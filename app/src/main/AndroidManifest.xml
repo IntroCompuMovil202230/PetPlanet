@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.petplanet">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/applogo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/applogo_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PetPlanet"
+        tools:targetApi="31">
+        <activity
+            android:name=".LandingPetWalkerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_landing_pet_walker" />
+        <activity
+            android:name=".AgendarPaseosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListarPerrosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SelecciondeCuentaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PerfilUsuarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PerfilPerroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroPerroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroPetWalkerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroPetOwnerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LandingPetOwnerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_landing_pet_owner" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
