@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/iniciarsesionBTN"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="149dp"
+        android:backgroundTint="@color/grey_100"
+        app:cornerRadius="15dp"
+        android:layout_below="@+id/creacruentaBTN"
+        android:text="@string/iniciarsesion"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/creacruentaBTN"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:layout_below="@+id/imageView"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="2dp"
+        android:backgroundTint="@color/purple_500"
+        android:text="@string/crearCuenta"
+
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        app:cornerRadius="15dp" />
+
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="240dp"
-        android:layout_height="227dp"
-        android:layout_marginStart="85dp"
-        android:layout_marginTop="129dp"
-        android:layout_marginEnd="86dp"
-        android:layout_marginBottom="375dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/applogo" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_width="match_parent"
+        android:layout_height="395dp"
+        app:srcCompat="@mipmap/logoconletras_foreground"
+        android:contentDescription="TODO" />
+
+</RelativeLayout>

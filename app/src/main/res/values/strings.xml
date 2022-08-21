@@ -5,4 +5,20 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_landing_pet_walker">LandingPetWalkerActivity</string>
+    <string name="iniciarsesion">Iniciar Sesión</string>
+    <string name="crearCuenta">Crear Cuenta</string>
+    <string name="companyname">PetCoding</string>
+    <string name="loginwelcome">!Bienvenido de nuevo!</string>
+    <string name="olvidarcontra">Olvidaste tu contraseña?</string>
+    <string name="eresnuevo">¿Eres nuevo?</string>
+    <string name="registrarse">Regístrate aqui</string>
+    <string name="cuenta">¿Ya tienes cuenta?</string>
+    <string name="iniciar">Ingresa con tu email</string>
+    <string name="crea">Crea tu cuenta!</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="correo">Correo</string>
+    <string name="olvidastetucontra">Ups!! olvidaste tu contraseña?</string>
+    <string name="enviacorreo">Introduce tu correo y te enviamos un link para restablecer la contraseña</string>
+    <string name="enviar">Enviar Link</string>
+
 </resources>
