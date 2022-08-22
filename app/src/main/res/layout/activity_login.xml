@@ -32,7 +32,7 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextPassword"
+            android:id="@+id/registroPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
@@ -63,7 +63,7 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextCorreo"
+            android:id="@+id/registroCorreo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
@@ -76,9 +76,9 @@
 
 
     <Button
-        android:id="@+id/iniciosesionBTN"
+        android:id="@+id/crearcuentaRBTN"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="70dp"
         android:layout_margin="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
@@ -102,12 +102,12 @@
         android:layout_margin="30dp"
 
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="29dp"
         android:clickable="true"
         android:text="@string/olvidarcontra"
         android:textColor="@color/purple_500"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/iniciosesionBTN"
+        app:layout_constraintBottom_toTopOf="@+id/crearcuentaRBTN"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
 

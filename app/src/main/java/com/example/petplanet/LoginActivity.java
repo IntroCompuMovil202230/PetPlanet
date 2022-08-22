@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
@@ -18,9 +17,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        EditText password = findViewById(R.id.editTextPassword);
-        EditText correo = findViewById(R.id.editTextCorreo);
-        Button login = findViewById(R.id.iniciosesionBTN);
+        EditText password = findViewById(R.id.registroPassword);
+        EditText correo = findViewById(R.id.registroCorreo);
+        Button login = findViewById(R.id.crearcuentaRBTN);
         TextView olvido = findViewById(R.id.olvidocontra);
         TextView registro = findViewById(R.id.nuevousuario);
 
@@ -48,28 +47,23 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                password.setError(null);
-                correo.setError(null);
+                String pass = password.getText().toString();
 
-                if(isEmail(correo) == false){
+
+                if(!isEmail(correo)){
                     correo.setError("Introduce un correo electonico valido");
                     correo.requestFocus();
                     return;
-                }if(password.getText().toString().isEmpty()){
+                }if(pass.isEmpty()){
                     password.setError("Introduce una contraseña");
                     password.requestFocus();
                     return;
                 }else{
-
-                    /*
-                    se tiene que verificar si un usuario es petowner o petwalker con el correo electronico para definir a que pantalla enviar al usuario
-
-                    por esta primera entrega vamos a mandarlo a la petowner activity
-                     */
-                    Intent intent = new Intent(LoginActivity.this, LandingPetOwnerActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
                     intent.putExtra("correo", correo.getText().toString());
                     intent.putExtra("password", password.getText().toString());
                     startActivity(intent);
+
                     finish();
                 }
             }

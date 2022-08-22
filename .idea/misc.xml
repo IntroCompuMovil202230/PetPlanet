@@ -4,9 +4,18 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/buttonround.xml" value="0.173" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_baseline_arrow_drop_down_circle_24.xml" value="0.197" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_dropdown.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_visibility_black_18dp.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/ic_visibility_off_black_18dp.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/rounded_buttonselection.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/rounded_cornerimageview.xml" value="0.197" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/rounded_edittext.xml" value="0.1355" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/show_password_selector.xml" value="0.197" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/drawable/spinnertext.xml" value="0.197" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/font/inter.xml" value="0.3648148148148148" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/font/interregular.xml" value="0.3648148148148148" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.2215528781793842" />
@@ -14,10 +23,14 @@
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_landing_pet_owner.xml" value="0.327445652173913" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_landing_pet_walker.xml" value="0.327445652173913" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_listar_perros.xml" value="0.327445652173913" />
-        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_login.xml" value="0.25" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_olvidarpassword.xml" value="0.34479166666666666" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_olvidarpassword.xml" value="0.67" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_registro_pet_owner.xml" value="0.33" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_seleccionde_cuenta.xml" value="0.33" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/activity_welcome.xml" value="0.34479166666666666" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/color_spinner_layout.xml" value="0.34479166666666666" />
+        <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/menu/bottom_nav_menu.xml" value="0.34479166666666666" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.298" />
       </map>
     </option>

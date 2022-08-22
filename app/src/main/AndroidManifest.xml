@@ -11,8 +11,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/applogo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PetPlanet"
+        android:theme="@style/Theme.PetPlanet">
         tools:targetApi="31">
+        <activity
+            android:name=".LandingPetOwnerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LandingPetWalkerActivity"
+            android:exported="false" />
         <activity
             android:name=".OlvidarpasswordActivity"
             android:exported="false" />
@@ -25,10 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LandingPetWalkerActivity"
-            android:exported="false"
-            android:label="@string/title_activity_landing_pet_walker" />
         <activity
             android:name=".AgendarPaseosActivity"
             android:exported="false" />
@@ -56,10 +58,6 @@
         <activity
             android:name=".RegistroPetOwnerActivity"
             android:exported="false" />
-        <activity
-            android:name=".LandingPetOwnerActivity"
-            android:exported="false"
-            android:label="@string/title_activity_landing_pet_owner" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

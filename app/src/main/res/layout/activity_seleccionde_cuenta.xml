@@ -6,4 +6,78 @@
     android:layout_height="match_parent"
     tools:context=".SelecciondeCuentaActivity">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/petowner_cardview"
+        android:layout_width="154dp"
+        android:layout_height="213dp"
+        android:layout_gravity="center"
+        android:clickable="true"
+
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="170dp"
+        android:layout_marginEnd="23dp"
+        android:backgroundTint="@color/petwalker_background"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintEnd_toStartOf="@+id/petwalker_cardview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="206dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/app_name"
+            app:srcCompat="@mipmap/petowner_foreground" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/rounded_buttonselection"
+            android:text="@string/petowner"
+            android:textAlignment="center"
+            android:textColor="@color/purple_500"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/petwalker_cardview"
+        android:layout_width="154dp"
+        android:layout_height="213dp"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:layout_marginTop="170dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="@color/petwalker_background"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+
+            android:layout_width="200dp"
+            android:layout_height="206dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/app_name"
+            app:srcCompat="@mipmap/petwalker_foreground" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="0dp"
+
+            android:background="@drawable/rounded_buttonselection"
+            android:text="@string/petwalker"
+            android:textAlignment="center"
+            android:textColor="@color/purple_500"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
