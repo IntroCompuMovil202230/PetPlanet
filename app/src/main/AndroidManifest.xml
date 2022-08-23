@@ -12,7 +12,12 @@
         android:roundIcon="@mipmap/applogo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetPlanet">
-        tools:targetApi="31">
+        <activity
+            android:name=".IniciarPaseoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListaPaseosActivity"
+            android:exported="false" />
         <activity
             android:name=".LandingPetOwnerActivity"
             android:exported="false" />

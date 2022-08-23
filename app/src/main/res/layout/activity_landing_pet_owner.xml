@@ -1,9 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
     tools:context=".LandingPetOwnerActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
+        android:layout_height="670dp"
+        android:layout_weight="1"
+        android:src="@drawable/mapa" />
+
+    <LinearLayout
+        android:id="@+id/barraA"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_weight="1"
+        android:background="@color/purple_500"
+        android:orientation="horizontal">
+
+
+        <ImageButton
+            android:id="@+id/mascotas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@color/purple_500"
+            android:src="@drawable/mascotas" />
+
+        <ImageButton
+            android:id="@+id/agendarPaseoA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@color/purple_500"
+            android:src="@drawable/agendar" />
+
+        <ImageButton
+            android:id="@+id/perfilA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@color/purple_500"
+            android:src="@drawable/perfil" />
+
+    </LinearLayout>
+
+</LinearLayout>
