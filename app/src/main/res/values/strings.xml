@@ -95,6 +95,15 @@
     <string name="nombcompl">Nombre completo</string>
     <string name="direccion">Dirección</string>
 
+    //registro pet walker
+    <string name="vamos">Vamos a crecer juntos</string>
+    <string name="documento">Documento de identidad</string>
+    <string name="experiencia">Cuentanos tu experiencia con mascotas</string>
+    <string name="hoja">Hoja de vida</string>
+    <string name="enviarsolicitud">Envia Solicitud</string>
+    <string name="solicitudenviada">Solicitud enviada</string>
+    <string name="subir">Subir</string>
+
     <string-array name="localidades">
         <item>Selecciona una localidad</item>
         <item>Usaquén</item>
