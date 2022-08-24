@@ -15,7 +15,7 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_olvidarpassword);
 
-        EditText CorreoOlvido = findViewById(R.id.editTextCorreoOlvido);
+        EditText CorreoOlvido = findViewById(R.id.editTextCorreoCambiopsw);
         Button enviar = findViewById(R.id.enviarLinkBTN);
 
         enviar.setOnClickListener(new View.OnClickListener() {

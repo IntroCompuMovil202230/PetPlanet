@@ -11,16 +11,16 @@
         android:layout_width="154dp"
         android:layout_height="213dp"
         android:layout_gravity="center"
-        android:clickable="true"
-
         android:layout_marginStart="20dp"
-        android:layout_marginTop="170dp"
+
+        android:layout_marginTop="114dp"
         android:layout_marginEnd="23dp"
         android:backgroundTint="@color/petwalker_background"
+        android:clickable="true"
         app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toStartOf="@+id/petwalker_cardview"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarSele">
 
         <ImageView
             android:layout_width="200dp"
@@ -49,13 +49,13 @@
         android:layout_width="154dp"
         android:layout_height="213dp"
         android:layout_gravity="center"
-        android:clickable="true"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="114dp"
         android:layout_marginEnd="20dp"
         android:backgroundTint="@color/petwalker_background"
+        android:clickable="true"
         app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarSele">
 
         <ImageView
 
@@ -80,4 +80,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarSele"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/seleccion_de_cuenta"
+        app:titleTextColor="@color/purple_500" />
 </androidx.constraintlayout.widget.ConstraintLayout>

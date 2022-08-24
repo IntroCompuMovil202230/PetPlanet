@@ -12,8 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetPlanet">
         <activity
-
             android:name=".CambiarPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".IniciarPaseoActivity"
             android:exported="false" />
         <activity

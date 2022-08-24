@@ -21,7 +21,7 @@ public class RegistroPetOwnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_pet_owner);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbarRegPetW);
         EditText correo =  findViewById(R.id.registroCorreo);
         EditText nombre = findViewById(R.id.registroNombrePet);
         EditText direccion =  findViewById(R.id.registrotDireccion);
@@ -38,7 +38,7 @@ public class RegistroPetOwnerActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                startActivity(new Intent(getApplicationContext(),SelecciondeCuentaActivity.class));
             }
         });
 

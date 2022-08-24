@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class PerfilUsuarioActivity extends AppCompatActivity {
 
 
@@ -17,7 +19,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_perfil_usuario);
 
         Button changePassword = findViewById(R.id.changepassword);
-        Button addPet = findViewById(R.id.addpet);
+        FloatingActionButton addPet = findViewById(R.id.addpet);
         ImageView pet = findViewById(R.id.petPicture);
 
         changePassword.setOnClickListener(new View.OnClickListener() {

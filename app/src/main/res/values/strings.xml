@@ -42,6 +42,11 @@
     <string name="carnet">Carnet de Vacunación</string>
     <string name="esterilizado">Esterilizado</string>
     <string name="fechapet">Ingrese la fecha de Nacimiento</string>
+    <string name="nombredelperro">Nombre del perro:</string>
+    <string name="nombredeldueno">Nombre del dueño:</string>
+    <string name="horario">Horario:</string>
+    <string name="listar">Listar paseos</string>
+    <string name="seleccion_de_cuenta">Selecciona el tipo de cuenta</string>
 
     //Registro Pet
     <string name="registroPerro">Cuentanos acerca de tu peludo!</string>
@@ -126,6 +131,38 @@
         <item>Rafael Uribe Uribe</item>
         <item>Ciudad Bolívar</item>
         <item>Sumapaz</item>
+
+    </string-array>
+
+
+    <string-array name="mascotas">
+        <item>Selecciona una mascota</item>
+        <item>daiki</item>
+        <item>puffy</item>
+        <item>tommy</item>
+        <item>manchas</item>
+        <item>pelusa</item>
+
+    </string-array>
+
+
+    <string-array name="horas">
+        <item>Hora</item>
+        <item>6:00am</item>
+        <item>7:00am</item>
+        <item>8:00am</item>
+        <item>9:00am</item>
+        <item>10:00am</item>
+
+    </string-array>
+
+    <string-array name="Paseadores">
+        <item>Seleccione el paseador</item>
+        <item>Juan Pablo Sanchez</item>
+        <item>Daniel Castellanos</item>
+        <item>Tatiana peña</item>
+        <item>Karol Ceballos</item>
+        <item>Laura Sanchez</item>
 
     </string-array>
 
