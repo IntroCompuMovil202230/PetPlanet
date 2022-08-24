@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                     password.requestFocus();
                     return;
                 }else{
-                    Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), PerfilUsuarioActivity.class);
                     intent.putExtra("correo", correo.getText().toString());
                     intent.putExtra("password", password.getText().toString());
                     startActivity(intent);

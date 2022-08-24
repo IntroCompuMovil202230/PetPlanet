@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".RegistroPetOwnerActivity">
 
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextNombre"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -27,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/registroNombreCompleto"
+            android:id="@+id/registroNombrePet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
@@ -39,7 +38,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
-        android:id="@+id/registroLocalidad"
+        android:id="@+id/spinnerraza"
         style="@style/Widget.AppCompat.Spinner.DropDown"
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -56,7 +55,7 @@
         tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTextLayoutDireccion"
+        android:id="@+id/sexo"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +69,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registroLocalidad">
+        app:layout_constraintTop_toBottomOf="@+id/spinnerraza">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registrotDireccion"
@@ -113,7 +112,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextLayoutDireccion">
+        app:layout_constraintTop_toBottomOf="@+id/sexo">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registroCorreo"

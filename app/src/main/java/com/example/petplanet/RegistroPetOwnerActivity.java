@@ -23,10 +23,10 @@ public class RegistroPetOwnerActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         EditText correo =  findViewById(R.id.registroCorreo);
-        EditText nombre = findViewById(R.id.registroNombreCompleto);
+        EditText nombre = findViewById(R.id.registroNombrePet);
         EditText direccion =  findViewById(R.id.registrotDireccion);
         EditText password =  findViewById(R.id.registroPassword);
-        Spinner localidad = findViewById(R.id.registroLocalidad);
+        Spinner localidad = findViewById(R.id.spinnerraza);
         Button creaccuenta = findViewById(R.id.crearcuentaRBTN);
 
 
