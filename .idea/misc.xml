@@ -32,6 +32,31 @@
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/layout/color_spinner_layout.xml" value="0.34479166666666666" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/menu/bottom_nav_menu.xml" value="0.34479166666666666" />
         <entry key="..\:/Users/juanp/Documents/github/PetPlanet/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.298" />
+        <entry key="app/src/main/res/drawable/circle.xml" value="0.1405" />
+        <entry key="app/src/main/res/drawable/image.xml" value="0.1405" />
+        <entry key="app/src/main/res/drawable/rounded_cornerimageview.xml" value="0.15" />
+        <entry key="app/src/main/res/layout/activity_agendar_paseos.xml" value="0.2821557971014493" />
+        <entry key="app/src/main/res/layout/activity_cambiar_password.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_landing_pet_owner.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/activity_landing_pet_walker.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/activity_listar_perros.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.2821557971014493" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2821557971014493" />
+        <entry key="app/src/main/res/layout/activity_olvidarpassword.xml" value="0.14010416666666667" />
+        <entry key="app/src/main/res/layout/activity_perfil_perro.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/activity_perfil_usuario.xml" value="0.24512023925781248" />
+        <entry key="app/src/main/res/layout/activity_registro_perro.xml" value="0.2451202392578125" />
+        <entry key="app/src/main/res/layout/activity_registro_pet_owner.xml" value="0.2821557971014493" />
+        <entry key="app/src/main/res/layout/activity_registro_pet_walker.xml" value="0.2821557971014493" />
+        <entry key="app/src/main/res/layout/activity_seleccionde_cuenta.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/activity_welcome.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/applogo.xml" value="0.1405" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/applogo_round.xml" value="0.1405" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/logoconletras.xml" value="0.1405" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/logoconletras_round.xml" value="0.1405" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/petowner.xml" value="0.1405" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/petowner_round.xml" value="0.1405" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/petwalker_round.xml" value="0.1405" />
       </map>
     </option>
   </component>

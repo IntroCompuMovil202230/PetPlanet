@@ -3,7 +3,158 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     tools:context=".PerfilUsuarioActivity">
+
+    <Button
+        android:id="@+id/changepassword"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+
+
+        android:layout_marginEnd="20dp"
+        android:padding="10dp"
+        android:text="@string/cambiarcontrasenia"
+        android:textColor="#000000"
+
+        app:cornerRadius="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numberPetOwner"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/addpet"
+        android:layout_width="38dp"
+        android:layout_height="51dp"
+        android:layout_margin="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+
+
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="8dp"
+        android:padding="10dp"
+        android:text="@string/plus"
+
+        android:textColor="#000000"
+        app:cornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.784"
+        app:layout_constraintStart_toEndOf="@+id/petPicture"
+        app:layout_constraintTop_toBottomOf="@+id/mascotas"
+        app:layout_constraintVertical_bias="0.321"
+        tools:ignore="TextContrastCheck" />
+
+    <ImageView
+        android:id="@+id/profilePetPicture"
+        android:layout_width="200dp"
+        android:layout_height="206dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="92dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_launcher_foreground" />
+
+    <ImageView
+        android:id="@+id/petPicture"
+        android:layout_width="120dp"
+        android:layout_height="111dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="126dp"
+        android:layout_marginBottom="47dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mascotas"
+        app:layout_constraintVertical_bias="0.347"
+        app:srcCompat="@mipmap/pet1_foreground" />
+
+    <TextView
+        android:id="@+id/fullNamePet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/firstname"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/profilePetPicture"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/carnetVacunacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/lastname"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/fullNamePet"
+        tools:layout_editor_absoluteX="20dp" />
+
+    <TextView
+        android:id="@+id/raza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/email"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/carnetVacunacion"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/numberPetOwner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/number"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/raza"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/mascotas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:text="@string/mascotas"
+        android:textAlignment="center"
+        android:textColor="@color/grey_200"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/changepassword"
+        tools:layout_editor_absoluteX="20dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

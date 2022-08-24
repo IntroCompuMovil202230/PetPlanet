@@ -4,6 +4,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp"
     tools:context=".PerfilPerroActivity">
+
+    <ImageView
+        android:id="@+id/profilePetPicture"
+        android:layout_width="200dp"
+        android:layout_height="206dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="92dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/pet1_foreground" />
+
+
+    <TextView
+        android:id="@+id/fullNamePet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/nombrePerro"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/profilePetPicture"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/carnetVacunacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/carnetvacunacion"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/fullNamePet"
+        tools:layout_editor_absoluteX="20dp" />
+
+    <TextView
+        android:id="@+id/raza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/raza"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/carnetVacunacion"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/numberPetOwner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/number"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/raza"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/address"
+        android:textAlignment="center"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/numberPetOwner"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/indicaciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="28dp"
+        android:text="@string/indicaciones"
+        android:textAlignment="center"
+        android:textColor="@color/grey_200"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/address"
+        tools:layout_editor_absoluteX="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

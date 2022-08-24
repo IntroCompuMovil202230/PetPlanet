@@ -22,6 +22,74 @@
     <string name="enviar">Enviar Link</string>
     <string name="petowner">PetOwner</string>
     <string name="petwalker">PetWalker</string>
+    <string name="registropet">Registrar Mascota</string>
+    <string name="plus">+</string>
+
+    // Perfiles
+    <string name="firstname">First Name</string>
+    <string name="lastname">Last Name</string>
+    <string name="email">Email</string>
+    <string name="number">Phone Number</string>
+    <string name="cambiarcontrasenia">Cambiar Contraseña</string>
+    <string name="mascotas">Mascotas</string>
+    <string name="deseascambiartupass">Deseas cambiar tu contraseña?</string>
+    <string name="nombrePerro">Pet Name, age</string>
+    <string name="carnetvacunacion">Carnet de Vacunacion</string>
+    <string name="raza">Raza</string>
+    <string name="address">Address</string>
+    <string name="indicaciones">Indicaciones y Recomendaciones</string>
+    <string name="sexo">Sexo</string>
+    <string name="carnet">Carnet de Vacunación</string>
+    <string name="esterilizado">Esterilizado</string>
+    <string name="fechapet">Ingrese la fecha de Nacimiento</string>
+
+    //Registro Pet
+    <string name="registroPerro">Cuentanos acerca de tu peludo!</string>
+    <string-array name="razas">
+        <item>Selecciona una raza</item>
+        <item>Golden Retriever</item>
+        <item>Yorkshire Terrier</item>
+        <item>Bulldog</item>
+        <item>Pastor Alemán</item>
+        <item>Labrador</item>
+        <item>Poodle</item>
+        <item>Husky Siberiano</item>
+        <item>Bulldog Francés</item>
+        <item>Pomerania</item>
+        <item>Airedale Terrier</item>
+        <item>Pug</item>
+        <item>Gran Dánes</item>
+        <item>Afgano</item>
+        <item>Chihuahua</item>
+        <item>Boxer</item>
+        <item>Doberman</item>
+        <item>Esquimal Americano</item>
+        <item>Border Collie</item>
+        <item>Pastor Ovejero</item>
+        <item>Bichon Frisé</item>
+        <item>Chow Chow</item>
+        <item>Dalmata</item>
+    </string-array>
+
+    <string-array name="colores">
+        <item>Selecciona un color</item>
+        <item>Blanco</item>
+        <item>Negro</item>
+        <item>Manchado</item>
+        <item>Cafe</item>
+        <item>Marrón</item>
+        <item>Chocolate</item>
+        <item>Atigrados</item>
+        <item>Arlequín</item>
+        <item>Albino</item>
+
+    </string-array>
+
+    <string-array name="sexo">
+        <item>Seleccione el sexo</item>
+        <item>Macho</item>
+        <item>Hembra</item>
+    </string-array>
 
     //registro pet owner
     <string name="nombcompl">Nombre completo</string>
