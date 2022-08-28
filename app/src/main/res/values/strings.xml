@@ -48,6 +48,14 @@
     <string name="listar">Listar paseos</string>
     <string name="seleccion_de_cuenta">Selecciona el tipo de cuenta</string>
 
+    <string name="perfil">Perfil</string>
+    <string name="cuidadores">Cuidadores</string>
+    <string name="agendarpaseos">Agendar Paseos</string>
+    <string name="mapa">Mapa</string>
+    <string name="enviarmens">Enviar mensaje</string>
+    <string name="disponibles">Perros disponibles</string>
+
+
     //Registro Pet
     <string name="registroPerro">Cuentanos acerca de tu peludo!</string>
     <string-array name="razas">
@@ -165,5 +173,6 @@
         <item>Laura Sanchez</item>
 
     </string-array>
+    <string name="title_activity_prueba">pruebaActivity</string>
 
 </resources>

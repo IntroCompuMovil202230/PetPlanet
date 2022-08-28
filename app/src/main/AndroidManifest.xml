@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetPlanet">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".CambiarPasswordActivity"
             android:exported="false" />
         <activity
@@ -19,7 +22,6 @@
             android:exported="false" />
         <activity
             android:name=".ListaPaseosActivity"
-
             android:exported="false" />
         <activity
             android:name=".LandingPetOwnerActivity"

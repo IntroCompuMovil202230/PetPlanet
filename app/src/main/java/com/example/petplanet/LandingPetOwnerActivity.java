@@ -1,12 +1,20 @@
 package com.example.petplanet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.ui.AppBarConfiguration;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class LandingPetOwnerActivity extends AppCompatActivity {
 
@@ -14,32 +22,34 @@ public class LandingPetOwnerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_pet_owner);
+        FloatingActionButton agendarBTN = findViewById(R.id.AgendarPaseoBTN);
 
-        ImageButton mascotas = findViewById(R.id.mascotas);
-        ImageButton agendar = findViewById(R.id.agendarPaseoA);
-        ImageButton perfil = findViewById(R.id.perfilA);
-
-        mascotas.setOnClickListener(new View.OnClickListener() {
+        BottomNavigationView bottomtool = findViewById(R.id.bottom_navigation);
+        bottomtool.setBackground(null);
+        bottomtool.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ListarPerrosActivity.class);
-                startActivity(intent);
-            }
-        });
-        agendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AgendarPaseosActivity.class);
-                startActivity(intent);
-            }
-        });
-        perfil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PerfilUsuarioActivity.class);
-                startActivity(intent);
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.mascotas:
+                        Intent intent = new Intent(getApplicationContext(), ListaPaseosActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.perfilA:
+                        Intent intent3 = new Intent(getApplicationContext(), PerfilUsuarioActivity.class);
+                        startActivity(intent3);
+                        break;
+                }
+                return true;
             }
         });
 
+        agendarBTN.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), AgendarPaseosActivity.class);
+            startActivity(intent);
+
+        });
     }
+
+
 }
