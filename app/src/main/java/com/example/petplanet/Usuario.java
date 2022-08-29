@@ -9,7 +9,7 @@ public class Usuario {
     private String contrasena;
     private String direccion;
     private String telefono;
-    private Bitmap foto;
+    private int foto;
     Boolean isWalker;
     String experiencia;
     String linkhojadevida;
@@ -18,7 +18,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String localidad, String correo, String contrasena, String direccion, String telefono, Bitmap foto, Boolean isWalker, String experiencia, String linkhojadevida, String linkdocumentoid) {
+    public Usuario(String nombre, String localidad, String correo, String contrasena, String direccion, String telefono, int foto, Boolean isWalker, String experiencia, String linkhojadevida, String linkdocumentoid) {
         this.nombre = nombre;
         this.localidad = localidad;
         this.correo = correo;
@@ -31,6 +31,14 @@ public class Usuario {
         this.linkhojadevida = linkhojadevida;
         this.linkdocumentoid = linkdocumentoid;
     }
+    public Usuario(String nombre,String telefono,String experiencia,int foto){
+        this.nombre=nombre;
+        this.telefono=telefono;
+        this.experiencia = experiencia;
+        this.foto=foto;
+    }
+
+
 
     public String getTelefono() {
         return telefono;
@@ -80,11 +88,11 @@ public class Usuario {
         this.direccion = direccion;
     }
 
-    public Bitmap getFoto() {
+    public int getFoto() {
         return foto;
     }
 
-    public void setFoto(Bitmap foto) {
+    public void setFoto(int foto) {
         this.foto = foto;
     }
 

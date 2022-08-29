@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetPlanet">
         <activity
+            android:name=".PerfilUsuarioWalkerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListarCuidadoresActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatActivity"
             android:exported="false" />
         <activity

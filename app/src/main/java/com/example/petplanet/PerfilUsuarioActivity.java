@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -17,17 +18,26 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_usuario);
+        Toolbar tollbarusuario = findViewById(R.id.toolbarPusuario);
+        tollbarusuario.setTitle("");
+        setSupportActionBar(tollbarusuario);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Button changePassword = findViewById(R.id.changepassword);
+        tollbarusuario.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // luego se pone despues que se revise el rol del usuario a que pantalla ir
+                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+            }
+        });
+        Button changePasswordbtn = findViewById(R.id.changepasswordBTN);
         FloatingActionButton addPet = findViewById(R.id.addpet);
         ImageView pet = findViewById(R.id.petPicture);
 
-        changePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CambiarPasswordActivity.class);
-                startActivity(intent);
-            }
+        changePasswordbtn.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), CambiarPasswordActivity.class);
+            startActivity(intent);
         });
 
         pet.setOnClickListener(new View.OnClickListener() {

@@ -45,9 +45,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="34dp"
         android:layout_marginEnd="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:background="@drawable/spinnertext"
         android:entries="@array/localidades"
         android:minHeight="48dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

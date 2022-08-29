@@ -55,6 +55,9 @@
     <string name="enviarmens">Enviar mensaje</string>
     <string name="disponibles">Perros disponibles</string>
 
+    <string name="Ingresefecha">Ingrese la fecha del paseo</string>
+    <string name="Ingresehora">Ingrese la hora del paseo</string>
+
 
     //Registro Pet
     <string name="registroPerro">Cuentanos acerca de tu peludo!</string>
@@ -173,6 +176,11 @@
         <item>Laura Sanchez</item>
 
     </string-array>
-    <string name="title_activity_prueba">pruebaActivity</string>
+    <string name="registratuperro">Crea una cuenta a tu perro</string>
+    <string name="listarcuidadores">Lista de cuidadores</string>
+    <string name="favoritos">Agregar a favoritos</string>
+    <string name="perfilPet">Perfil del cuidador</string>
+    <string name="chat">Chat</string>
+    <string name="escribe_un_mensaje">Escribe un mensaje</string>
 
 </resources>

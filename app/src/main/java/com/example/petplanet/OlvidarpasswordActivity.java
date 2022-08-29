@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,8 +23,8 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CorreoOlvido.setError(null);
-                if(CorreoOlvido.getText().toString().isEmpty()){
+
+                if(!isEmail(CorreoOlvido)){
                     CorreoOlvido.setError("Introduce un correo electronico");
                     CorreoOlvido.requestFocus();
                     return;
@@ -33,5 +35,9 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    public boolean isEmail(EditText text) {
+        CharSequence email = text.getText().toString();
+        return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
 }

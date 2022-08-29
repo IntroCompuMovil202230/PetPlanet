@@ -2,18 +2,14 @@ package com.example.petplanet;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import androidx.gridlayout.widget.GridLayout;
 
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -52,7 +48,7 @@ public class ListaPaseosActivity extends AppCompatActivity {
         perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
         perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
         perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
-        ArrayAdapter adapter = new CardAdapter(this,R.layout.cardview,perroslist);
+        ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
         gridLayout.setAdapter(adapter);
 
 

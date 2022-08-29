@@ -1,4 +1,5 @@
 package com.example.petplanet;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +10,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class CardAdapter extends ArrayAdapter {
+public class CardAdapterUsuario extends ArrayAdapter {
 
-    ArrayList<Perro> perrolist = new ArrayList<>();
 
-    public CardAdapter(Context context, int textViewResourceId, ArrayList objects) {
+    ArrayList<Usuario> usuariolist = new ArrayList<>();
+
+    public CardAdapterUsuario(Context context, int textViewResourceId, ArrayList objects) {
         super(context, textViewResourceId, objects);
-        perrolist = objects;
+        usuariolist = objects;
     }
 
     @Override
@@ -33,12 +35,11 @@ public class CardAdapter extends ArrayAdapter {
         TextView horario = (TextView) v.findViewById(R.id.horariotxt);
         TextView conoce = (TextView) v.findViewById(R.id.conoceperrotxt);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
-        nombre.setText(perrolist.get(position).getNombrecompleto());
-        horario.setText(perrolist.get(position).getHorario());
-        conoce.setText("Conoce mas de: "+perrolist.get(position).getNombrecompleto());
-        imageView.setImageResource(perrolist.get(position).getFoto());
+        nombre.setText(usuariolist.get(position).getNombre());
+        horario.setText(usuariolist.get(position).getTelefono());
+        conoce.setText("Conoce mas de: "+ usuariolist.get(position).getNombre());
+        imageView.setImageResource(usuariolist.get(position).getFoto());
         return v;
-
     }
 
 }

@@ -31,9 +31,13 @@ public class LandingPetOwnerActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 switch (id) {
-                    case R.id.mascotas:
-                        Intent intent = new Intent(getApplicationContext(), ListaPaseosActivity.class);
+                    case R.id.cuidadores:
+                        Intent intent = new Intent(getApplicationContext(), ListarCuidadoresActivity.class);
                         startActivity(intent);
+                        break;
+                    case R.id.chat:
+                        Intent intent2 = new Intent(getApplicationContext(), ChatActivity.class);
+                        startActivity(intent2);
                         break;
                     case R.id.perfilA:
                         Intent intent3 = new Intent(getApplicationContext(), PerfilUsuarioActivity.class);
