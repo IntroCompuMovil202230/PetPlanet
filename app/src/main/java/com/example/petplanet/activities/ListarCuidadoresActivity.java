@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,7 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
-import org.json.JSONException;
+import com.example.petplanet.adapters.CardAdapterUsuario;
+import com.example.petplanet.R;
+import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
 

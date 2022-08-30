@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.models;
 
 import android.graphics.Bitmap;
 

@@ -1,10 +1,13 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.example.petplanet.R;
+import com.example.petplanet.activities.MainActivity;
 
 public class WelcomeActivity extends AppCompatActivity {
 

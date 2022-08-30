@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.models;
 
 import android.graphics.Bitmap;
 
@@ -38,6 +38,11 @@ public class Usuario {
         this.foto=foto;
     }
 
+    public Usuario(String nombre,String telefono,int foto){
+        this.nombre=nombre;
+        this.telefono=telefono;
+        this.foto=foto;
+    }
 
 
     public String getTelefono() {

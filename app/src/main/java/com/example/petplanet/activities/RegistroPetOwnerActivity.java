@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.example.petplanet.R;
 
 public class RegistroPetOwnerActivity extends AppCompatActivity {
 

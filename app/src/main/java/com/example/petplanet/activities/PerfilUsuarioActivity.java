@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.petplanet.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class PerfilUsuarioActivity extends AppCompatActivity {

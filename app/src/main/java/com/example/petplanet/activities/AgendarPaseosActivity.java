@@ -1,11 +1,10 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,11 +14,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.petplanet.R;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-
-import com.google.android.material.timepicker.MaterialTimePicker;
-import com.google.android.material.timepicker.TimeFormat;
 
 import java.util.Locale;
 
@@ -47,7 +44,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
         agengarTool.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
             }
         });
 

@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,6 +10,10 @@ import android.view.View;
 
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+
+import com.example.petplanet.adapters.CardAdapterPerro;
+import com.example.petplanet.models.Perro;
+import com.example.petplanet.R;
 
 import java.util.ArrayList;
 

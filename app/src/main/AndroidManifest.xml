@@ -12,34 +12,40 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetPlanet">
         <activity
-            android:name=".PerfilUsuarioWalkerActivity"
+            android:name=".activities.ListaDeChatsActivity"
             android:exported="false" />
         <activity
-            android:name=".ListarCuidadoresActivity"
+            android:name=".activities.UsersActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".activities.PerfilUsuarioWalkerActivity"
             android:exported="false" />
         <activity
-            android:name=".CambiarPasswordActivity"
+            android:name=".activities.ListarCuidadoresActivity"
             android:exported="false" />
         <activity
-            android:name=".IniciarPaseoActivity"
+            android:name=".activities.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".ListaPaseosActivity"
+            android:name=".activities.CambiarPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".LandingPetOwnerActivity"
+            android:name=".activities.IniciarPaseoActivity"
             android:exported="false" />
         <activity
-            android:name=".LandingPetWalkerActivity"
+            android:name=".activities.ListaPaseosActivity"
             android:exported="false" />
         <activity
-            android:name=".OlvidarpasswordActivity"
+            android:name=".activities.LandingPetOwnerActivity"
             android:exported="false" />
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".activities.LandingPetWalkerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.OlvidarpasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,34 +54,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AgendarPaseosActivity"
+            android:name=".activities.AgendarPaseosActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".ListarPerrosActivity"
+            android:name=".activities.ListarPerrosActivity"
             android:exported="false" />
         <activity
-            android:name=".SelecciondeCuentaActivity"
+            android:name=".activities.SelecciondeCuentaActivity"
             android:exported="false" />
         <activity
-            android:name=".PerfilUsuarioActivity"
+            android:name=".activities.PerfilUsuarioActivity"
             android:exported="false" />
         <activity
-            android:name=".PerfilPerroActivity"
+            android:name=".activities.PerfilPerroActivity"
             android:exported="false" />
         <activity
-            android:name=".RegistroPerroActivity"
+            android:name=".activities.RegistroPerroActivity"
             android:exported="false" />
         <activity
-            android:name=".RegistroPetWalkerActivity"
+            android:name=".activities.RegistroPetWalkerActivity"
             android:exported="false" />
         <activity
-            android:name=".RegistroPetOwnerActivity"
+            android:name=".activities.RegistroPetOwnerActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

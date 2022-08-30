@@ -6,12 +6,18 @@
         android:icon="@drawable/ic_people"
         android:title="@string/cuidadores"
         />
+    <item
+        android:id="@+id/AgendarPaseoBTN"
+        android:icon="@drawable/conversion_path"
+        android:title="@string/agendar_paseo"
+        />
 
     <item
         android:id="@+id/chat"
         android:icon="@drawable/ic_chat"
         android:title="@string/chat"
         />
+
     <item
         android:id="@+id/perfilA"
         android:icon="@drawable/ic_person"

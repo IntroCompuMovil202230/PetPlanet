@@ -1,8 +1,10 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.petplanet.R;
 
 public class ChatActivity extends AppCompatActivity {
 

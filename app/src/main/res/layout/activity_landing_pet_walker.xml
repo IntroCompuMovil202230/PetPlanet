@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".LandingPetWalkerActivity">
+    tools:context=".activities.LandingPetWalkerActivity">
 
     <ImageView
         android:id="@+id/imageView3"
@@ -46,13 +46,6 @@
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/IniciarPaseoBTN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_near_me"
-            app:layout_anchor="@id/sbottom_navigation"
-            tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

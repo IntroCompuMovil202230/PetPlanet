@@ -182,5 +182,8 @@
     <string name="perfilPet">Perfil del cuidador</string>
     <string name="chat">Chat</string>
     <string name="escribe_un_mensaje">Escribe un mensaje</string>
+    <string name="agendar_paseo">Agendar Paseo</string>
+    <string name="iniciar_paseo">Iniciar Paseo</string>
+    <string name="seleccionauncuidador">Selecciona un cuidador</string>
 
 </resources>

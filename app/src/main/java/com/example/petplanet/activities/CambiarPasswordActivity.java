@@ -1,4 +1,4 @@
-package com.example.petplanet;
+package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,6 +10,8 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.petplanet.R;
 
 public class CambiarPasswordActivity extends AppCompatActivity {
 
@@ -31,7 +33,7 @@ public class CambiarPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // luego se pone despues que se revise el rol del usuario a que pantalla ir
-                startActivity(new Intent(getApplicationContext(),PerfilUsuarioActivity.class));
+                startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
             }
         });
 
