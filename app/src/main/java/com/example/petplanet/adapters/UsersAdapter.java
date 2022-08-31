@@ -24,10 +24,11 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
+public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> implements View.OnClickListener {
 
     private List<Usuario> usuarioList;
     private Context context;
+    private View.OnClickListener listener;
 
     public UsersAdapter(List<Usuario> usuarioList, Context context) {
         this.usuarioList = usuarioList;
@@ -38,6 +39,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     @Override
     public UsersAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_user, parent ,false);
+        v.setOnClickListener(this);
+
         return new ViewHolder(v);
     }
 
@@ -46,6 +49,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         holder.nombre.setText(usuarioList.get(position).getNombre());
         holder.telefono.setText(usuarioList.get(position).getTelefono());
         holder.foto.setImageResource(usuarioList.get(position).getFoto());
+
     }
 
     @Override
@@ -53,7 +57,18 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         return usuarioList.size();
     }
 
-public static  class ViewHolder extends RecyclerView.ViewHolder {
+
+    public void setOnClickListener(View.OnClickListener listener){
+        this.listener = listener;
+    }
+    @Override
+    public void onClick(View view) {
+        if(listener != null){
+            listener.onClick(view);
+        }
+    }
+
+    public static  class ViewHolder extends RecyclerView.ViewHolder {
         TextView nombre;
         TextView telefono;
         ImageView foto;
@@ -65,6 +80,8 @@ public static  class ViewHolder extends RecyclerView.ViewHolder {
         nombre = itemView.findViewById(R.id.TextName);
         telefono = itemView.findViewById(R.id.TextPhone);
         foto = itemView.findViewById(R.id.imageprofile);
+
+
     }
 
 }

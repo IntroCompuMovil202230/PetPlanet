@@ -33,8 +33,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
                     case R.id.IniciarPaseoBTN:
                         Intent intent2 = new Intent(getApplicationContext(), IniciarPaseoActivity.class);
                         startActivity(intent2);
+                        break;
                     case R.id.chat:
-                        Intent intent3 = new Intent(getApplicationContext(), ChatActivity.class);
+                        Intent intent3 = new Intent(getApplicationContext(), ListaDeChatsActivity.class);
                         startActivity(intent3);
                         break;
                     case R.id.perfilA:

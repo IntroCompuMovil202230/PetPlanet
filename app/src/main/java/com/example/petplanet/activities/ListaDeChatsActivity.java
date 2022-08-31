@@ -17,6 +17,10 @@ public class ListaDeChatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_de_chats);
 
         FloatingActionButton addChat = findViewById(R.id.addChatBTN);
-        addChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), UsersActivity.class)));
+        addChat.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), UsersActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 }

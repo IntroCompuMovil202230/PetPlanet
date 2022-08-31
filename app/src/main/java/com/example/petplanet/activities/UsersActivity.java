@@ -54,6 +54,13 @@ public class UsersActivity extends AppCompatActivity {
             cuidadoreslist.add(new Usuario("David otero","3149988433",R.drawable.perro3));
 
             adapter = new UsersAdapter(cuidadoreslist,this);
+            adapter.setOnClickListener(view -> {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                intent.putExtra("nombre",cuidadoreslist.get(recyclerView.getChildAdapterPosition(view)).getNombre());
+                intent.putExtra("foto",cuidadoreslist.get(recyclerView.getChildAdapterPosition(view)).getFoto());
+                startActivity(intent);
+                finish();
+            });
             recyclerView.setAdapter(adapter);
 
         }catch (Exception e) {

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import java.sql.Date;
 
 public class Perro {
+    String nombredueno;
     String nombrecompleto;
     String raza;
     String sexo;
@@ -19,22 +20,33 @@ public class Perro {
     }
 
 
-    public Perro(String nombrecompleto, String raza, String sexo, String color, String horario, Date fechanacimiento, Boolean vacunado, Boolean esterilizado, int foto) {
+    public Perro(String nombredueno, String nombrecompleto, String raza, String sexo, String color, String horario, Date fechanacimiento, Boolean vacunado, Boolean esterilizado, int foto) {
+        this.nombredueno = nombredueno;
         this.nombrecompleto = nombrecompleto;
         this.raza = raza;
         this.sexo = sexo;
         this.color = color;
-        Horario = horario;
+        this.Horario = horario;
         this.fechanacimiento = fechanacimiento;
         this.vacunado = vacunado;
         this.esterilizado = esterilizado;
         this.foto = foto;
     }
 
-    public Perro(String nombrecompleto,String horario, int  foto) {
+
+
+    public Perro(String nombredueno,String nombrecompleto,int  foto) {
+        this.nombredueno = nombredueno;
         this.nombrecompleto = nombrecompleto;
-        Horario = horario;
         this.foto = foto;
+    }
+
+    public String getNombredueno() {
+        return nombredueno;
+    }
+
+    public void setNombredueno(String nombredueno) {
+        this.nombredueno = nombredueno;
     }
 
     public String getHorario() {
@@ -42,7 +54,7 @@ public class Perro {
     }
 
     public void setHorario(String horario) {
-        Horario = horario;
+        this.Horario = horario;
     }
 
     public String getNombrecompleto() {
