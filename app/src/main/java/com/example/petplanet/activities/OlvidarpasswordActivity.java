@@ -1,6 +1,7 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,24 +19,31 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_olvidarpassword);
+        Toolbar olvtole = findViewById(R.id.toolbarolv);
+        olvtole.setTitle("");
+        setSupportActionBar(olvtole);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        olvtole.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+            finish();
+        });
 
         EditText CorreoOlvido = findViewById(R.id.editTextCorreoCambiopsw);
         Button enviar = findViewById(R.id.enviarLinkBTN);
 
-        enviar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        enviar.setOnClickListener(v -> {
 
-                if(!isEmail(CorreoOlvido)){
-                    CorreoOlvido.setError("Introduce un correo electronico");
-                    CorreoOlvido.requestFocus();
-                    return;
-                }
-                else {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+            if(!isEmail(CorreoOlvido)){
+                CorreoOlvido.setError("Introduce un correo electronico");
+                CorreoOlvido.requestFocus();
+                return;
+            }
+            else {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
