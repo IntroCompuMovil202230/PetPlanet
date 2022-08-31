@@ -43,7 +43,7 @@ public class ChatActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), ListaDeChatsActivity.class);
             startActivity(intent);
             finish();
-        });
+        });// se tiene que implementar la paerte de los mensajes ya los layouts estan hechos
 
         info.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), PerfilUsuarioWalkerActivity.class);// hay que poner el perfil de owner
