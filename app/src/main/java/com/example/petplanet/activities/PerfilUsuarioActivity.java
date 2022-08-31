@@ -30,6 +30,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // luego se pone despues que se revise el rol del usuario a que pantalla ir
                 startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                finish();
             }
         });
         Button changePasswordbtn = findViewById(R.id.changepasswordBTN);
@@ -39,6 +40,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         changePasswordbtn.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), CambiarPasswordActivity.class);
             startActivity(intent);
+            finish();
         });
 
         pet.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +48,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), PerfilPerroActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -54,6 +57,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), RegistroPerroActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

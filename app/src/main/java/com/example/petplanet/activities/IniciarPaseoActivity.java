@@ -28,7 +28,6 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         gridView = findViewById(R.id.grindDispo);
         ArrayList<Perro> perrosList=new ArrayList<>();
         Toolbar toolbarDispo = findViewById(R.id.toolbarPerDispo);
-        Button btnIniciar = findViewById(R.id.chatduenoBTN);
         setSupportActionBar(toolbarDispo);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -38,6 +37,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+                finish();
             }
         });
 
@@ -60,6 +60,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                     intent.putExtra("nombre",items.getNombredueno());
                     intent.putExtra("imagen",items.getFoto());
                     startActivity(intent);
+                    finish();
                 }
             });
 

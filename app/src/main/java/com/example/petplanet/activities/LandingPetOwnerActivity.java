@@ -28,19 +28,22 @@ public class LandingPetOwnerActivity extends AppCompatActivity {
                     case R.id.cuidadores:
                         Intent intent = new Intent(getApplicationContext(), ListarCuidadoresActivity.class);
                         startActivity(intent);
+                        finish();
                         break;
                     case R.id.AgendarPaseoBTN:
                         Intent intent2 = new Intent(getApplicationContext(), AgendarPaseosActivity.class);
                         startActivity(intent2);
+                        finish();
                         break;
                     case R.id.chat:
-
                         Intent intent3 = new Intent(getApplicationContext(), ListaDeChatsActivity.class);
                         startActivity(intent3);
+                        finish();
                         break;
                     case R.id.perfilA:
                         Intent intent4 = new Intent(getApplicationContext(), PerfilUsuarioActivity.class);
                         startActivity(intent4);
+                        finish();
                         break;
                 }
                 return true;

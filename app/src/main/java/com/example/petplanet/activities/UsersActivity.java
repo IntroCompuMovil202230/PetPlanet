@@ -45,7 +45,10 @@ public class UsersActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        back.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class)));
+        back.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+            finish();
+        });
 
         try {
             cuidadoreslist.add(new Usuario("carlos","3109988453",R.mipmap.ic_launcher_foreground));

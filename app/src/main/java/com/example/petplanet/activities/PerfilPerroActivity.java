@@ -27,6 +27,7 @@ public class PerfilPerroActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // luego se pone despues que se revise el rol del usuario a que pantalla ir
                 startActivity(new Intent(getApplicationContext(),PerfilUsuarioActivity.class));
+                finish();
             }
         });
     }

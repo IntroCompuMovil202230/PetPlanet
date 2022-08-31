@@ -36,6 +36,7 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                finish();
             }
         });
 
@@ -68,6 +69,7 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
                     intent.putExtra("imagen",items.getFoto());
 
                     startActivity(intent);
+                    finish();
                 }
             });
         }catch (Exception e) {

@@ -1,9 +1,11 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +18,19 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_usuario_walker);
+        Toolbar tbpw = findViewById(R.id.tollbarPwalker);
+        setSupportActionBar(tbpw);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        tbpw.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),ListarCuidadoresActivity.class));// esto cambia si el usuario es dueño o walker
+                finish();
+            }
+        });
 
         TextView nombrepet = findViewById(R.id.nombrePetWalker);
         TextView Telefonopet = findViewById(R.id.TelefonoPetwalker);
@@ -52,6 +67,7 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
             startActivity(intent);
             //agregarFavoritos(nombre,telefono,experiencia,foto);
+            finish();
         });
 
     }

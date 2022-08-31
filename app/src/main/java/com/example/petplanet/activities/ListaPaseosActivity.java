@@ -37,6 +37,7 @@ public class ListaPaseosActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+                finish();
             }
         });
 

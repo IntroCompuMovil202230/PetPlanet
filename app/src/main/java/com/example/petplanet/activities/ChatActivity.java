@@ -30,7 +30,6 @@ public class ChatActivity extends AppCompatActivity {
                 foto= 0;
             } else {
                 nombre= extras.getString("nombre");
-
                 foto= extras.getInt("foto");
             }
         } else {

@@ -23,7 +23,7 @@
     <string name="petowner">PetOwner</string>
     <string name="petwalker">PetWalker</string>
     <string name="registropet">Registrar Mascota</string>
-    <string name="plus">+</string>
+
 
     // Perfiles
     <string name="firstname">First Name</string>
@@ -184,6 +184,9 @@
     <string name="escribe_un_mensaje">Escribe un mensaje</string>
     <string name="agendar_paseo">Agendar Paseo</string>
     <string name="iniciar_paseo">Iniciar Paseo</string>
-    <string name="seleccionauncuidador">Selecciona un cuidador</string>
+    <string name="seleccionauncuidador">Selecciona a una persona</string>
+    <string name="nombredelcuidador">Nombre</string>
+    <string name="telefonodelcuidador">Telefono</string>
+    <string name="expericenciaconlosperros">Expericencia</string>
 
 </resources>

@@ -34,6 +34,7 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),SelecciondeCuentaActivity.class));
+                finish();
             }
         });
 
@@ -81,6 +82,7 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
                 else{
                     Intent intent = new Intent(getApplicationContext() , LandingPetWalkerActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

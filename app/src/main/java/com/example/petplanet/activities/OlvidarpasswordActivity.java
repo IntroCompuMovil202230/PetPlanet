@@ -34,6 +34,7 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
                 else {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });
