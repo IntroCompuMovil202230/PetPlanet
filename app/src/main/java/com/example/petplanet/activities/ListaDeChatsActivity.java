@@ -17,11 +17,12 @@ public class ListaDeChatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_de_chats);
         Toolbar tbchat = findViewById(R.id.toolbarlistchat);
+        tbchat.setTitle("");
         setSupportActionBar(tbchat);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        tbchat.setTitle("");
+
         tbchat.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
