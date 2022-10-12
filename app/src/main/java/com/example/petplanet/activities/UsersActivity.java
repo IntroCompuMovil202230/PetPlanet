@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.adapters.UsersAdapter;
+import com.example.petplanet.databinding.ActivitySelecciondeCuentaBinding;
+import com.example.petplanet.databinding.ActivityUsersBinding;
 import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import java.util.List;
 
 public class UsersActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
+    private ActivityUsersBinding binding;
 
 
 
@@ -32,20 +34,21 @@ public class UsersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_users);
-        List<Usuario> cuidadoreslist=new ArrayList<>();
-        ImageView back = findViewById(R.id.imageback);
-        recyclerView = findViewById(R.id.usersList);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setVisibility(View.VISIBLE);
+        binding = ActivityUsersBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        ProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+
+
+        List<Usuario> cuidadoreslist=new ArrayList<>();
+        binding.usersList.setHasFixedSize(true);
+        binding.usersList.setVisibility(View.VISIBLE);
+
+        binding.progressBar.setVisibility(View.GONE);
         UsersAdapter adapter;
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        back.setOnClickListener(v -> {
+        binding.usersList.setLayoutManager(linearLayoutManager);
+        binding.imageback.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
             finish();
         });
@@ -59,12 +62,12 @@ public class UsersActivity extends AppCompatActivity {
             adapter = new UsersAdapter(cuidadoreslist,this);
             adapter.setOnClickListener(view -> {
                 Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                intent.putExtra("nombre",cuidadoreslist.get(recyclerView.getChildAdapterPosition(view)).getNombre());
-                intent.putExtra("foto",cuidadoreslist.get(recyclerView.getChildAdapterPosition(view)).getFoto());
+                intent.putExtra("nombre",cuidadoreslist.get(binding.usersList.getChildAdapterPosition(view)).getNombre());
+                intent.putExtra("foto",cuidadoreslist.get(binding.usersList.getChildAdapterPosition(view)).getFoto());
                 startActivity(intent);
                 finish();
             });
-            recyclerView.setAdapter(adapter);
+            binding.usersList.setAdapter(adapter);
 
         }catch (Exception e) {
             e.printStackTrace();

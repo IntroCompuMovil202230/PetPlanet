@@ -9,19 +9,19 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityLoginBinding;
+import com.example.petplanet.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
+    private ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-
-
-        Button crearcuenta = findViewById(R.id.creacruentaBTN);
-        Button iniciarsesion = findViewById(R.id.iniciarsesionBTN);
-        crearcuenta.setOnClickListener(new View.OnClickListener() {
+        binding.creacruentaBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SelecciondeCuentaActivity.class);
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-        iniciarsesion.setOnClickListener(new View.OnClickListener() {
+        binding.iniciarsesionBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

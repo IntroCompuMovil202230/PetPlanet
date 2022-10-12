@@ -38,16 +38,16 @@ public class RazasActivity extends AppCompatActivity {
                 sexoselperro=null;
 
             } else {
-                nombredelperro= extras.getString("nombredelamascota");
+                nombredelperro = extras.getString("nombredelamascota");
                 fechadenacimeinto = extras.getString("fechadenacimiento");
                 colordelperro = extras.getString("colordelperro");
-                sexoselperro=extras.getString("sexoselamascota");
+                sexoselperro =extras.getString("sexoselamascota");
             }
         } else {
-            nombredelperro= (String) savedInstanceState.getSerializable("nombredelamascota");
+            nombredelperro = (String) savedInstanceState.getSerializable("nombredelamascota");
             fechadenacimeinto = (String) savedInstanceState.getSerializable("fechadenacimiento");
             colordelperro = (String) savedInstanceState.getSerializable("colordelperro");
-            sexoselperro=(String) savedInstanceState.getSerializable("sexoselamascota");
+            sexoselperro =(String) savedInstanceState.getSerializable("sexoselamascota");
         }
 
 

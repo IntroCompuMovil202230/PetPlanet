@@ -9,49 +9,39 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityRegistroPetWalkerBinding;
+import com.example.petplanet.databinding.ActivitySelecciondeCuentaBinding;
 
 public class SelecciondeCuentaActivity extends AppCompatActivity {
-
+    private ActivitySelecciondeCuentaBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seleccionde_cuenta);
+        binding = ActivitySelecciondeCuentaBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        Toolbar toolbar = findViewById(R.id.toolbarSele);
 
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbarSele);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-            }
+        binding.toolbarSele.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
         });
 
 
-        CardView petowner =  findViewById(R.id.petowner_cardview);
-        CardView petwalker = findViewById(R.id.petwalker_cardview);
-
-        petowner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RegistroPetOwnerActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.petownerCardview.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), RegistroPetOwnerActivity.class);
+            startActivity(intent);
+            finish();
         });
-        petwalker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RegistroPetWalkerActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.petwalkerCardview.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), RegistroPetWalkerActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 

@@ -38,7 +38,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
-        android:id="@+id/spinnerraza"
+        android:id="@+id/spinnerLocalidad"
         style="@style/Widget.AppCompat.Spinner.DropDown"
         android:layout_width="match_parent"
         android:layout_height="55dp"

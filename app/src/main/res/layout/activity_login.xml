@@ -32,7 +32,7 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/registroPassword"
+            android:id="@+id/loginPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
@@ -63,7 +63,7 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/registroCorreo"
+            android:id="@+id/loginCorreo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
@@ -76,7 +76,7 @@
 
 
     <Button
-        android:id="@+id/crearcuentaRBTN"
+        android:id="@+id/loginBTN"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_margin="20dp"
@@ -107,7 +107,7 @@
         android:text="@string/olvidarcontra"
         android:textColor="@color/purple_500"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/crearcuentaRBTN"
+        app:layout_constraintBottom_toTopOf="@+id/loginBTN"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
 

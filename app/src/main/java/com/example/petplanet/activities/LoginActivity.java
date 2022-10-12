@@ -1,7 +1,5 @@
 package com.example.petplanet.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,21 +9,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityListarCuidadoresBinding;
+import com.example.petplanet.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        EditText password = findViewById(R.id.registroPassword);
-        EditText correo = findViewById(R.id.registroCorreo);
-        Button login = findViewById(R.id.crearcuentaRBTN);
-        TextView olvido = findViewById(R.id.olvidocontra);
-        TextView registro = findViewById(R.id.nuevousuario);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        registro.setOnClickListener(new View.OnClickListener() {
+
+        binding.nuevousuario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
@@ -34,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        olvido.setOnClickListener(new View.OnClickListener() {
+        binding.olvidocontra.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, OlvidarpasswordActivity.class);
@@ -44,25 +45,25 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
+        binding.loginBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String pass = password.getText().toString();
+                String pass = binding.loginPassword.getText().toString();
 
 
-                if(!isEmail(correo)){
-                    correo.setError("Introduce un correo electonico valido");
-                    correo.requestFocus();
+                if(!isEmail(binding.loginCorreo)){
+                    binding.loginCorreo.setError("Introduce un correo electonico valido");
+                    binding.loginCorreo.requestFocus();
                     return;
                 }if(pass.isEmpty()){
-                    password.setError("Introduce una contraseña");
-                    password.requestFocus();
+                    binding.loginPassword.setError("Introduce una contraseña");
+                    binding.loginPassword.requestFocus();
                     return;
                 }else{
                     Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
-                    intent.putExtra("correo", correo.getText().toString());
-                    intent.putExtra("password", password.getText().toString());
+                    intent.putExtra("correo", binding.loginCorreo.getText().toString());
+                    intent.putExtra("password", binding.loginPassword.getText().toString());
                     startActivity(intent);
 
                     finish();

@@ -12,32 +12,34 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityMainBinding;
+import com.example.petplanet.databinding.ActivityOlvidarpasswordBinding;
 
 public class OlvidarpasswordActivity extends AppCompatActivity {
-
+    private ActivityOlvidarpasswordBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_olvidarpassword);
-        Toolbar olvtole = findViewById(R.id.toolbarolv);
-        olvtole.setTitle("");
-        setSupportActionBar(olvtole);
+        binding = ActivityOlvidarpasswordBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
+        binding.toolbarolv.setTitle("");
+        setSupportActionBar(binding.toolbarolv);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        olvtole.setNavigationOnClickListener(v -> {
+        binding.toolbarolv.setNavigationOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(),LoginActivity.class));
             finish();
         });
 
-        EditText CorreoOlvido = findViewById(R.id.editTextCorreoCambiopsw);
-        Button enviar = findViewById(R.id.enviarLinkBTN);
 
-        enviar.setOnClickListener(v -> {
+        binding.enviarLinkBTN.setOnClickListener(v -> {
 
-            if(!isEmail(CorreoOlvido)){
-                CorreoOlvido.setError("Introduce un correo electronico");
-                CorreoOlvido.requestFocus();
+            if(!isEmail(binding.editTextCorreoCambiopsw)){
+                binding.editTextCorreoCambiopsw.setError("Introduce un correo electronico");
+                binding.editTextCorreoCambiopsw.requestFocus();
                 return;
             }
             else {

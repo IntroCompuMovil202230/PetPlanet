@@ -8,27 +8,26 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityOlvidarpasswordBinding;
+import com.example.petplanet.databinding.ActivityPerfilPerroBinding;
 
 public class PerfilPerroActivity extends AppCompatActivity {
-
+    private ActivityPerfilPerroBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil_perro);
+        binding = ActivityPerfilPerroBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        Toolbar tollbarperro = findViewById(R.id.toolbarPperro);
-        tollbarperro.setTitle("");
-        setSupportActionBar(tollbarperro);
+        binding.toolbarPperro.setTitle("");
+        setSupportActionBar(binding.toolbarPperro);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        tollbarperro.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // luego se pone despues que se revise el rol del usuario a que pantalla ir
-                startActivity(new Intent(getApplicationContext(),PerfilUsuarioActivity.class));
-                finish();
-            }
+        binding.toolbarPperro.setNavigationOnClickListener(v -> {
+            // luego se pone despues que se revise el rol del usuario a que pantalla ir
+            startActivity(new Intent(getApplicationContext(),PerfilUsuarioActivity.class));
+            finish();
         });
     }
     @Override

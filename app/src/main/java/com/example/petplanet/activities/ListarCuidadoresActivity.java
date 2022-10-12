@@ -13,26 +13,30 @@ import android.widget.GridView;
 
 import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityListaPaseosBinding;
+import com.example.petplanet.databinding.ActivityListarCuidadoresBinding;
 import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
 
 public class ListarCuidadoresActivity extends AppCompatActivity {
+    private ActivityListarCuidadoresBinding binding;
     GridView gridLayout;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listar_cuidadores);
+        binding = ActivityListarCuidadoresBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         ArrayList<Usuario> cuidadoreslist=new ArrayList<>();
-        Toolbar toolbarCuida = findViewById(R.id.toolbarListarCuidadores);
-        setSupportActionBar(toolbarCuida);
+        setSupportActionBar(binding.toolbarListarCuidadores);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        toolbarCuida.setNavigationOnClickListener(new View.OnClickListener() {
+        binding.toolbarListarCuidadores.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
@@ -40,10 +44,10 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
             }
         });
 
-        gridLayout = findViewById(R.id.grindCuidadores);
-        gridLayout.setNumColumns(2);
-        gridLayout.setVerticalSpacing(30);
-        gridLayout.setHorizontalSpacing(30);
+
+        binding.grindCuidadores.setNumColumns(2);
+        binding.grindCuidadores.setVerticalSpacing(30);
+        binding.grindCuidadores.setHorizontalSpacing(30);
 
 
         try {
@@ -54,10 +58,10 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
             cuidadoreslist.add(new Usuario("Alejandro","3109588433","Siempre llevo treats para los perros",R.mipmap.ic_launcher_foreground));
             cuidadoreslist.add(new Usuario("David otero","3149988433","Siempre camino mucho con los perros",R.drawable.perro3));
             ArrayAdapter<Usuario> adapter = new CardAdapterUsuario(this,R.layout.cardview,cuidadoreslist);
-            if (gridLayout != null) {
-                gridLayout.setAdapter(adapter);
+            if (binding.grindCuidadores != null) {
+                binding.grindCuidadores.setAdapter(adapter);
             }
-            gridLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            binding.grindCuidadores.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(getApplicationContext() , PerfilUsuarioWalkerActivity.class);
