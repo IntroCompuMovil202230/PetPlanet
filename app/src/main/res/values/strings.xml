@@ -188,5 +188,6 @@
     <string name="nombredelcuidador">Nombre</string>
     <string name="telefonodelcuidador">Telefono</string>
     <string name="expericenciaconlosperros">Expericencia</string>
+    <string name="escojeraza">Escoge la raza de tu perro</string>
 
 </resources>

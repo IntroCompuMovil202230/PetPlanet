@@ -75,10 +75,41 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+        finish();
     }
 }

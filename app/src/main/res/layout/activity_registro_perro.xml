@@ -46,11 +46,12 @@
         android:id="@+id/fotodelperroBTN"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:background="@drawable/circleimage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/circleimage"
 
         app:layout_constraintTop_toBottomOf="@+id/toolbarRegPetW"
+        tools:ignore="SpeakableTextPresentCheck"
         tools:srcCompat="@tools:sample/avatars" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -86,38 +87,22 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
-        android:id="@+id/spinnerraza"
-        style="@style/Widget.AppCompat.Spinner.DropDown"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/spinnertext"
-        android:entries="@array/razas"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNombre"
-        tools:ignore="SpeakableTextPresentCheck" />
-
-    <Spinner
         android:id="@+id/spinnersexo"
         style="@style/Widget.AppCompat.Spinner.DropDown"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/spinnertext"
         android:entries="@array/sexo"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerraza"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextNombre"
+        tools:ignore="SpeakableTextPresentCheck"
+        />
 
     <Spinner
         android:id="@+id/spinnercolor"
@@ -199,8 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                tools:ignore="UseSwitchCompatOrMaterialXml"
-                 />
+                tools:ignore="UseSwitchCompatOrMaterialXml,TouchTargetSizeCheck" />
 
         </LinearLayout>
 
@@ -227,7 +211,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
+                tools:ignore="UseSwitchCompatOrMaterialXml,TouchTargetSizeCheck" />
         </LinearLayout>
     </LinearLayout>
 

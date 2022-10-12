@@ -34,13 +34,10 @@ public class RegistroPerroActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        toolbarRegPet.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // luego se pone despues que se revise el rol del usuario a que pantalla ir
-                startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
-                finish();
-            }
+        toolbarRegPet.setNavigationOnClickListener(v -> {
+            // luego se pone despues que se revise el rol del usuario a que pantalla ir
+            startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+            finish();
         });
 
 
@@ -48,7 +45,6 @@ public class RegistroPerroActivity extends AppCompatActivity {
         EditText nombredelperro = findViewById(R.id.registroNombrePet);
         ImageView fotoperro = findViewById(R.id.fotodelperroBTN);
         Button registrarperro = findViewById(R.id.registrarMascotaBT);
-        Spinner raza = findViewById(R.id.spinnerraza);
         Spinner sexo = findViewById(R.id.spinnersexo);
         Spinner color = findViewById(R.id.spinnercolor);
         MaterialDatePicker.Builder<Long> materialDateBuilder = MaterialDatePicker.Builder.datePicker();
@@ -61,33 +57,26 @@ public class RegistroPerroActivity extends AppCompatActivity {
             }
         });
         materialDatePicker.addOnPositiveButtonClickListener(
-                new MaterialPickerOnPositiveButtonClickListener() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onPositiveButtonClick(Object selection) {
+                selection -> {
 
-                        // if the user clicks on the positive
-                        // button that is ok button update the
-                        // selected date
-                        fechanacimiento.setText(materialDatePicker.getHeaderText());
-                        // in the above statement, getHeaderText
-                        // will return selected date preview from the
-                        // dialog
-                    }
+                    // if the user clicks on the positive
+                    // button that is ok button update the
+                    // selected date
+                    fechanacimiento.setText(materialDatePicker.getHeaderText());
+                    // in the above statement, getHeaderText
+                    // will return selected date preview from the
+                    // dialog
                 });
 
         registrarperro.setOnClickListener(v -> {
             String nombrep =nombredelperro.getText().toString();
             String colorS = color.getSelectedItem().toString();
             String sexoS = sexo.getSelectedItem().toString();
-            String razaS = raza.getSelectedItem().toString();
             String fechanacimientoS = fechanacimiento.getText().toString();
             if(nombrep.isEmpty()){
                 nombredelperro.setError("Ingrese el nombre de la mascota");
                 nombredelperro.requestFocus();
                 return;
-            }if(razaS.equals("Selecciona una raza")){
-                ((TextView)raza.getSelectedView()).setError("Error message");
             }if(sexoS.equals("Seleccione el sexo")){
                 ((TextView)sexo.getSelectedView()).setError("Error message");
             }if(colorS.equals("Selecciona un color")){
@@ -97,7 +86,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
                 fechanacimiento.requestFocus();
                 return;
             }else{
-                Intent intent = new Intent(getApplicationContext(), PerfilUsuarioActivity.class);
+                Intent intent = new Intent(getApplicationContext(), RazasActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -105,5 +94,45 @@ public class RegistroPerroActivity extends AppCompatActivity {
 
 
 
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+        finish();
     }
 }

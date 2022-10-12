@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetPlanet">
         <activity
+            android:name=".activities.RazasActivity"
+            android:exported="false"
+            >
+        </activity>
+        <activity
             android:name=".activities.ListaDeChatsActivity"
             android:exported="false" />
         <activity
