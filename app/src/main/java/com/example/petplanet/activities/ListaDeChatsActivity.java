@@ -8,31 +8,30 @@ import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
+import com.example.petplanet.databinding.ActivityListaDeChatsBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ListaDeChatsActivity extends AppCompatActivity {
-
+    private ActivityListaDeChatsBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_de_chats);
-        Toolbar tbchat = findViewById(R.id.toolbarlistchat);
-        tbchat.setTitle("");
-        setSupportActionBar(tbchat);
+        binding = ActivityListaDeChatsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.toolbarlistchat.setTitle("");
+        setSupportActionBar(binding.toolbarlistchat);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        tbchat.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));// esto cambia si el usuario es dueño o walker
-                finish();
-            }
+        binding.toolbarlistchat.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));// esto cambia si el usuario es dueño o walker
+            finish();
         });
 
-        FloatingActionButton addChat = findViewById(R.id.addChatBTN);
-        addChat.setOnClickListener(v -> {
+        binding.addChatBTN.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), UsersActivity.class);
             startActivity(intent);
             finish();

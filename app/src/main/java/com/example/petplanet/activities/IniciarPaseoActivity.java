@@ -14,26 +14,29 @@ import android.widget.GridView;
 import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterIniciarpaseo;
 import com.example.petplanet.adapters.CardAdapterUsuario;
+import com.example.petplanet.databinding.ActivityChatBinding;
+import com.example.petplanet.databinding.ActivityIniciarPaseoBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
 
 public class IniciarPaseoActivity extends AppCompatActivity {
-    GridView gridView;
+    private ActivityIniciarPaseoBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_iniciar_paseo);
-        gridView = findViewById(R.id.grindDispo);
+
+        binding = ActivityIniciarPaseoBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         ArrayList<Perro> perrosList=new ArrayList<>();
-        Toolbar toolbarDispo = findViewById(R.id.toolbarPerDispo);
-        setSupportActionBar(toolbarDispo);
+        setSupportActionBar(binding.toolbarPerDispo);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        toolbarDispo.setNavigationOnClickListener(new View.OnClickListener() {
+        binding.toolbarPerDispo.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
@@ -41,18 +44,18 @@ public class IniciarPaseoActivity extends AppCompatActivity {
             }
         });
 
-        gridView.setNumColumns(1);
-        gridView.setVerticalSpacing(30);
-        gridView.setHorizontalSpacing(30);
+        binding.grindDispo.setNumColumns(1);
+        binding.grindDispo.setVerticalSpacing(30);
+        binding.grindDispo.setHorizontalSpacing(30);
         try {
             perrosList.add(new Perro("juan pablo","fluffy",R.drawable.perro1));
             perrosList.add(new Perro("carlos","donald",R.drawable.perro2));
             perrosList.add(new Perro("Pedro","BB",R.drawable.perro3));
             ArrayAdapter<Perro> adapter = new CardAdapterIniciarpaseo(this,R.layout.cardviewiniciarpaseo,perrosList);
-            if (gridView != null) {
-                gridView.setAdapter(adapter);
+            if (binding.grindDispo != null) {
+                binding.grindDispo.setAdapter(adapter);
             }
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            binding.grindDispo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(getApplicationContext() , ChatActivity.class);

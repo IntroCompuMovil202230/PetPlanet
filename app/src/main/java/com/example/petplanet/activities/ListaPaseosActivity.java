@@ -12,39 +12,37 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import com.example.petplanet.adapters.CardAdapterPerro;
+import com.example.petplanet.databinding.ActivityListaDeChatsBinding;
+import com.example.petplanet.databinding.ActivityListaPaseosBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.R;
 
 import java.util.ArrayList;
 
 public class ListaPaseosActivity extends AppCompatActivity {
-
-    GridView gridLayout;
+    private ActivityListaPaseosBinding binding;
     ArrayList<Perro> perroslist=new ArrayList<>();
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_paseos);
+        binding = ActivityListaPaseosBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        Toolbar toolbar = findViewById(R.id.toolbarListar);
-        setSupportActionBar(toolbar);
+
+        setSupportActionBar(binding.toolbarListar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
-                finish();
-            }
+        binding.toolbarListar.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+            finish();
         });
 
-        gridLayout = findViewById(R.id.grind);
-        gridLayout.setNumColumns(2);
-        gridLayout.setVerticalSpacing(30);
-        gridLayout.setHorizontalSpacing(30);
+        binding.grind.setNumColumns(2);
+        binding.grind.setVerticalSpacing(30);
+        binding.grind.setHorizontalSpacing(30);
         perroslist.add(new Perro("Perro 1","Horario 4pm-6pm",R.drawable.perro1));
         perroslist.add(new Perro("Perro 2","Horario 5pm-6pm",R.drawable.perro2));
         perroslist.add(new Perro("Perro 3","Horario 3pm-6pm",R.drawable.perro3));
@@ -54,7 +52,7 @@ public class ListaPaseosActivity extends AppCompatActivity {
         perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
         perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
         ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
-        gridLayout.setAdapter(adapter);
+        binding.grind.setAdapter(adapter);
     }
     @Override
     public void onResume() {
