@@ -87,6 +87,10 @@ public class RegistroPerroActivity extends AppCompatActivity {
                 return;
             }else{
                 Intent intent = new Intent(getApplicationContext(), RazasActivity.class);
+                intent.putExtra("nombredelamascota",nombrep);
+                intent.putExtra("colordelperro",colorS);
+                intent.putExtra("sexoselamascota",sexoS);
+                intent.putExtra("fechadenacimiento",fechanacimientoS);
                 startActivity(intent);
                 finish();
             }
