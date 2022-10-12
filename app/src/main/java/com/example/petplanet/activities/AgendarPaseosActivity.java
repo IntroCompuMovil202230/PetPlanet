@@ -72,19 +72,15 @@ public class AgendarPaseosActivity extends AppCompatActivity {
         final MaterialDatePicker materialDatePicker = materialDateBuilder.build();
         binding.AgendarFecha.setOnClickListener(v -> materialDatePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER"));
         materialDatePicker.addOnPositiveButtonClickListener(
-                new MaterialPickerOnPositiveButtonClickListener() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onPositiveButtonClick(Object selection) {
+                selection -> {
 
-                        // if the user clicks on the positive
-                        // button that is ok button update the
-                        // selected date
-                        binding.AgendarFecha.setText(materialDatePicker.getHeaderText());
-                        // in the above statement, getHeaderText
-                        // will return selected date preview from the
-                        // dialog
-                    }
+                    // if the user clicks on the positive
+                    // button that is ok button update the
+                    // selected date
+                    binding.AgendarFecha.setText(materialDatePicker.getHeaderText());
+                    // in the above statement, getHeaderText
+                    // will return selected date preview from the
+                    // dialog
                 });
 
 

@@ -36,12 +36,9 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        binding.toolbarPerDispo.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
-                finish();
-            }
+        binding.toolbarPerDispo.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+            finish();
         });
 
         binding.grindDispo.setNumColumns(1);
@@ -55,16 +52,13 @@ public class IniciarPaseoActivity extends AppCompatActivity {
             if (binding.grindDispo != null) {
                 binding.grindDispo.setAdapter(adapter);
             }
-            binding.grindDispo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
-                    Perro items = perrosList.get(position);
-                    intent.putExtra("nombre",items.getNombredueno());
-                    intent.putExtra("imagen",items.getFoto());
-                    startActivity(intent);
-                    finish();
-                }
+            binding.grindDispo.setOnItemClickListener((parent, view, position, id) -> {
+                Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+                Perro items = perrosList.get(position);
+                intent.putExtra("nombre",items.getNombredueno());
+                intent.putExtra("imagen",items.getFoto());
+                startActivity(intent);
+                finish();
             });
 
 

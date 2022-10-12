@@ -4,16 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.petplanet.R;
-import com.example.petplanet.databinding.ActivityListarCuidadoresBinding;
 import com.example.petplanet.databinding.ActivityLoginBinding;
+
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,53 +21,40 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        binding.nuevousuario.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.nuevousuario.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        binding.olvidocontra.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, OlvidarpasswordActivity.class);
+        binding.olvidocontra.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, OlvidarpasswordActivity.class);
+            startActivity(intent);
+
+            finish();
+        });
+
+        binding.loginBTN.setOnClickListener(v -> {
+
+            String pass = binding.loginPassword.getText().toString();
+
+
+            if(!isEmail(binding.loginCorreo)){
+                binding.loginCorreo.setError("Introduce un correo electonico valido");
+                binding.loginCorreo.requestFocus();
+                return;
+            }if(pass.isEmpty()){
+                binding.loginPassword.setError("Introduce una contraseña");
+                binding.loginPassword.requestFocus();
+                return;
+            }else{
+                Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
+                intent.putExtra("correo", binding.loginCorreo.getText().toString());
+                intent.putExtra("password", binding.loginPassword.getText().toString());
                 startActivity(intent);
 
                 finish();
             }
-        });
-
-        binding.loginBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String pass = binding.loginPassword.getText().toString();
-
-
-                if(!isEmail(binding.loginCorreo)){
-                    binding.loginCorreo.setError("Introduce un correo electonico valido");
-                    binding.loginCorreo.requestFocus();
-                    return;
-                }if(pass.isEmpty()){
-                    binding.loginPassword.setError("Introduce una contraseña");
-                    binding.loginPassword.requestFocus();
-                    return;
-                }else{
-                    Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
-                    intent.putExtra("correo", binding.loginCorreo.getText().toString());
-                    intent.putExtra("password", binding.loginPassword.getText().toString());
-                    startActivity(intent);
-
-                    finish();
-                }
-            }
-
-
-
-
         });
 
 

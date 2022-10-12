@@ -27,13 +27,10 @@ public class CambiarPasswordActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        binding.toolbarCPassword.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // luego se pone despues que se revise el rol del usuario a que pantalla ir
-                startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
-                finish();
-            }
+        binding.toolbarCPassword.setNavigationOnClickListener(v -> {
+            // luego se pone despues que se revise el rol del usuario a que pantalla ir
+            startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+            finish();
         });
 
         binding.enviarLinkBTN2.setOnClickListener(v -> {

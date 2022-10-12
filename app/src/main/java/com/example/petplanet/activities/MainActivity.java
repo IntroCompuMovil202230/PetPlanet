@@ -5,11 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+
 
 import com.example.petplanet.R;
-import com.example.petplanet.databinding.ActivityLoginBinding;
 import com.example.petplanet.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,21 +19,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.creacruentaBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SelecciondeCuentaActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.creacruentaBTN.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), SelecciondeCuentaActivity.class);
+            startActivity(intent);
+            finish();
         });
-        binding.iniciarsesionBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.iniciarsesionBTN.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
         });
 
     }

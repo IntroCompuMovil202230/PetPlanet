@@ -6,14 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-
-import com.example.petplanet.R;
-
-
 import com.example.petplanet.databinding.ActivityRazasBinding;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
+
 
 public class RazasActivity extends AppCompatActivity {
 

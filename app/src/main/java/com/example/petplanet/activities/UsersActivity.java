@@ -1,28 +1,20 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-
 import com.example.petplanet.R;
-import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.adapters.UsersAdapter;
-import com.example.petplanet.databinding.ActivitySelecciondeCuentaBinding;
 import com.example.petplanet.databinding.ActivityUsersBinding;
 import com.example.petplanet.models.Usuario;
-
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class UsersActivity extends AppCompatActivity {
 

@@ -1,26 +1,12 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.annotation.SuppressLint;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.example.petplanet.R;
-import com.example.petplanet.activities.PerfilUsuarioActivity;
-import com.example.petplanet.databinding.ActivityRazasBinding;
 import com.example.petplanet.databinding.ActivityRegistroPerroBinding;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+
 
 
 public class RegistroPerroActivity extends AppCompatActivity {
@@ -46,12 +32,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
         MaterialDatePicker.Builder<Long> materialDateBuilder = MaterialDatePicker.Builder.datePicker();
         materialDateBuilder.setTitleText("Selecciona la fecha de nacimiento");
         final MaterialDatePicker materialDatePicker = materialDateBuilder.build();
-        binding.registrofechanacimientoperro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                materialDatePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-            }
-        });
+        binding.registrofechanacimientoperro.setOnClickListener(v -> materialDatePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER"));
         materialDatePicker.addOnPositiveButtonClickListener(
                 selection -> {
 

@@ -36,12 +36,9 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        binding.toolbarListarCuidadores.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
-                finish();
-            }
+        binding.toolbarListarCuidadores.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+            finish();
         });
 
 
@@ -61,20 +58,17 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
             if (binding.grindCuidadores != null) {
                 binding.grindCuidadores.setAdapter(adapter);
             }
-            binding.grindCuidadores.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getApplicationContext() , PerfilUsuarioWalkerActivity.class);
-                    Usuario items = cuidadoreslist.get(position);
+            binding.grindCuidadores.setOnItemClickListener((parent, view, position, id) -> {
+                Intent intent = new Intent(getApplicationContext() , PerfilUsuarioWalkerActivity.class);
+                Usuario items = cuidadoreslist.get(position);
 
-                    intent.putExtra("nombre",items.getNombre());
-                    intent.putExtra("telefono",items.getTelefono());
-                    intent.putExtra("experiencia",items.getExperiencia());
-                    intent.putExtra("imagen",items.getFoto());
+                intent.putExtra("nombre",items.getNombre());
+                intent.putExtra("telefono",items.getTelefono());
+                intent.putExtra("experiencia",items.getExperiencia());
+                intent.putExtra("imagen",items.getFoto());
 
-                    startActivity(intent);
-                    finish();
-                }
+                startActivity(intent);
+                finish();
             });
         }catch (Exception e) {
             e.printStackTrace();
