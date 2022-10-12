@@ -13,19 +13,43 @@ import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityRazasBinding;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class RazasActivity extends AppCompatActivity {
 
     String raza[]= {"Beagle","Bulldog","Chihuahua","Dalmata","Golden Retriever","Labrador","Pitbull","Poodle","Rottweiler","San Bernardo","Schnauzer","Shih Tzu","Terrier","Yorkshire"};
 
     private ActivityRazasBinding binding;
-
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityRazasBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         addChipGroup();
+
+        String nombredelperro,fechadenacimeinto,sexoselperro,colordelperro;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                nombredelperro= null;
+                fechadenacimeinto = null;
+                colordelperro =null;
+                sexoselperro=null;
+
+            } else {
+                nombredelperro= extras.getString("nombredelamascota");
+                fechadenacimeinto = extras.getString("fechadenacimiento");
+                colordelperro = extras.getString("colordelperro");
+                sexoselperro=extras.getString("sexoselamascota");
+            }
+        } else {
+            nombredelperro= (String) savedInstanceState.getSerializable("nombredelamascota");
+            fechadenacimeinto = (String) savedInstanceState.getSerializable("fechadenacimiento");
+            colordelperro = (String) savedInstanceState.getSerializable("colordelperro");
+            sexoselperro=(String) savedInstanceState.getSerializable("sexoselamascota");
+        }
+
 
         setSupportActionBar(binding.toolbarEscogeRaza);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -44,8 +68,18 @@ public class RazasActivity extends AppCompatActivity {
             }
         });
 
+        binding.registrarMascotaBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
     }
 
+
+    private void registrarperro(String nombredelperro, String sexodelperro,String fechadenacimiento,String colordelperro,String Razadelperro) {
+    }
 
     private void addChipGroup() {
         binding.chipGroup.removeAllViews();

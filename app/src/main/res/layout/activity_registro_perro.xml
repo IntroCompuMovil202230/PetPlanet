@@ -8,7 +8,7 @@
 
 
     <Button
-        android:id="@+id/registrarMascotaBT"
+        android:id="@+id/seguirconelregistroBTN"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_margin="20dp"
@@ -153,7 +153,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="132dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/registrarMascotaBT"
+        app:layout_constraintBottom_toTopOf="@+id/seguirconelregistroBTN"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
