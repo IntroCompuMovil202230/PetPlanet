@@ -4,17 +4,55 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 
 import com.example.petplanet.R;
+import com.example.petplanet.adapters.CardAdapterPerro;
+import com.example.petplanet.databinding.ActivityListarPerrosBinding;
+import com.example.petplanet.models.Perro;
+import com.example.petplanet.models.Usuario;
+
+import java.util.ArrayList;
 
 public class ListarPerrosActivity extends AppCompatActivity {
 
+    private ActivityListarPerrosBinding binding;
+
+    ArrayList<Perro> perroslist=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listar_perros);
+        binding = ActivityListarPerrosBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbarListarPerros);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        binding.toolbarListarPerros.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+            finish();
+        });
+
+        binding.grindPerrosdueno.setNumColumns(2);
+        binding.grindPerrosdueno.setVerticalSpacing(30);
+        binding.grindPerrosdueno.setHorizontalSpacing(30);
+        perroslist.add(new Perro("Perro 1", R.drawable.perro1));
+        perroslist.add(new Perro("Perro 2",R.drawable.perro2));
+        ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
+        if (binding.grindPerrosdueno != null) {
+            binding.grindPerrosdueno.setAdapter(adapter);
+        }
+        binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(getApplicationContext() , PerfilPerroActivity.class);
+            Perro items = perroslist.get(position);
+            intent.putExtra("nombredelperro",items.getNombredueno());
+            intent.putExtra("imagen",items.getFoto());
+            startActivity(intent);
+            finish();
+        });
+
+
     }
     @Override
     public void onResume() {

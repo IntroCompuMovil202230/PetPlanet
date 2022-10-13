@@ -38,7 +38,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         });
 
         binding.petPicture.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), PerfilPerroActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ListarPerrosActivity.class);
             startActivity(intent);
             finish();
         });

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 public class ListarCuidadoresActivity extends AppCompatActivity {
     private ActivityListarCuidadoresBinding binding;
-    GridView gridLayout;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override

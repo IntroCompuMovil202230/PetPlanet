@@ -27,6 +27,8 @@ public class PerfilPerroActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(),PerfilUsuarioActivity.class));
             finish();
         });
+
+
     }
     @Override
     public void onResume() {
