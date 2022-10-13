@@ -191,5 +191,6 @@
     <string name="escojeraza">Escoge la raza de tu perro</string>
     <string name="seguir_con_el_registro">Seguir con el registro</string>
     <string name="tusPerrosestanaca">Tus perros estan aca</string>
+    <string name="cerrar_sesion">cerrar sesión</string>
 
 </resources>

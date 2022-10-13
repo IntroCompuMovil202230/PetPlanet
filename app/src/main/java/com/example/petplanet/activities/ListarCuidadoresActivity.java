@@ -47,12 +47,7 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
 
 
         try {
-            cuidadoreslist.add(new Usuario("juan pablo","3109988433","me gustan los perros de todo tipo, soy mu cariñoso con todos, trato de no asustarlos ni dejarlos que se peleen entre ellos",R.drawable.perro1));
-            cuidadoreslist.add(new Usuario("carlos","3109988453","me encantan los perros pequeños",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("Pedro","3019988433","Soy un amante de los labradores",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("David","3109978433","Me encantan los perros medianos",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("Alejandro","3109588433","Siempre llevo treats para los perros",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("David otero","3149988433","Siempre camino mucho con los perros",R.drawable.perro3));
+
             ArrayAdapter<Usuario> adapter = new CardAdapterUsuario(this,R.layout.cardview,cuidadoreslist);
             if (binding.grindCuidadores != null) {
                 binding.grindCuidadores.setAdapter(adapter);
