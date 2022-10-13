@@ -10,21 +10,18 @@
 
     <Button
         android:id="@+id/changepasswordBTN"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_margin="20dp"
 
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="16dp"
 
 
-        android:layout_marginEnd="20dp"
         android:padding="10dp"
         android:text="@string/cambiarcontrasenia"
 
         app:cornerRadius="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numberPetOwner"
         tools:ignore="TextContrastCheck" />
@@ -158,6 +155,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/fingerBTN"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="20dp"
+        app:cornerRadius="15dp"
+        android:text="Añadir huella"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/changepasswordBTN"
+        app:layout_constraintTop_toBottomOf="@+id/numberPetOwner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

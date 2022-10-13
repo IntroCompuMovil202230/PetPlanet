@@ -1,89 +1,104 @@
 package com.example.petplanet.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import com.example.petplanet.databinding.ActivityLoginBinding;
 
-import com.example.petplanet.R;
+
 
 public class LoginActivity extends AppCompatActivity {
+
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        EditText password = findViewById(R.id.registroPassword);
-        EditText correo = findViewById(R.id.registroCorreo);
-        Button login = findViewById(R.id.crearcuentaRBTN);
-        TextView olvido = findViewById(R.id.olvidocontra);
-        TextView registro = findViewById(R.id.nuevousuario);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        registro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
-                startActivity(intent);
-                finish();
-            }
+
+        binding.nuevousuario.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        olvido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, OlvidarpasswordActivity.class);
+        binding.olvidocontra.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, OlvidarpasswordActivity.class);
+            startActivity(intent);
+
+            finish();
+        });
+
+        binding.loginBTN.setOnClickListener(v -> {
+
+            String pass = binding.loginPassword.getText().toString();
+
+
+            if(!isEmail(binding.loginCorreo)){
+                binding.loginCorreo.setError("Introduce un correo electonico valido");
+                binding.loginCorreo.requestFocus();
+                return;
+            }if(pass.isEmpty()){
+                binding.loginPassword.setError("Introduce una contraseña");
+                binding.loginPassword.requestFocus();
+                return;
+            }else{
+                Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
+                intent.putExtra("correo", binding.loginCorreo.getText().toString());
+                intent.putExtra("password", binding.loginPassword.getText().toString());
                 startActivity(intent);
 
                 finish();
             }
-        });
-
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String pass = password.getText().toString();
-
-
-                if(!isEmail(correo)){
-                    correo.setError("Introduce un correo electonico valido");
-                    correo.requestFocus();
-                    return;
-                }if(pass.isEmpty()){
-                    password.setError("Introduce una contraseña");
-                    password.requestFocus();
-                    return;
-                }else{
-                    Intent intent = new Intent(getApplicationContext(), LandingPetOwnerActivity.class);
-                    intent.putExtra("correo", correo.getText().toString());
-                    intent.putExtra("password", password.getText().toString());
-                    startActivity(intent);
-
-                    finish();
-                }
-            }
-
-
-
-
         });
 
 
     }
 
-    @Override
-    public void onBackPressed() {
-        finish();
-    }
+
     public boolean isEmail(EditText text) {
         CharSequence email = text.getText().toString();
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
 }

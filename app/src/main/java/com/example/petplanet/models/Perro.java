@@ -33,6 +33,11 @@ public class Perro {
         this.foto = foto;
     }
 
+    public Perro(String nombredelperro,int foto){
+        this.nombrecompleto=nombredelperro;
+        this.foto=foto;
+    }
+
 
 
     public Perro(String nombredueno,String nombrecompleto,int  foto) {

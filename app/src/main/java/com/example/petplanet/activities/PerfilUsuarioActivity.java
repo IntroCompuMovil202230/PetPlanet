@@ -4,61 +4,89 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import androidx.appcompat.widget.Toolbar;
 
-import com.example.petplanet.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
+
 
 public class PerfilUsuarioActivity extends AppCompatActivity {
 
-
+    private ActivityPerfilUsuarioBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil_usuario);
-        Toolbar tollbarusuario = findViewById(R.id.toolbarPusuario);
-        tollbarusuario.setTitle("");
-        setSupportActionBar(tollbarusuario);
+        binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
+
+        binding.toolbarPusuario.setTitle("");
+        setSupportActionBar(binding.toolbarPusuario);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        tollbarusuario.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // luego se pone despues que se revise el rol del usuario a que pantalla ir
-                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
-                finish();
-            }
+        binding.toolbarPusuario.setNavigationOnClickListener(v -> {
+            // luego se pone despues que se revise el rol del usuario a que pantalla ir
+            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+            finish();
         });
-        Button changePasswordbtn = findViewById(R.id.changepasswordBTN);
-        FloatingActionButton addPet = findViewById(R.id.addpet);
-        ImageView pet = findViewById(R.id.petPicture);
 
-        changePasswordbtn.setOnClickListener(view -> {
+
+        binding.changepasswordBTN.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), CambiarPasswordActivity.class);
             startActivity(intent);
             finish();
         });
 
-        pet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PerfilPerroActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.petPicture.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), ListarPerrosActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        addPet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RegistroPerroActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.addpet.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), RegistroPerroActivity.class);
+            startActivity(intent);
+            finish();
         });
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        //aca toca un if para ver si es dueño o cuidador y mandarlo a la pantalla correspondiente
+        startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+        finish();
     }
 }

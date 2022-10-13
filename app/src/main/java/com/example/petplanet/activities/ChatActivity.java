@@ -8,18 +8,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.petplanet.R;
+import com.example.petplanet.databinding.ActivityCambiarPasswordBinding;
+import com.example.petplanet.databinding.ActivityChatBinding;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private ActivityChatBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        binding = ActivityChatBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TextView nombrepersona = findViewById(R.id.TextName);
-        ImageView fotopersona = findViewById(R.id.imagePerson);
-        ImageView back = findViewById(R.id.imageback);
-        ImageView info = findViewById(R.id.imageinfo);
         int foto;
         String nombre;
         if (savedInstanceState == null) {
@@ -36,21 +36,60 @@ public class ChatActivity extends AppCompatActivity {
             nombre= (String) savedInstanceState.getSerializable("nombre");
             foto= (int) savedInstanceState.getSerializable("foto");
         }
-        nombrepersona.setText(nombre);
-        fotopersona.setImageResource(foto);
+        binding.TextName.setText(nombre);
+        binding.imagePerson.setImageResource(foto);
 
-        back.setOnClickListener(v -> {
+        binding.imageback.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), ListaDeChatsActivity.class);
             startActivity(intent);
             finish();
         });// se tiene que implementar la paerte de los mensajes ya los layouts estan hechos
 
-        info.setOnClickListener(v -> {
+        binding.imageinfo.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), PerfilUsuarioWalkerActivity.class);// hay que poner el perfil de owner
             intent.putExtra("nombre", nombre);
             intent.putExtra("imagen", foto);
             startActivity(intent);
             finish();
         });
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), ListaDeChatsActivity.class));
+        finish();
     }
 }
