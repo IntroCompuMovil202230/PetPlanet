@@ -9,7 +9,8 @@ public class Usuario {
     private String contrasena;
     private String direccion;
     private String telefono;
-    private int foto;
+    private String foto;
+
     Boolean isWalker;
     String experiencia;
     String linkhojadevida;
@@ -18,7 +19,18 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String localidad, String correo, String contrasena, String direccion, String telefono, int foto, Boolean isWalker, String experiencia, String linkhojadevida, String linkdocumentoid) {
+    public Usuario(String nombre, String localidad, String correo, String direccion,boolean isWalker,String experiencia) {
+        this.nombre = nombre;
+        this.localidad = localidad;
+        this.correo = correo;
+        this.direccion = direccion;
+        this.isWalker = isWalker;
+        if(isWalker){
+            this.experiencia = experiencia;
+        }
+    }
+
+    public Usuario(String nombre, String localidad, String correo, String contrasena, String direccion, String telefono, String foto, Boolean isWalker, String experiencia, String linkhojadevida, String linkdocumentoid) {
         this.nombre = nombre;
         this.localidad = localidad;
         this.correo = correo;
@@ -31,20 +43,6 @@ public class Usuario {
         this.linkhojadevida = linkhojadevida;
         this.linkdocumentoid = linkdocumentoid;
     }
-    public Usuario(String nombre,String telefono,String experiencia,int foto){
-        this.nombre=nombre;
-        this.telefono=telefono;
-        this.experiencia = experiencia;
-        this.foto=foto;
-    }
-
-    public Usuario(String nombre,String telefono,int foto){
-        this.nombre=nombre;
-        this.telefono=telefono;
-        this.foto=foto;
-    }
-
-
     public String getTelefono() {
         return telefono;
     }
@@ -93,11 +91,11 @@ public class Usuario {
         this.direccion = direccion;
     }
 
-    public int getFoto() {
+    public String getFoto() {
         return foto;
     }
 
-    public void setFoto(int foto) {
+    public void setFoto(String foto) {
         this.foto = foto;
     }
 

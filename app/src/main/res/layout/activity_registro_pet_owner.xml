@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbarRegPetW">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/registroNombrePet"
+            android:id="@+id/registroNombrePetOwner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
@@ -72,7 +72,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerraza">
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLocalidad">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registrotDireccion"

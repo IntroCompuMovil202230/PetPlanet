@@ -48,7 +48,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull UsersAdapter.ViewHolder holder, int position) {
         holder.nombre.setText(usuarioList.get(position).getNombre());
         holder.telefono.setText(usuarioList.get(position).getTelefono());
-        holder.foto.setImageResource(usuarioList.get(position).getFoto());
+        //holder.foto.setImageResource(usuarioList.get(position).getFoto());
 
     }
 

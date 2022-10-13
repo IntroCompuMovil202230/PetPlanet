@@ -53,7 +53,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="20dp"
+        android:maxLength="255"
         android:layout_marginStart="20dp"
+        android:inputType="textEmailAddress"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="15dp"
         android:hint="@string/correo"
@@ -68,7 +70,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edittext"
             android:inputType="textEmailAddress"
-            android:maxLength="20"
+            android:maxLength="255"
             android:textColor="@color/black"
             android:textColorHint="#616161"
             tools:ignore="TextContrastCheck" />

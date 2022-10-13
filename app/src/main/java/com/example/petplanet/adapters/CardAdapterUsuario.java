@@ -41,7 +41,7 @@ public class CardAdapterUsuario extends ArrayAdapter {
         nombre.setText(usuariolist.get(position).getNombre());
         horario.setText(usuariolist.get(position).getTelefono());
         conoce.setText("Conoce mas de: "+ usuariolist.get(position).getNombre());
-        imageView.setImageResource(usuariolist.get(position).getFoto());
+        //imageView.setImageResource(usuariolist.get(position).getFoto());
         return v;
     }
 

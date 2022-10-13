@@ -4,31 +4,39 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class PerfilUsuarioActivity extends AppCompatActivity {
 
     private ActivityPerfilUsuarioBinding binding;
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
+        mAuth = FirebaseAuth.getInstance();
 
         binding.toolbarPusuario.setTitle("");
         setSupportActionBar(binding.toolbarPusuario);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
         binding.toolbarPusuario.setNavigationOnClickListener(v -> {
             // luego se pone despues que se revise el rol del usuario a que pantalla ir
             startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
             finish();
         });
+
 
 
         binding.changepasswordBTN.setOnClickListener(view -> {
@@ -50,6 +58,30 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+// Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.perfil_nav_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+// Handle action bar item clicks here. The action bar will
+// automatically handle clicks on the Home/Up button, so long
+// as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+//noinspection SimplifiableIfStatement
+// Display menu item's title by using a Toast.
+        if (id == R.id.logoutBtn) {
+            mAuth.signOut();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onResume() {

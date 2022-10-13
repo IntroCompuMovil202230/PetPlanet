@@ -46,7 +46,7 @@ public class ChatActivity extends AppCompatActivity {
         });// se tiene que implementar la paerte de los mensajes ya los layouts estan hechos
 
         binding.imageinfo.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), PerfilUsuarioWalkerActivity.class);// hay que poner el perfil de owner
+            Intent intent = new Intent(getApplicationContext(), PerfilUsuarioWalkerActivity.class);
             intent.putExtra("nombre", nombre);
             intent.putExtra("imagen", foto);
             startActivity(intent);

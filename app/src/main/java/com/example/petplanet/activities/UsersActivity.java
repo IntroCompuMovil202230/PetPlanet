@@ -46,10 +46,6 @@ public class UsersActivity extends AppCompatActivity {
         });
 
         try {
-            cuidadoreslist.add(new Usuario("carlos","3109988453",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("Pedro","3019988433",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("Alejandro","3109588433",R.mipmap.ic_launcher_foreground));
-            cuidadoreslist.add(new Usuario("David otero","3149988433",R.drawable.perro3));
 
             adapter = new UsersAdapter(cuidadoreslist,this);
             adapter.setOnClickListener(view -> {
