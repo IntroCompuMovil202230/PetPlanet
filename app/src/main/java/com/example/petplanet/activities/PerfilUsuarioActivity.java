@@ -132,6 +132,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
         binding.changepasswordBTN.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), CambiarPasswordActivity.class);
+            intent.putExtra("correo",Client.getCorreo());
             startActivity(intent);
             finish();
         });
