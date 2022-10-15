@@ -45,9 +45,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         binding.grindDispo.setVerticalSpacing(30);
         binding.grindDispo.setHorizontalSpacing(30);
         try {
-            perrosList.add(new Perro("juan pablo","fluffy",R.drawable.perro1));
-            perrosList.add(new Perro("carlos","donald",R.drawable.perro2));
-            perrosList.add(new Perro("Pedro","BB",R.drawable.perro3));
+
             ArrayAdapter<Perro> adapter = new CardAdapterIniciarpaseo(this,R.layout.cardviewiniciarpaseo,perrosList);
             if (binding.grindDispo != null) {
                 binding.grindDispo.setAdapter(adapter);
@@ -55,7 +53,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
             binding.grindDispo.setOnItemClickListener((parent, view, position, id) -> {
                 Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
                 Perro items = perrosList.get(position);
-                intent.putExtra("nombre",items.getNombredueno());
+                intent.putExtra("nombre",items.getNombrecompleto());
                 intent.putExtra("imagen",items.getFoto());
                 startActivity(intent);
                 finish();

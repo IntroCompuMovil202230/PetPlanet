@@ -82,12 +82,21 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
 
     }
 
+
     private void validateIfUsersAlreadyExists() {
         mAuth.fetchSignInMethodsForEmail(binding.registroCorreo.getText().toString()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (task.getResult().getSignInMethods().isEmpty()) {
                     // No existe el usuario
-                    createFirebaseAuthUser(String.valueOf(binding.registroCorreo.getText()), String.valueOf(binding.registroPassword.getText()));
+                    Intent intent = new Intent(getApplicationContext(), FotoPerfilActivity.class);
+                    intent.putExtra("nombre",binding.registroNombreCompleto.getText().toString());
+                    intent.putExtra("direccion",binding.registrotDireccion.getText().toString());
+                    intent.putExtra("localidad",binding.registroLocalidad.getSelectedItem().toString());
+                    intent.putExtra("correo",binding.registroCorreo.getText().toString());
+                    intent.putExtra("password",binding.registroPassword.getText().toString());
+                    intent.putExtra("experiencia",binding.registroExperiencia.getText().toString());
+                    intent.putExtra("tipo","petwalker");
+                    startActivity(intent);
                 } else {
                     // Existe el usuario
                     Toast.makeText(getApplicationContext(), "El usuario ya existe", Toast.LENGTH_SHORT).show();
@@ -95,42 +104,6 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    private void createFirebaseAuthUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-
-                saveUser();
-            }
-
-        });
-    }
-
-    private Usuario createUserObject() {
-        return new Usuario(binding.registroNombreCompleto.getText().toString(),
-                binding.registroLocalidad.getSelectedItem().toString(),
-                binding.registroCorreo.getText().toString(),
-                binding.registrotDireccion.getText().toString(),
-                true,binding.registroExperiencia.getText().toString());
-    }
-
-
-
-    private void saveUser() {
-        Usuario Client = createUserObject();
-        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
-        myRef.setValue(Client).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                Toast.makeText(getApplicationContext(), "Usuario registrado", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
-                finish();
-            }else{
-                Toast.makeText(getApplicationContext(), "Error al registrar usuario", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
 
     private boolean isEmail(EditText text) {
