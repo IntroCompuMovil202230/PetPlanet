@@ -193,5 +193,8 @@
     <string name="tusPerrosestanaca">Tus perros estan aca</string>
     <string name="cerrar_sesion">cerrar sesión</string>
     <string name="seguir_conelregistro">Seguir con el registro</string>
+    <string name="introduce_tu_nueva_contrase_a">Introduce tu nueva contraseña</string>
+    <string name="introduce_tu_contrase_a_actual">Introduce tu contraseña actual</string>
+    <string name="cambiar_contrase_a">Cambiar contraseña</string>
 
 </resources>
