@@ -43,14 +43,7 @@ public class ListaPaseosActivity extends AppCompatActivity {
         binding.grind.setNumColumns(2);
         binding.grind.setVerticalSpacing(30);
         binding.grind.setHorizontalSpacing(30);
-        perroslist.add(new Perro("Perro 1","Horario 4pm-6pm",R.drawable.perro1));
-        perroslist.add(new Perro("Perro 2","Horario 5pm-6pm",R.drawable.perro2));
-        perroslist.add(new Perro("Perro 3","Horario 3pm-6pm",R.drawable.perro3));
-        perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
-        perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
-        perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
-        perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
-        perroslist.add(new Perro("Perro 4","Horario 2pm-4pm",R.drawable.perro1));
+
         ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
         binding.grind.setAdapter(adapter);
     }

@@ -37,8 +37,7 @@ public class ListarPerrosActivity extends AppCompatActivity {
         binding.grindPerrosdueno.setNumColumns(2);
         binding.grindPerrosdueno.setVerticalSpacing(30);
         binding.grindPerrosdueno.setHorizontalSpacing(30);
-        perroslist.add(new Perro("Perro 1", R.drawable.perro1));
-        perroslist.add(new Perro("Perro 2",R.drawable.perro2));
+
         ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
         if (binding.grindPerrosdueno != null) {
             binding.grindPerrosdueno.setAdapter(adapter);
@@ -46,7 +45,7 @@ public class ListarPerrosActivity extends AppCompatActivity {
         binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(getApplicationContext() , PerfilPerroActivity.class);
             Perro items = perroslist.get(position);
-            intent.putExtra("nombredelperro",items.getNombredueno());
+            intent.putExtra("nombredelperro",items.getNombrecompleto());
             intent.putExtra("imagen",items.getFoto());
             startActivity(intent);
             finish();

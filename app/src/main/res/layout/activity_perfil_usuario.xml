@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     tools:context=".activities.PerfilUsuarioActivity">
+
 
     <Button
         android:id="@+id/changepasswordBTN"
@@ -14,134 +15,103 @@
         android:layout_height="50dp"
         android:layout_margin="20dp"
 
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="16dp"
 
-
+        android:layout_marginTop="22dp"
         android:padding="10dp"
         android:text="@string/cambiarcontrasenia"
-
         app:cornerRadius="15dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/numberPetOwner"
+        app:layout_constraintTop_toBottomOf="@+id/emailtxt"
         tools:ignore="TextContrastCheck" />
 
-    <ImageView
-        android:id="@+id/profilePetPicture"
-        android:layout_width="200dp"
-        android:layout_height="206dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="92dp"
-        android:contentDescription="@string/app_name"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePetUPicture"
+        android:layout_width="122dp"
+        android:layout_height="156dp"
+        android:clickable="true"
+        app:civ_border_color="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarPusuario"
-        app:srcCompat="@mipmap/ic_launcher_foreground" />
-
-    <ImageView
-        android:id="@+id/petPicture"
-        android:layout_width="120dp"
-        android:layout_height="111dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="126dp"
-        android:layout_marginBottom="47dp"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mascotas"
-        app:layout_constraintVertical_bias="0.347"
-        app:srcCompat="@mipmap/pet1_foreground" />
+        tools:ignore="SpeakableTextPresentCheck"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/fullNamePet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="28dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/rounded_edittext"
-        android:text="@string/firstname"
-        android:textAlignment="center"
+
+
+        android:layout_marginStart="10dp"
+
+        android:layout_marginTop="35dp"
         android:textColor="@color/purple_500"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/profilePetPicture"
-        tools:layout_editor_absoluteX="16dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profilePetUPicture"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarPusuario" />
 
     <TextView
         android:id="@+id/direccionUsuario"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="27dp"
+
+
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/rounded_edittext"
-        android:text="@string/direccion"
-        android:textAlignment="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="21dp"
+
         android:textColor="@color/purple_500"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toEndOf="@+id/profilePetUPicture"
         app:layout_constraintTop_toBottomOf="@+id/fullNamePet" />
 
     <TextView
-        android:id="@+id/raza"
+        android:id="@+id/localidadPetOwner"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|center_horizontal"
+
+
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profilePetUPicture"
+        app:layout_constraintTop_toBottomOf="@+id/direccionUsuario" />
+
+    <TextView
+        android:id="@+id/emailtxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="27dp"
-        android:background="@drawable/rounded_edittext"
-        android:text="@string/email"
-        android:textAlignment="center"
+        android:layout_marginTop="30dp"
+
         android:textColor="@color/purple_500"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/direccionUsuario"
+        app:layout_constraintTop_toBottomOf="@+id/localidadPetOwner"
         tools:layout_editor_absoluteX="16dp" />
-
-    <TextView
-        android:id="@+id/numberPetOwner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/rounded_edittext"
-        android:text="@string/number"
-        android:textAlignment="center"
-        android:textColor="@color/purple_500"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/raza"
-        tools:layout_editor_absoluteX="16dp" />
-
-    <TextView
-        android:id="@+id/mascotas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="24dp"
-        android:text="@string/mascotas"
-        android:textAlignment="center"
-        android:textColor="@color/grey_200"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/changepasswordBTN"
-        tools:layout_editor_absoluteX="20dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addpet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="45dp"
-        android:layout_marginEnd="58dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:clickable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/petPicture"
-        app:layout_constraintTop_toBottomOf="@+id/mascotas"
 
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -153,20 +123,70 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/perfil_nav_menu" />
 
     <Button
         android:id="@+id/fingerBTN"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="20dp"
-        app:cornerRadius="15dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="192dp"
         android:text="Añadir huella"
+        app:cornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/changepasswordBTN"
-        app:layout_constraintTop_toBottomOf="@+id/numberPetOwner" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/changepasswordBTN" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Nombre"
+        app:layout_constraintBottom_toTopOf="@+id/fullNamePet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/profilePetUPicture" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Direccion"
+        app:layout_constraintBottom_toTopOf="@+id/direccionUsuario"
+        app:layout_constraintStart_toEndOf="@+id/profilePetUPicture" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Localidad"
+        app:layout_constraintBottom_toTopOf="@+id/localidadPetOwner"
+        app:layout_constraintStart_toEndOf="@+id/profilePetUPicture" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Correo electronico"
+        app:layout_constraintBottom_toTopOf="@+id/emailtxt"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <GridView
+        android:id="@+id/grindPerrosdueno"
+        android:layout_width="match_parent"
+        android:layout_height="404dp"
+        android:layout_marginTop="23dp"
+        android:scrollbarAlwaysDrawHorizontalTrack="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.525"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fingerBTN" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

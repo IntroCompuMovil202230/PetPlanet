@@ -1,6 +1,9 @@
 package com.example.petplanet.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +42,10 @@ public class CardAdapterIniciarpaseo  extends ArrayAdapter {
         TextView nombredueno = (TextView) v.findViewById(R.id.duenoperrotxt);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
         nombreperro.setText("Nombre del perro: "+perroslist.get(position).getNombrecompleto());
-        nombredueno.setText("Nombre del dueño: "+perroslist.get(position).getNombredueno());
-        imageView.setImageResource(perroslist.get(position).getFoto());
+        //nombredueno.setText("Nombre del dueño: "+perroslist.get(position).getNombredueno());
+        byte[] decodedString = Base64.decode(perroslist.get(position).getFoto(), Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        imageView.setImageBitmap(decodedByte);
         return v;
     }
 }

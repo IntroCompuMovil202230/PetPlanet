@@ -5,54 +5,44 @@ import android.graphics.Bitmap;
 import java.sql.Date;
 
 public class Perro {
-    String nombredueno;
     String nombrecompleto;
     String raza;
     String sexo;
     String color;
     String Horario;
-    Date fechanacimiento;
+    String fechanacimiento;
     Boolean vacunado;
     Boolean esterilizado;
-    int  foto;
+    String  foto;
 
     public Perro() {
     }
 
 
-    public Perro(String nombredueno, String nombrecompleto, String raza, String sexo, String color, String horario, Date fechanacimiento, Boolean vacunado, Boolean esterilizado, int foto) {
-        this.nombredueno = nombredueno;
+    public Perro( String nombrecompleto, String raza, String sexo, String color, String fechanacimiento, Boolean vacunado, Boolean esterilizado, String foto) {
         this.nombrecompleto = nombrecompleto;
         this.raza = raza;
         this.sexo = sexo;
         this.color = color;
-        this.Horario = horario;
         this.fechanacimiento = fechanacimiento;
         this.vacunado = vacunado;
         this.esterilizado = esterilizado;
         this.foto = foto;
     }
 
-    public Perro(String nombredelperro,int foto){
+    public Perro(String nombredelperro,String foto){
         this.nombrecompleto=nombredelperro;
         this.foto=foto;
     }
 
 
 
-    public Perro(String nombredueno,String nombrecompleto,int  foto) {
-        this.nombredueno = nombredueno;
+    public Perro(String nombredueno,String nombrecompleto,String  foto) {
         this.nombrecompleto = nombrecompleto;
         this.foto = foto;
     }
 
-    public String getNombredueno() {
-        return nombredueno;
-    }
 
-    public void setNombredueno(String nombredueno) {
-        this.nombredueno = nombredueno;
-    }
 
     public String getHorario() {
         return Horario;
@@ -94,11 +84,11 @@ public class Perro {
         this.color = color;
     }
 
-    public Date getFechanacimiento() {
+    public String getFechanacimiento() {
         return fechanacimiento;
     }
 
-    public void setFechanacimiento(Date fechanacimiento) {
+    public void setFechanacimiento(String fechanacimiento) {
         this.fechanacimiento = fechanacimiento;
     }
 
@@ -118,11 +108,11 @@ public class Perro {
         this.esterilizado = esterilizado;
     }
 
-    public int  getFoto() {
+    public String  getFoto() {
         return foto;
     }
 
-    public void setFoto(int  foto) {
+    public void setFoto(String  foto) {
         this.foto = foto;
     }
 }

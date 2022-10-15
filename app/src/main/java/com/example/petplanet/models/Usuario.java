@@ -2,6 +2,8 @@ package com.example.petplanet.models;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
 public class Usuario {
     private String nombre;
     private String localidad;
@@ -10,6 +12,8 @@ public class Usuario {
     private String direccion;
     private String telefono;
     private String foto;
+    private ArrayList<Perro> perros;    //Array de perros
+
 
     Boolean isWalker;
     String experiencia;
@@ -19,11 +23,12 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String localidad, String correo, String direccion,boolean isWalker,String experiencia) {
+    public Usuario(String nombre, String localidad, String correo, String direccion,String foto,boolean isWalker,String experiencia) {
         this.nombre = nombre;
         this.localidad = localidad;
         this.correo = correo;
         this.direccion = direccion;
+        this.foto = foto;
         this.isWalker = isWalker;
         if(isWalker){
             this.experiencia = experiencia;
@@ -43,6 +48,15 @@ public class Usuario {
         this.linkhojadevida = linkhojadevida;
         this.linkdocumentoid = linkdocumentoid;
     }
+
+    public ArrayList<Perro> getPerros() {
+        return perros;
+    }
+
+    public void setPerros(ArrayList<Perro> perros) {
+        this.perros = perros;
+    }
+
     public String getTelefono() {
         return telefono;
     }
