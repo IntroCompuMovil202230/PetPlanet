@@ -142,7 +142,7 @@ public class FotoPerfilActivity extends AppCompatActivity {
                     try {
                         Bitmap img = (Bitmap) MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                        img.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                         byte[] byteArray = byteArrayOutputStream .toByteArray();
                         fotoS = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
@@ -160,7 +160,7 @@ public class FotoPerfilActivity extends AppCompatActivity {
         if (requestCode == CAMERA_REQUEST) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream .toByteArray();
             fotoS = Base64.encodeToString(byteArray, Base64.DEFAULT);
             Log.d("imagen", "onActivityResult: " + fotoS);

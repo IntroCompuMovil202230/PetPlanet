@@ -11,12 +11,28 @@ import com.example.petplanet.databinding.ActivityPerfilPerroBinding;
 
 public class PerfilPerroActivity extends AppCompatActivity {
     private ActivityPerfilPerroBinding binding;
+
+    String nombreS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityPerfilPerroBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                nombreS= null;
+
+            } else {
+                nombreS = extras.getString("nombredelperro");
+
+            }
+        } else {
+            nombreS =        (String) savedInstanceState.getSerializable("nombredelperro");
+        }
+
+        binding.fullNamePet.setText(nombreS);
         binding.toolbarPperro.setTitle("");
         setSupportActionBar(binding.toolbarPperro);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

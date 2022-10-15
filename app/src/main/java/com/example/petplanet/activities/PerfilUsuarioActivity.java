@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -47,12 +48,14 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     int SELECT_PICTURE = 200;
     int CAMERA_REQUEST = 100;
     ArrayList<Perro> perroslist =new ArrayList<>();
+    Boolean iswalker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
+        binding.guardatBTN.setVisibility(View.INVISIBLE);
 
         myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
@@ -65,6 +68,12 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 binding.direccionUsuario.setText(Client.getDireccion());
                 binding.localidadPetOwner.setText(Client.getLocalidad());
                 binding.emailtxt.setText(Client.getCorreo());
+                if(Client.getWalker()) {
+                    binding.addpet.setVisibility(View.GONE);
+                }
+                else{
+                    binding.addpet.setVisibility(View.VISIBLE);
+                }
             }
         });
         ArrayList<Perro> prueba = new ArrayList<>();
@@ -72,6 +81,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         binding.grindPerrosdueno.setNumColumns(3);
         binding.grindPerrosdueno.setVerticalSpacing(30);
         binding.grindPerrosdueno.setHorizontalSpacing(30);
+
         myUserRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS);
         myUserRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
@@ -83,9 +93,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                     Log.d("malditasea", "onComplete: "+prueba.size());
 
                     ArrayAdapter adapter = new CardAdapterUserDog(this,R.layout.perfilperroview,prueba);
-                    if (binding.grindPerrosdueno != null) {
-                        binding.grindPerrosdueno.setAdapter(adapter);
-                    }
+                    binding.grindPerrosdueno.setAdapter(adapter);
                     binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
                         Intent intent = new Intent(getApplicationContext() , PerfilPerroActivity.class);
                         Perro items = prueba.get(position);
@@ -98,6 +106,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
             }
         });
+
 
         binding.toolbarPusuario.setTitle("");
         setSupportActionBar(binding.toolbarPusuario);
@@ -136,7 +145,6 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
 
         binding.addpet.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), RegistroPerroActivity.class);
@@ -187,7 +195,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-
+                    binding.guardatBTN.setVisibility(View.VISIBLE);
                     binding.profilePetUPicture.setImageURI(selectedImageUri);
                 }
             }
@@ -201,8 +209,21 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             fotoS = Base64.encodeToString(byteArray, Base64.DEFAULT);
             Log.d("imagen", "onActivityResult: " + fotoS);
 
+            binding.guardatBTN.setVisibility(View.VISIBLE);
             binding.profilePetUPicture.setImageBitmap(image);
         }
+        binding.guardatBTN.setOnClickListener(view -> {
+            Client.setFoto(fotoS);
+            myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
+            myRef.setValue(Client).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+                    binding.guardatBTN.setVisibility(View.INVISIBLE);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Error al actualizar foto de perfil", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
 

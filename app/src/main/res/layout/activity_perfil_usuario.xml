@@ -188,5 +188,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fingerBTN" />
 
+    <Button
+        android:id="@+id/guardatBTN"
+        android:layout_width="113dp"
+        android:layout_height="42dp"
+
+        android:layout_marginTop="138dp"
+        android:text="Guardar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/profilePetUPicture"
+        tools:ignore="TouchTargetSizeCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
