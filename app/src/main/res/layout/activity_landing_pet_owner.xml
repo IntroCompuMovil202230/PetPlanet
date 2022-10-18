@@ -9,17 +9,14 @@
     tools:context=".activities.LandingPetOwnerActivity">
 
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="482dp"
-        android:layout_height="879dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        map:srcCompat="@drawable/mapa" />
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.LandingPetOwnerActivity"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-225dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton2"
