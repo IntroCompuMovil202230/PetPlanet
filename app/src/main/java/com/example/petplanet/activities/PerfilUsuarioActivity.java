@@ -69,7 +69,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 binding.localidadPetOwner.setText(Client.getLocalidad());
                 binding.emailtxt.setText(Client.getCorreo());
                 if(Client.getWalker()) {
-                    binding.addpet.setVisibility(View.GONE);
+                    binding.addpet.setVisibility(View.INVISIBLE);
                 }
                 else{
                     binding.addpet.setVisibility(View.VISIBLE);

@@ -19,10 +19,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FotoPerfilActivity extends AppCompatActivity {
 
@@ -34,10 +36,14 @@ public class FotoPerfilActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     public static final String PATH_PERROS="mascotas/";
-
+    String tokenS;
+    ArrayList<String> tokens = new ArrayList<>();
     ArrayList<Perro> perros = new ArrayList<>();
     int SELECT_PICTURE = 200;
     int CAMERA_REQUEST = 100;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,8 +156,6 @@ public class FotoPerfilActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
                     binding.fotodelusuarioBTN.setImageURI(selectedImageUri);
                 }
             }
@@ -187,7 +191,6 @@ public class FotoPerfilActivity extends AppCompatActivity {
     private void createFirebaseAuthUser(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-
                 saveUser();
             }
 
@@ -195,19 +198,15 @@ public class FotoPerfilActivity extends AppCompatActivity {
     }
 
     private Usuario createUserObject() {
-
+        Usuario usu = new Usuario();
         if(tipoS.equals("petowner")) {
-
-
-            return new Usuario(nombreS, localidadS, emailS, direccionS,fotoS, false, "");
+            return new Usuario(mAuth.getCurrentUser().getUid(),nombreS,localidadS, emailS, direccionS, fotoS, false, "");
         }
         if(tipoS.equals("petwalker")) {
-            return new Usuario(nombreS, localidadS, emailS, direccionS,fotoS, true, experiensiaS);
+            return new Usuario(mAuth.getCurrentUser().getUid(),nombreS,localidadS, emailS, direccionS, fotoS, true, experiensiaS);
         }
         return null;
     }
-
-
 
     private void saveUser() {
         Usuario Client = createUserObject();
@@ -225,14 +224,11 @@ public class FotoPerfilActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
                     finish();
                 }
-
             }else{
                 Toast.makeText(getApplicationContext(), "Error al registrar usuario", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-
 
 
 }

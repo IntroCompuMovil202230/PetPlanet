@@ -39,7 +39,14 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.progressBar3.setVisibility(View.VISIBLE);
-        binding.progressbarlayout.setVisibility(View.VISIBLE);
+        binding.nombrePetWalker.setVisibility(View.INVISIBLE);
+        binding.experienciaview.setVisibility(View.INVISIBLE);
+        binding.nombreview.setVisibility(View.INVISIBLE);
+        binding.telefonovieww.setVisibility(View.INVISIBLE);
+        binding.TelefonoPetwalker.setVisibility(View.INVISIBLE);
+        binding.experienciaPetwalker.setVisibility(View.INVISIBLE);
+        binding.FotoPetWalker.setVisibility(View.INVISIBLE);
+        binding.agregarFaboritos.setVisibility(View.INVISIBLE);
 
 
         if (savedInstanceState == null) {
@@ -59,7 +66,14 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
         myRef.getDatabase().getReference(PATH_USERS).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 binding.progressBar3.setVisibility(View.INVISIBLE);
-                binding.progressbarlayout.setVisibility(View.INVISIBLE);
+                binding.nombrePetWalker.setVisibility(View.VISIBLE);
+                binding.TelefonoPetwalker.setVisibility(View.VISIBLE);
+                binding.experienciaPetwalker.setVisibility(View.VISIBLE);
+                binding.experienciaview.setVisibility(View.VISIBLE);
+                binding.nombreview.setVisibility(View.VISIBLE);
+                binding.telefonovieww.setVisibility(View.VISIBLE);
+                binding.FotoPetWalker.setVisibility(View.VISIBLE);
+                binding.agregarFaboritos.setVisibility(View.VISIBLE);
                 for (DataSnapshot walker : task.getResult().getChildren()) {
                     walkerx = walker.getValue(Usuario.class);
                     if (walkerx.getWalker()) {
@@ -73,7 +87,6 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
                         }
                     }
                 }
-
             }
         });
         setSupportActionBar(binding.tollbarPwalker);

@@ -54,7 +54,7 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
                 for (DataSnapshot walker : task.getResult().getChildren()) {
                     walkerx = walker.getValue(Usuario.class);
                     if (walkerx.getWalker()) {
-                        cuidadoreslist.add(new Usuario(walkerx.getNombre(), walkerx.getLocalidad(), walkerx.getCorreo(), walkerx.getDireccion(), walkerx.getFoto(), walkerx.getWalker(), walkerx.getExperiencia()));
+                        cuidadoreslist.add(new Usuario(walker.getKey(),walkerx.getNombre(), walkerx.getLocalidad(), walkerx.getCorreo(), walkerx.getDireccion(), walkerx.getFoto(), walkerx.getWalker(), walkerx.getExperiencia()));
 
                         ArrayAdapter adapter = new CardAdapterUsuario(this, R.layout.cardview, cuidadoreslist);
                         if (binding.grindCuidadores != null) {
