@@ -47,9 +47,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
                         humActual = sensorEvent.values[0];
                         if(humActual >  65)
                         {
-                            Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
                         }else {
-                            Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
                         }
                     }
             }
@@ -60,12 +60,24 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
             }
         };
 
+
+        // esto es lo del boton?? que me perdi
+        Intent intent = new Intent(getApplicationContext(),LandingPetWalkerActivity.class);
+        startActivity(intent);
+        if(humActual >  65)
+        {
+            Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+        }
+        finish();
+
         binding.bottomNavigationWalker.setBackground(null);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             switch (id) {
                 case R.id.mascotas:
-                    Intent intent = new Intent(getApplicationContext(), ListaPaseosActivity.class);
+                    Intent intent1 = new Intent(getApplicationContext(), ListaPaseosActivity.class);
                     startActivity(intent);
                     finish();
                     break;
@@ -93,7 +105,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(tempSensorListener,tempSensor,sensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(humSensorListener,humSensor,sensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -114,12 +126,12 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        sensorManager.unregisterListener(tempSensorListener);
+        sensorManager.unregisterListener(humSensorListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(tempSensorListener);
+        sensorManager.unregisterListener(humSensorListener);
     }
 }
