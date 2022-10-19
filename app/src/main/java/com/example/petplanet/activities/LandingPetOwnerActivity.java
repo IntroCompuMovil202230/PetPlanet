@@ -1,37 +1,38 @@
 package com.example.petplanet.activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityLandingPetOwnerBinding;
 import com.google.android.gms.common.api.ApiException;
@@ -40,6 +41,7 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -47,15 +49,18 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -63,8 +68,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
-public class LandingPetOwnerActivity extends AppCompatActivity {
+import org.json.JSONException;
+
+public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ActivityLandingPetOwnerBinding binding;
     public final static double RADIUS_OF_EARTH_KM = 6371;
 
@@ -147,6 +161,54 @@ public class LandingPetOwnerActivity extends AppCompatActivity {
                 return false;
             }
         });
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        mLocationRequest = createLocationRequest();
+        //Location
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, "El permiso es necesario para acceder a la localizacion", LOCATION_PERMISSION_ID);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                aux=location;
+                Log.i(TAG, "Location update in the callback: " + location);
+                if (location != null) {
+                    mCurrentLocation = location;
+                }
+            }
+        };
+        // Initialize the sensors
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        // Initialize the listener
+        lightSensorListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                if (mMap != null) {
+                    if (event.values[0] < 100) {
+                        Log.i("MAPS", "DARK MAP " + event.values[0]);
+                        mMap.setMapStyle(MapStyleOptions
+                                .loadRawResourceStyle(LandingPetOwnerActivity.this, R.raw.style_night));
+                    } else {
+                        Log.i("MAPS", "LIGHT MAP " + event.values[0]);
+                        mMap.setMapStyle(MapStyleOptions
+                                .loadRawResourceStyle(LandingPetOwnerActivity.this, R.raw.style_day));
+                    }
+                }
+            }
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        };
+
+        // Initialize geocoder
+        mGeocoder = new Geocoder(getBaseContext());
 
 
     }
@@ -227,17 +289,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity {
             //Definimos el color de la Polilíneas
             lineOptions.color(Color.BLUE);
         }
-        // Dibujamos las Polilineas en el Google Map para cada ruta
-        mMap.addPolyline(lineOptions);
 
-        LatLng origen = new LatLng(Utilitys.coordenadas.getLatitudInicial(), Utilitys.coordenadas.getLongitudInicial());
-        mMap.addMarker(new MarkerOptions().position(origen).title("Lat: "+Utilitys.coordenadas.getLatitudInicial()+" - Long: "+Utilitys.coordenadas.getLongitudInicial()));
-
-        LatLng destino = new LatLng(Utilitys.coordenadas.getLatitudFinal(), Utilitys.coordenadas.getLongitudFinal());
-        mMap.addMarker(new MarkerOptions().position(destino).title("Lat: "+Utilitys.coordenadas.getLatitudFinal()+" - Long: "+Utilitys.coordenadas.getLongitudFinal()));
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(center, 15));
-        // Add a marker
         LatLng location = new LatLng(4.62867, -74.06461);
 
         //int auxiliar = (int) Math.round(mCurrentLocation.getLatitude());
