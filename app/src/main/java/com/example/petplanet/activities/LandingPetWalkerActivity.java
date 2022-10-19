@@ -23,9 +23,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
 
 
     private SensorManager sensorManager;
-    private Sensor lightSensor,tempSensor;
-    private SensorEventListener lightSensorListener, tempSensorListener;
-    private float tempActual;
+    private Sensor humSensor;
+    private SensorEventListener humSensorListener;
+    private float humActual;
 
     private ActivityLandingPetWalkerBinding binding;
     @Override
@@ -36,20 +36,20 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
 
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        tempSensorListener = lecturaTemperatura;
-        tempActual = 0;
-        sensorManager.registerListener(tempSensorListener,tempSensor,sensorManager.SENSOR_DELAY_NORMAL);
+        humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        humActual = 0;
+        sensorManager.registerListener(humSensorListener,humSensor,sensorManager.SENSOR_DELAY_NORMAL);
 
         SensorEventListener lecturaSensor = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                    if(Math.abs(tempActual-sensorEvent.values[0])>10){
-                        tempActual = sensorEvent.values[0];
-                        if(tempActual<12)
+                    if(Math.abs(humActual-sensorEvent.values[0])>10){
+                        humActual = sensorEvent.values[0];
+                        if(humActual >  65)
                         {
-                            Toast.makeText(LandingPetWalkerActivity.this, "La temperatura es muy baja, abríguese mijo!", Toast.LENGTH_SHORT).show();
-                        }else if(tempActual>25) {
-                            Toast.makeText(LandingPetWalkerActivity.this, "La temperatura es alta, toma agüita!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
                         }
                     }
             }
@@ -112,8 +112,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         sensorManager.unregisterListener(tempSensorListener);
     }
 
