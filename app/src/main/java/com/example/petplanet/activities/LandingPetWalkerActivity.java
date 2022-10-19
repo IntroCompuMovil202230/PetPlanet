@@ -4,8 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityLandingPetOwnerBinding;
@@ -20,6 +25,27 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        SensorEventListener event;
+
+        private SensorEventListener lecturaSensor = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
+                if (mMap != null) {
+                    if (Math.abs(tempActual - sensorEvent.values[0]) > 10) {
+                        tempActual = sensorEvent.values[0];
+                        if (tempActual < 12) {
+                            Toast.makeText(PrincipalEstudiante.this, "La temperatura es muy baja, abríguese mijo!", Toast.LENGTH_SHORT).show();
+                        } else if (tempActual > 25) {
+                            Toast.makeText(PrincipalEstudiante.this, "La temperatura es alta, toma agüita!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        }
+
 
         binding.bottomNavigationWalker.setBackground(null);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {

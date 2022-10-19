@@ -34,6 +34,19 @@
         map:srcCompat="@drawable/ic_location"
         tools:ignore="SpeakableTextPresentCheck" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/Llover"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="500dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        map:srcCompat="@drawable/ic_location"
+        tools:ignore="SpeakableTextPresentCheck" />
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="410dp"
