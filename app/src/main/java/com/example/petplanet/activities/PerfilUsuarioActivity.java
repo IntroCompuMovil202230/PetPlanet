@@ -1,11 +1,16 @@
 package com.example.petplanet.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+
+import androidx.biometric.BiometricPrompt;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,7 +18,9 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.petplanet.R;
@@ -30,12 +37,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 
 public class PerfilUsuarioActivity extends AppCompatActivity {
+    private BiometricPrompt biometricPrompt;
+   private BiometricPrompt.PromptInfo promptInfo;
 
     private ActivityPerfilUsuarioBinding binding;
     private FirebaseAuth mAuth;
+
     Usuario Client = new Usuario();
     Perro perrox = new Perro();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -50,9 +61,11 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
+
 
         myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
@@ -142,6 +155,38 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), RegistroPerroActivity.class);
             startActivity(intent);
             finish();
+        });
+
+
+       binding.fingerBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Executor executor = ContextCompat.getMainExecutor(PerfilUsuarioActivity.this);
+
+                biometricPrompt = new BiometricPrompt(PerfilUsuarioActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationError(int errorCode, @NonNull  CharSequence errString) {
+                        super.onAuthenticationError(errorCode, errString);
+                    }
+
+                    @Override
+                    public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        //Cambiar de pantalla
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        super.onAuthenticationFailed();
+                    }
+                });
+
+                promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Project").setDescription("Usa tu huella").setDeviceCredentialAllowed(true).build();
+                biometricPrompt.authenticate(promptInfo);
+
+
+            }
         });
     }
 
