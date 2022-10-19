@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
+
+import com.example.petplanet.databinding.ActivityListaDeChatsBinding;
+
 import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
@@ -30,6 +34,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ListaDeChatsActivity extends AppCompatActivity {
     private ActivityListaDeChatsBinding binding;

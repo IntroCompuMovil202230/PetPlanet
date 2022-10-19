@@ -20,11 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+
 import android.widget.Button;
 import android.widget.Toast;
 
+
 import com.example.petplanet.R;
-import com.example.petplanet.adapters.CardAdapterPerro;
 import com.example.petplanet.adapters.CardAdapterUserDog;
 import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
 import com.example.petplanet.models.Perro;
@@ -35,7 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
