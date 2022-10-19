@@ -9,6 +9,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -20,24 +21,37 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class LandingPetWalkerActivity extends AppCompatActivity {
 
+
+    private SensorManager sensorManager;
+    private Sensor lightSensor,tempSensor;
+    private SensorEventListener lightSensorListener, tempSensorListener;
+    private float tempActual;
+
     private ActivityLandingPetWalkerBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        float presionActual;
-        float lectura = 0;
-        Sensor presSensor;
-        SensorEventListener presSensorListener;
-        SensorManager sensorManager;
-        presionActual = 0;
+
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        presSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        presSensorListener = new SensorEventListener() {
+        tempSensorListener = lecturaTemperatura;
+        tempActual = 0;
+        sensorManager.registerListener(tempSensorListener,tempSensor,sensorManager.SENSOR_DELAY_NORMAL);
+
+        SensorEventListener lecturaSensor = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-
+                    if(Math.abs(tempActual-sensorEvent.values[0])>10){
+                        tempActual = sensorEvent.values[0];
+                        if(tempActual<12)
+                        {
+                            Toast.makeText(LandingPetWalkerActivity.this, "La temperatura es muy baja, abríguese mijo!", Toast.LENGTH_SHORT).show();
+                        }else if(tempActual>25) {
+                            Toast.makeText(LandingPetWalkerActivity.this, "La temperatura es alta, toma agüita!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
             }
 
             @Override
@@ -45,27 +59,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
 
             }
         };
-
-        SensorManager.registerListener(presSensorListener,presSensor,sensorManager.SENSOR_DELAY_NORMAL);
-        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        SensorEventListener event;
-
-        private SensorEventListener lecturaSensor = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-
-                if (Math.abs(presionActual - sensorEvent.values[0]) > 10) {
-                    presionActual = sensorEvent.values[0];
-                    if (presionActual < 12) {
-                        Toast.makeText(LandingPetWalkerActivity.this, "Esta haciendo sol! Relajao", Toast.LENGTH_SHORT).show();
-                    } else if (presionActual > 25) {
-                        Toast.makeText(LandingPetWalkerActivity.this, "Cuidado, puede llover! busca un paraguas", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }
-
 
         binding.bottomNavigationWalker.setBackground(null);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
@@ -98,8 +91,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
 
     }
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
+        sensorManager.registerListener(tempSensorListener,tempSensor,sensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -118,12 +112,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(tempSensorListener);
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
+        sensorManager.unregisterListener(tempSensorListener);
     }
 }
