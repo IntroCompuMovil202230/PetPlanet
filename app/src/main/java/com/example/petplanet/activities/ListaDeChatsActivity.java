@@ -1,5 +1,6 @@
 package com.example.petplanet.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -16,6 +17,7 @@ import com.example.petplanet.R;
 import com.example.petplanet.adapters.RecentConversationsAdapter;
 import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
 import com.example.petplanet.databinding.ActivityListaDeChatsBinding;
+import com.example.petplanet.listeners.ConversationListener;
 import com.example.petplanet.models.ChatMessage;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
@@ -24,14 +26,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ListaDeChatsActivity extends AppCompatActivity {
+public class ListaDeChatsActivity extends AppCompatActivity implements ConversationListener {
     private ActivityListaDeChatsBinding binding;
     private FirebaseAuth mAuth;
     Usuario Client = new Usuario();
@@ -54,7 +59,7 @@ public class ListaDeChatsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
         conversations = new ArrayList<>();
-        conversationsAdapter = new RecentConversationsAdapter(conversations);
+        conversationsAdapter = new RecentConversationsAdapter(conversations,this);
         binding.conversationsRecyclerView.setAdapter(conversationsAdapter);
         binding.toolbarlistchat.setTitle("");
         setSupportActionBar(binding.toolbarlistchat);
@@ -69,9 +74,11 @@ public class ListaDeChatsActivity extends AppCompatActivity {
         });
 
         myRef = database.getReference(Constants.KEY_COLLECTION_CONVERSATIONS);
-        myRef.getDatabase().getReference(Constants.KEY_COLLECTION_CONVERSATIONS).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DataSnapshot conversation : task.getResult().getChildren()) {
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                conversations.clear();
+                for (DataSnapshot conversation : snapshot.getChildren()) {
                     if (conversation.child(Constants.KEY_SENDER_ID).getValue().equals(mAuth.getCurrentUser().getUid())) {
                         ChatMessage chatMessage = new ChatMessage();
                         chatMessage.setSenderid(conversation.child(Constants.KEY_SENDER_ID).getValue().toString());
@@ -85,17 +92,23 @@ public class ListaDeChatsActivity extends AppCompatActivity {
                             chatMessage.conversionName = conversation.child(Constants.KEY_SENDER_NAME).getValue().toString();
                             chatMessage.conversionId = conversation.child(Constants.KEY_SENDER_ID).getValue().toString();
                         }
-                        chatMessage.setMessage(conversation.child(Constants.KEY_MESSAGE).getValue().toString());
+                        chatMessage.setMessage(conversation.child(Constants.KEY_LAST_MESSAGE).getValue().toString());
                         chatMessage.setDatetime(conversation.child(Constants.KEY_TIMESTAMP).getValue().toString());
                         conversations.add(chatMessage);
                     }
                 }
+                Collections.sort(conversations, (o1, o2) -> o2.getDatetime().compareTo(o1.getDatetime()));
+                conversationsAdapter.notifyDataSetChanged();
+                binding.conversationsRecyclerView.smoothScrollToPosition(0);
+                binding.conversationsRecyclerView.setVisibility(View.VISIBLE);
+                binding.progresconversation.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-
-
-
-
         //getToken();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -112,6 +125,15 @@ public class ListaDeChatsActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public void onConversationClicked(Usuario user) {
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_USER_ID,user.getId());
+        intent.putExtra(Constants.KEY_USER,"me han tocado jejeje");
+
+        startActivity(intent);
+    }
 
     @Override
     public void onResume() {

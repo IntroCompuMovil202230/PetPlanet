@@ -191,8 +191,6 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
                 promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Project").setDescription("Usa tu huella").setDeviceCredentialAllowed(true).build();
                 biometricPrompt.authenticate(promptInfo);
-
-
             }
         });
     }

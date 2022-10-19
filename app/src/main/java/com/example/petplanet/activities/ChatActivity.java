@@ -65,6 +65,15 @@ public class ChatActivity extends AppCompatActivity {
         this.uid2 = uid2;
     }
 
+    public String foto;
+    public String getFotoUid2() {
+        return foto;
+    }
+
+    public void setFotoUid2(String foto) {
+        this.foto = foto;
+    }
+
     byte[] decodedString;
     boolean listo = false;
     Bitmap decodedByte;
@@ -98,21 +107,10 @@ public class ChatActivity extends AppCompatActivity {
             correo= (String) savedInstanceState.getSerializable(Constants.KEY_USER);
             setUid2((String) savedInstanceState.getSerializable(Constants.KEY_USER_ID));
         }
-        init();
+        Log.d("CrHATerrrr112", "asdasd2: " + correo);
+        llenarUsuariochat();
+        llenarWalkerx();
         setListeners();
-        String uid = mAuth.getCurrentUser().getUid();
-
-
-        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                usuariochat = task.getResult().getValue(Usuario.class);
-            }
-        });
-
-
-
-
 
         Log.d("CrHATerrrr112", "asdasd2: " + getUid2());
 
@@ -120,7 +118,10 @@ public class ChatActivity extends AppCompatActivity {
         myChat.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                llenarUsuariochat();
+                llenarWalkerx();
                 chatMessages.clear();
+                count = chatMessages.size();
                 for (DataSnapshot chatt : snapshot.getChildren()) {
                     ChatMessage chat = chatt.getValue(ChatMessage.class);
                     chatM.setMessage(chat.getMessage());
@@ -130,8 +131,7 @@ public class ChatActivity extends AppCompatActivity {
                     Log.d("CrHATerrrr222", "onCreate244444444444444444: " + getUid2());
                     Log.d("CrHATerrrr27722", "asdasd39: " + chatM.getMessage());
                         if(chatM.getSenderid().equals(mAuth.getCurrentUser().getUid()) && chatM.getReceiverid().equals(getUid2())){
-                            count += 1;
-                            Log.d("CrHATerrrrss", "contadorrrr: " + count);
+
                             chatMessages.add(chatM);
                         }
                     Log.d("CrHATerrrr66", "222uto: " + mAuth.getCurrentUser().getUid());
@@ -144,16 +144,24 @@ public class ChatActivity extends AppCompatActivity {
                         chatM = new ChatMessage();
                         Log.d("CrHATerrrr", "onCreate: " + chatMessages.size());
                 }
-                Log.d("CrHATerrrrss", "onCreate: " + chatMessages.size());
-                chatMessages.sort(Comparator.comparing(ChatMessage::getDatetime));
-                if(chatMessages.isEmpty()){
+                Log.d("CrHATerrrrss", "mnmhhhhhhhhhhhh: " + chatMessages.size());
+                Collections.sort(chatMessages, (o1, o2) -> o1.getDatetime().compareTo(o2.getDatetime()));
+                if(chatMessages.size() == 0){
                     chatAdapter.notifyDataSetChanged();
                 }
                 else{
-                    chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
-                    binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size()-1);
-                    binding.chatRecyclerView.setVisibility(View.VISIBLE);
-                    binding.progressBar.setVisibility(View.GONE);
+                    if(chatAdapter == null){
+                        llenarUsuariochat();
+                        llenarWalkerx();
+                        binding.chatRecyclerView.setVisibility(View.VISIBLE);
+                        binding.progressBar.setVisibility(View.GONE);
+                    }
+                    else {
+                        chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
+                        binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+                        binding.chatRecyclerView.setVisibility(View.VISIBLE);
+                        binding.progressBar.setVisibility(View.GONE);
+                    }
                 }
                 if(conversionId== null){
                     checkForConversion();
@@ -168,8 +176,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-
-    private void init(){
+    private void llenarWalkerx(){
         myRef=database.getReference(PATH_USERS+getUid2());
         myRef.getDatabase().getReference(PATH_USERS+getUid2()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -179,7 +186,18 @@ public class ChatActivity extends AppCompatActivity {
                 binding.TextName.setText(walkerx.getNombre());
                 binding.imagePerson.setImageBitmap(decodedByte);
                 chatAdapter = new ChatAdapter(decodeFromFirebaseBase64(walkerx.getFoto()),chatMessages,mAuth.getCurrentUser().getUid());
+                setFotoUid2(walkerx.getFoto());
                 binding.chatRecyclerView.setAdapter(chatAdapter);
+            }
+        });
+    }
+
+
+    private void llenarUsuariochat(){
+        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                usuariochat = task.getResult().getValue(Usuario.class);
             }
         });
     }
@@ -192,7 +210,8 @@ public class ChatActivity extends AppCompatActivity {
         message.put(Constants.KEY_TIMESTAMP,java.text.DateFormat.getDateTimeInstance().format(new Date()));
         myRef = database.getReference(Constants.PATH_CHATS);
         myRef.push().setValue(message);
-        if(conversionId!=null){
+        Log.d("CrHATerrrr", "onCreatetttt: " + conversionId);
+        if(conversionId != null){
             updateConversion(binding.inputmessage.getText().toString());
         }
         else{
@@ -203,7 +222,7 @@ public class ChatActivity extends AppCompatActivity {
             conversion.put(Constants.KEY_RECEIVER_ID,getUid2());
             conversion.put(Constants.KEY_RECEIVER_NAME, walkerx.getNombre());
             conversion.put(Constants.KEY_RECEIVER_IMAGE,walkerx.getFoto());
-            conversion.put(Constants.KEY_MESSAGE, binding.inputmessage.getText().toString());
+            conversion.put(Constants.KEY_LAST_MESSAGE, binding.inputmessage.getText().toString());
             conversion.put(Constants.KEY_TIMESTAMP,java.text.DateFormat.getDateTimeInstance().format(new Date()));
             addConversion(conversion);
         }
