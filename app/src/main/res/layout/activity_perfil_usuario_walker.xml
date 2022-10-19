@@ -6,16 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".activities.PerfilUsuarioWalkerActivity">
 
-    <ImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/FotoPetWalker"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="56dp"
+        android:clickable="true"
+
+
+        app:civ_border_color="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tollbarPwalker"
-        tools:ignore="ImageContrastCheck"
+        tools:ignore="SpeakableTextPresentCheck"
         tools:srcCompat="@tools:sample/avatars" />
+
+
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tollbarPwalker"
@@ -87,7 +94,7 @@
         app:layout_constraintTop_toBottomOf="@+id/experienciaPetwalker" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/nombreview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="38dp"
@@ -97,7 +104,7 @@
         app:layout_constraintTop_toBottomOf="@+id/FotoPetWalker" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/telefonovieww"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -107,7 +114,7 @@
         app:layout_constraintTop_toBottomOf="@+id/nombrePetWalker" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/experienciaview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
@@ -115,4 +122,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TelefonoPetwalker" />
+
+    <ProgressBar
+        android:id="@+id/progressBar3"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="440dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

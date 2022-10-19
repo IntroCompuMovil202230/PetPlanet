@@ -91,12 +91,14 @@
         android:overScrollMode="never"
         android:padding="20dp"
         android:visibility="gone"
+        app:stackFromEnd="true"
         android:layout_marginBottom="65dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="@id/inputmessage"
         app:layout_constraintTop_toTopOf="@+id/viewBackGround" />
 
     <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="25dp"
         android:layout_height="25dp"
         app:layout_constraintBottom_toBottomOf="@id/viewBackGround"

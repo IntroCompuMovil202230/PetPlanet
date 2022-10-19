@@ -4,25 +4,72 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
+
 import android.widget.TextView;
 
 import com.example.petplanet.databinding.ActivityAgendarPaseosBinding;
 import com.google.android.material.datepicker.MaterialDatePicker;
 
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+
+import com.example.petplanet.R;
+import com.example.petplanet.adapters.CardAdapterUserDog;
+import com.example.petplanet.adapters.CardAdapterUsuario;
+import com.example.petplanet.databinding.ActivityAgendarPaseosBinding;
+import com.example.petplanet.databinding.ActivityRazasBinding;
+import com.example.petplanet.models.Paseo;
+import com.example.petplanet.models.Perro;
+import com.example.petplanet.models.Usuario;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class AgendarPaseosActivity extends AppCompatActivity {
     private ActivityAgendarPaseosBinding binding;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
+    DatabaseReference myUserRef;
+    private FirebaseAuth mAuth;
+    public static final String PATH_USERS="users/";
+    public static final String PATH_PERROS="/mascotas/";
+    public static final String PATH_PASEOS="paseos/";
+    Perro perrox = new Perro();
+    Usuario walkerx = new Usuario();
+    Usuario Client = new Usuario();
     int hour, minute;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAgendarPaseosBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
+        mAuth = FirebaseAuth.getInstance();
+        binding.progressBarAgendar.setVisibility(View.VISIBLE);
+        binding.spinnerMascota.setVisibility(View.INVISIBLE);
+        binding.AgendarHora.setVisibility(View.INVISIBLE);
+        binding.AgendarFecha.setVisibility(View.INVISIBLE);
+        binding.buttonAgendar.setVisibility(View.INVISIBLE);
         setSupportActionBar(binding.toolbarAgendar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -31,6 +78,41 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
             finish();
         });
+        ArrayList<Perro> prueba = new ArrayList<>();
+        ArrayList<String> menuperros = new ArrayList<>();
+        menuperros.add("Seleccione un perro");
+        myUserRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS);
+        myUserRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                binding.progressBarAgendar.setVisibility(View.INVISIBLE);
+                binding.spinnerMascota.setVisibility(View.VISIBLE);
+
+                binding.AgendarHora.setVisibility(View.VISIBLE);
+                binding.AgendarFecha.setVisibility(View.VISIBLE);
+                binding.buttonAgendar.setVisibility(View.VISIBLE);
+                Log.d("malditasea", "onComplete: "+task1.getResult().getValue());
+                task1.getResult().getChildren().forEach(perro -> {
+                    perrox = perro.getValue(Perro.class);
+                    Log.d("malditasea", "onComplete: "+perrox.getNombrecompleto());
+                    prueba.add(new Perro(perrox.getNombrecompleto(),perrox.getRaza(),perrox.getSexo(),perrox.getColor(),perrox.getFechanacimiento(),perrox.getVacunado(),perrox.getEsterilizado(),perrox.getFoto()));
+                    menuperros.add(perrox.getNombrecompleto());
+
+                    Log.d("malditasea", "onComplete: "+prueba.size());
+                    ArrayAdapter adapter = new ArrayAdapter(AgendarPaseosActivity.this, android.R.layout.simple_spinner_dropdown_item, menuperros);
+                    binding.spinnerMascota.setAdapter(adapter);
+                });
+            }
+        });
+
+
+
+        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Client = task.getResult().getValue(Usuario.class);
+            }
+        });
+
 
 
         binding.AgendarHora.setOnClickListener(v -> popTimePicker(v));
@@ -40,7 +122,6 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             String fecha = binding.AgendarFecha.getText().toString();
             String hora = binding.AgendarHora.getText().toString();
             String mascota = binding.spinnerMascota.getSelectedItem().toString();
-            String cuidador = binding.spinnerPaseador.getSelectedItem().toString();
             if(mascota.equals("Selecciona una mascota")){
                 ((TextView)binding.spinnerMascota.getSelectedView()).setError("Error message");
             }if(fecha.isEmpty()){
@@ -50,11 +131,8 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                 binding.AgendarHora.setError("Selecciona una hora valida");
                 binding.AgendarHora.requestFocus();
             }
-            if(cuidador.equals("Seleccione el paseador")) {
-                ((TextView) binding.spinnerPaseador.getSelectedView()).setError("Error message");
-            }
             else{
-            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+            agendarpaseo(fecha,hora,mascota);
             }
         });
 
@@ -77,6 +155,18 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
 
     }
+    public void agendarpaseo(String fecha, String hora, String mascota){
+
+       /* Paseo paseo = new Paseo(Client.getNombre(),mascota,Client.getLocalidad(),fecha,hora,Client.getDireccion());
+        myRef = database.getReference(PATH_PASEOS+mAuth.getCurrentUser().getUid());
+        myRef.child(id).setValue(paseo);
+        Toast.makeText(this, "Paseo agendado", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+        finish();*/
+
+
+    }
+
 
     public void popTimePicker(View view)
     {

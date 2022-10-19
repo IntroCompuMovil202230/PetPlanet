@@ -147,7 +147,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
                     try {
                         Bitmap img = (Bitmap) MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                        img.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                         byte[] byteArray = byteArrayOutputStream .toByteArray();
                         encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         Log.d("imagen", "onActivityResult: " + encoded);
