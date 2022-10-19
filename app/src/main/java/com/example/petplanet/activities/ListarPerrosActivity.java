@@ -10,7 +10,6 @@ import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterPerro;
 import com.example.petplanet.databinding.ActivityListarPerrosBinding;
 import com.example.petplanet.models.Perro;
-import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
 

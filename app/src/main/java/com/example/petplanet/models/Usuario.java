@@ -11,7 +11,9 @@ public class Usuario {
     private String contrasena;
     private String direccion;
     private String telefono;
+    private String fcmToken;
     private String foto;
+    private String id;
     private ArrayList<Perro> perros;    //Array de perros
 
 
@@ -23,7 +25,8 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String localidad, String correo, String direccion,String foto,boolean isWalker,String experiencia) {
+    public Usuario(String id,String nombre, String localidad, String correo, String direccion,String foto,boolean isWalker,String experiencia) {
+        this.id = id;
         this.nombre = nombre;
         this.localidad = localidad;
         this.correo = correo;
@@ -47,6 +50,22 @@ public class Usuario {
         this.experiencia = experiencia;
         this.linkhojadevida = linkhojadevida;
         this.linkdocumentoid = linkdocumentoid;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public ArrayList<Perro> getPerros() {

@@ -1,11 +1,16 @@
 package com.example.petplanet.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+
+import androidx.biometric.BiometricPrompt;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,11 +18,14 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+
+import android.widget.Button;
 import android.widget.Toast;
 
+
 import com.example.petplanet.R;
-import com.example.petplanet.adapters.CardAdapterPerro;
 import com.example.petplanet.adapters.CardAdapterUserDog;
 import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
 import com.example.petplanet.models.Perro;
@@ -28,14 +36,17 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 
 public class PerfilUsuarioActivity extends AppCompatActivity {
+    private BiometricPrompt biometricPrompt;
+   private BiometricPrompt.PromptInfo promptInfo;
 
     private ActivityPerfilUsuarioBinding binding;
     private FirebaseAuth mAuth;
+
     Usuario Client = new Usuario();
     Perro perrox = new Perro();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -47,12 +58,16 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     int SELECT_PICTURE = 200;
     int CAMERA_REQUEST = 100;
     ArrayList<Perro> perroslist =new ArrayList<>();
+    Boolean iswalker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
+        binding.guardatBTN.setVisibility(View.INVISIBLE);
+
 
         myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
@@ -65,6 +80,12 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 binding.direccionUsuario.setText(Client.getDireccion());
                 binding.localidadPetOwner.setText(Client.getLocalidad());
                 binding.emailtxt.setText(Client.getCorreo());
+                if(Client.getWalker()) {
+                    binding.addpet.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    binding.addpet.setVisibility(View.VISIBLE);
+                }
             }
         });
         ArrayList<Perro> prueba = new ArrayList<>();
@@ -72,6 +93,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         binding.grindPerrosdueno.setNumColumns(3);
         binding.grindPerrosdueno.setVerticalSpacing(30);
         binding.grindPerrosdueno.setHorizontalSpacing(30);
+
         myUserRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS);
         myUserRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
@@ -83,9 +105,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                     Log.d("malditasea", "onComplete: "+prueba.size());
 
                     ArrayAdapter adapter = new CardAdapterUserDog(this,R.layout.perfilperroview,prueba);
-                    if (binding.grindPerrosdueno != null) {
-                        binding.grindPerrosdueno.setAdapter(adapter);
-                    }
+                    binding.grindPerrosdueno.setAdapter(adapter);
                     binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
                         Intent intent = new Intent(getApplicationContext() , PerfilPerroActivity.class);
                         Perro items = prueba.get(position);
@@ -98,6 +118,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
             }
         });
+
 
         binding.toolbarPusuario.setTitle("");
         setSupportActionBar(binding.toolbarPusuario);
@@ -124,9 +145,15 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
 
         binding.toolbarPusuario.setNavigationOnClickListener(v -> {
-            // luego se pone despues que se revise el rol del usuario a que pantalla ir
-            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
-            finish();
+            if(Client.getWalker()){
+                startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+                finish();
+            }
+            else{
+                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                finish();
+            }
+
         });
 
 
@@ -137,11 +164,40 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             finish();
         });
 
-
         binding.addpet.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), RegistroPerroActivity.class);
             startActivity(intent);
             finish();
+        });
+
+
+       binding.fingerBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Executor executor = ContextCompat.getMainExecutor(PerfilUsuarioActivity.this);
+
+                biometricPrompt = new BiometricPrompt(PerfilUsuarioActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationError(int errorCode, @NonNull  CharSequence errString) {
+                        super.onAuthenticationError(errorCode, errString);
+                    }
+
+                    @Override
+                    public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        //Cambiar de pantalla
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        super.onAuthenticationFailed();
+                    }
+                });
+
+                promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Project").setDescription("Usa tu huella").setDeviceCredentialAllowed(true).build();
+                biometricPrompt.authenticate(promptInfo);
+            }
         });
     }
 
@@ -187,7 +243,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-
+                    binding.guardatBTN.setVisibility(View.VISIBLE);
                     binding.profilePetUPicture.setImageURI(selectedImageUri);
                 }
             }
@@ -201,8 +257,21 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             fotoS = Base64.encodeToString(byteArray, Base64.DEFAULT);
             Log.d("imagen", "onActivityResult: " + fotoS);
 
+            binding.guardatBTN.setVisibility(View.VISIBLE);
             binding.profilePetUPicture.setImageBitmap(image);
         }
+        binding.guardatBTN.setOnClickListener(view -> {
+            Client.setFoto(fotoS);
+            myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
+            myRef.setValue(Client).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+                    binding.guardatBTN.setVisibility(View.INVISIBLE);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Error al actualizar foto de perfil", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
 
