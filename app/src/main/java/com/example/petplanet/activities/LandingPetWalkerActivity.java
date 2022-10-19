@@ -27,13 +27,15 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         float presionActual;
+        Sensor presSensor;
+        SensorEventListener presSensorListener;
         SensorManager sensorManager;
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         presionActual = 0;
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         presSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        presSensorListener = lecturaPres;
 
         SensorManager.registerListener(presSensorListener,presSensor,sensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(presSensorListener,tempSensor,sensorManager.SENSOR_DELAY_NORMAL);
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         SensorEventListener event;
