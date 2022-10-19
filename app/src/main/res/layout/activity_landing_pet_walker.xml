@@ -8,14 +8,12 @@
     android:orientation="vertical"
     tools:context=".activities.LandingPetWalkerActivity">
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="577dp"
-        android:layout_height="933dp"
-        android:src="@drawable/mapa"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.LandingPetWalkerActivity" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"

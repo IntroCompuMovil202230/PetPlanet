@@ -4,13 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import androidx.appcompat.widget.Toolbar;
 
-import com.example.petplanet.R;
-import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
 import com.example.petplanet.databinding.ActivityListaDeChatsBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ListaDeChatsActivity extends AppCompatActivity {
     private ActivityListaDeChatsBinding binding;

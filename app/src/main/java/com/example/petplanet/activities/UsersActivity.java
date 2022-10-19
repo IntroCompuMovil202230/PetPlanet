@@ -8,7 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import com.example.petplanet.R;
+
 import com.example.petplanet.adapters.UsersAdapter;
 import com.example.petplanet.databinding.ActivityUsersBinding;
 import com.example.petplanet.models.Usuario;

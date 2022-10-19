@@ -1,20 +1,11 @@
 package com.example.petplanet.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -23,16 +14,25 @@ import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityLandingPetOwnerBinding;
 import com.google.android.gms.common.api.ApiException;
@@ -54,13 +54,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -68,15 +68,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
 
 public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ActivityLandingPetOwnerBinding binding;
@@ -95,7 +86,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     Sensor lightSensor;
     SensorEventListener lightSensorListener;
 
-    EditText editAddress;
 
     public static final double lowerLeftLatitude = 4.4542324059959295;
     public static final double lowerLeftLongitude= -74.31798356566968;
@@ -151,16 +141,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
             }
             return true;
         });
-        editAddress = findViewById(R.id.address);
-        editAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_SEND){
-                    buscarDireccion();
-                }
-                return false;
-            }
-        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -209,8 +189,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
         // Initialize geocoder
         mGeocoder = new Geocoder(getBaseContext());
-
-
     }
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -398,37 +376,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                 }
             }
         }
-    }
-
-    public void buscarDireccion(){
-        mMap.clear();
-        String valorBuscar = editAddress.getText().toString();
-        if(!valorBuscar.isEmpty()){
-            try {
-                List<Address> direcciones = mGeocoder.getFromLocationName(valorBuscar, 10,
-                        lowerLeftLatitude, lowerLeftLongitude, upperRightLatitude, upperRightLongitude);
-                if(!direcciones.isEmpty()){
-                    for(Address dir: direcciones){
-                        LatLng posicion = new LatLng(dir.getLatitude(), dir.getLongitude());
-                        mMap.addMarker( new MarkerOptions()
-                                .position(posicion)
-                                .title(dir.getFeatureName())
-                                .snippet(dir.getAddressLine(0))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(posicion));
-                        double distancia = distancia(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),posicion.latitude,posicion.longitude);
-                        Toast.makeText(LandingPetOwnerActivity.this,
-                                "Distancia al objetivo: "+distancia+" km", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(LandingPetOwnerActivity.this,
-                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();}
-            } catch (IOException ex){
-                ex.printStackTrace();
-            }
-        }else {
-            Toast.makeText(LandingPetOwnerActivity.this,
-                    "La dirección esta vacía", Toast.LENGTH_SHORT).show();}
     }
 
     private void webServiceObtenerRuta(String latitudInicial, String longitudInicial, String latitudFinal, String longitudFinal) {
