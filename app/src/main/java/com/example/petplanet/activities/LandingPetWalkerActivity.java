@@ -19,12 +19,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class LandingPetWalkerActivity extends AppCompatActivity {
+
     private ActivityLandingPetWalkerBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        float presionActual;
+        presionActual = 0;
+        tempSensorListener = lecturaTemperatura;
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
@@ -33,14 +37,13 @@ public class LandingPetWalkerActivity extends AppCompatActivity {
         private SensorEventListener lecturaSensor = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if (mMap != null) {
-                    if (Math.abs(tempActual - sensorEvent.values[0]) > 10) {
-                        tempActual = sensorEvent.values[0];
-                        if (tempActual < 12) {
-                            Toast.makeText(PrincipalEstudiante.this, "La temperatura es muy baja, abríguese mijo!", Toast.LENGTH_SHORT).show();
-                        } else if (tempActual > 25) {
-                            Toast.makeText(PrincipalEstudiante.this, "La temperatura es alta, toma agüita!", Toast.LENGTH_SHORT).show();
-                        }
+
+                if (Math.abs(presionActual - sensorEvent.values[0]) > 10) {
+                    presionActual = sensorEvent.values[0];
+                    if (presionActual < 12) {
+                        Toast.makeText(LandingPetWalkerActivity.this, "Esta haciendo sol! Relajao", Toast.LENGTH_SHORT).show();
+                    } else if (presionActual > 25) {
+                        Toast.makeText(LandingPetWalkerActivity.this, "Cuidado, puede llover! busca un paraguas", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
