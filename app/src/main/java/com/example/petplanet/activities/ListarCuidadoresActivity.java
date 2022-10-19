@@ -1,13 +1,15 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
+import android.widget.ArrayAdapter;
+
 import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,9 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
+
 import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.R;
-import com.example.petplanet.databinding.ActivityListaPaseosBinding;
 import com.example.petplanet.databinding.ActivityListarCuidadoresBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;

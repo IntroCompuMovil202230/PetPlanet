@@ -11,10 +11,12 @@ import android.preference.PreferenceManager;
 import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.View;
+
 import android.widget.ArrayAdapter;
 
 import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterUsuario;
+
 import com.example.petplanet.adapters.UsersAdapter;
 import com.example.petplanet.databinding.ActivityUsersBinding;
 import com.example.petplanet.listeners.UserListener;
