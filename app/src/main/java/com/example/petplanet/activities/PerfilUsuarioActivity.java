@@ -145,9 +145,15 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
 
         binding.toolbarPusuario.setNavigationOnClickListener(v -> {
-            // luego se pone despues que se revise el rol del usuario a que pantalla ir
-            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
-            finish();
+            if(Client.getWalker()){
+                startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+                finish();
+            }
+            else{
+                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                finish();
+            }
+
         });
 
 

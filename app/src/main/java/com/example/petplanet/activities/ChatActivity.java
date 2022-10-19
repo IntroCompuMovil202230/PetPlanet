@@ -145,9 +145,9 @@ public class ChatActivity extends AppCompatActivity {
                         Log.d("CrHATerrrr", "onCreate: " + chatMessages.size());
                 }
                 Log.d("CrHATerrrrss", "mnmhhhhhhhhhhhh: " + chatMessages.size());
-                Collections.sort(chatMessages, (o1, o2) -> o1.getDatetime().compareTo(o2.getDatetime()));
-                if(chatMessages.size() == 0){
-                    chatAdapter.notifyDataSetChanged();
+                chatMessages.sort(Comparator.comparing(ChatMessage::getDatetime));
+                if(chatMessages.isEmpty()){
+                    //chatAdapter.notifyDataSetChanged();
                 }
                 else{
                     if(chatAdapter == null){

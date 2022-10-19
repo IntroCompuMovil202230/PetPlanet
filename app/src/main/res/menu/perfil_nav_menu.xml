@@ -6,7 +6,7 @@
     <item
         android:id="@+id/logoutBtn"
         android:icon="@drawable/ic_logout"
-        android:iconTint="@color/white"
+        android:iconTint="@color/purple_200"
         android:title="@string/cerrar_sesion"
         app:showAsAction="ifRoom"
     />

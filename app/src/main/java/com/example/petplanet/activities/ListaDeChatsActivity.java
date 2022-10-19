@@ -135,7 +135,6 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra(Constants.KEY_USER_ID,user.getId());
         intent.putExtra(Constants.KEY_USER,"me han tocado jejeje");
-
         startActivity(intent);
     }
 

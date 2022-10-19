@@ -17,6 +17,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,10 +34,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityLandingPetOwnerBinding;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -47,6 +55,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -55,6 +64,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -62,6 +72,9 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.directions.route.RoutingListener;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +82,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RoutingListener {
     private ActivityLandingPetOwnerBinding binding;
     public final static double RADIUS_OF_EARTH_KM = 6371;
 
@@ -79,13 +93,13 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
     private GoogleMap mMap;
     private final static int INITIAL_ZOOM_LEVEL = 15;
-
     private Geocoder mGeocoder;
 
-    SensorManager sensorManager;
+    private SensorManager sensorManager;
     Sensor lightSensor;
-    SensorEventListener lightSensorListener;
-
+    private Sensor humSensor;
+    private SensorEventListener lightSensorListener;
+    private List<Polyline> polylines=null;
 
     public static final double lowerLeftLatitude = 4.4542324059959295;
     public static final double lowerLeftLongitude= -74.31798356566968;
@@ -106,6 +120,12 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
+    protected LatLng start=null;
+    protected LatLng end=null;
+
+
+    private float humActual;
+    private SensorEventListener humSensorListener;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -113,7 +133,11 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetOwnerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
+
+
+        humActual = 0;
         binding.bottomNavigation.setBackground(null);
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -163,8 +187,44 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                 }
             }
         };
+        humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        humSensorListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
+
+                    if(Math.abs(humActual-sensorEvent.values[0])>1){
+                    humActual = sensorEvent.values[0];
+                    Log.d("Humedad", "Humedad: "+humActual);
+                    if(humActual >  65)
+                    {
+                        Toast.makeText(LandingPetOwnerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(LandingPetOwnerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
+
+            }
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // Initialize the sensors
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // Initialize the listener
@@ -190,6 +250,9 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         // Initialize geocoder
         mGeocoder = new Geocoder(getBaseContext());
     }
+
+
+
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
@@ -202,39 +265,42 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         ArrayList<LatLng> points = null;
         PolylineOptions lineOptions = null;
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(@NonNull LatLng latLng) {mMap.clear();
+        mMap.setOnMapLongClickListener(latLng -> {mMap.clear();
 
-                // Animating to the touched position
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            // Animating to the touched position
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                try {
-                    List<Address> direcciones =mGeocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
-                    if(!direcciones.isEmpty()){
-                        for(Address dir: direcciones){
-                            mMap.addMarker( new MarkerOptions()
-                                    .position(latLng)
-                                    .title(dir.getFeatureName())
-                                    .snippet(dir.getAddressLine(0))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                            Utilitys.coordenadas.setLatitudInicial(mCurrentLocation.getLatitude());
-                            Utilitys.coordenadas.setLongitudInicial(mCurrentLocation.getLongitude());
-                            Utilitys.coordenadas.setLatitudFinal(latLng.latitude);
-                            Utilitys.coordenadas.setLongitudFinal(latLng.longitude);
-                            webServiceObtenerRuta(String.valueOf(mCurrentLocation.getLongitude()),String.valueOf(mCurrentLocation.getLongitude()),
-                                    String.valueOf(latLng.latitude),String.valueOf(latLng.longitude));
-                            double distancia = distancia(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),latLng.latitude,latLng.longitude);
-                            Toast.makeText(LandingPetOwnerActivity.this,
-                                    "Distancia : "+distancia+" km", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
+            try {
+                List<Address> direcciones =mGeocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
+                if(!direcciones.isEmpty()){
+                    for(Address dir: direcciones){
+                        mMap.addMarker( new MarkerOptions()
+                                .position(latLng)
+                                .title(dir.getFeatureName())
+                                .snippet(dir.getAddressLine(0))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                        Location locationA = new Location("point A");
+                        locationA.setLatitude(mCurrentLocation.getLatitude());
+                        locationA.setLongitude(mCurrentLocation.getLongitude());
+                        start = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+                        Location locationB = new Location("point B");
+                        locationB.setLatitude(latLng.latitude);
+                        locationB.setLongitude(latLng.longitude);
+                        float distance = locationA.distanceTo(locationB);
+                        float distanceKm = distance / 1000;
+                        end = new LatLng(latLng.latitude,latLng.longitude);
                         Toast.makeText(LandingPetOwnerActivity.this,
-                                "Dirección no encontrada", Toast.LENGTH_SHORT).show();}
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                                "Distancia : "+distanceKm+" km", Toast.LENGTH_SHORT).show();
+                        Findroutes(start,end);
+
+
+                    }
+                } else {
+                    Toast.makeText(LandingPetOwnerActivity.this,
+                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();}
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 
@@ -307,6 +373,27 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         return mLocationRequest;
     }
 
+    public void Findroutes(LatLng Start, LatLng End)
+    {
+        if(Start==null || End==null) {
+            Toast.makeText(LandingPetOwnerActivity.this,"Unable to get location", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.DRIVING)
+                    .withListener(this)
+                    .alternativeRoutes(true)
+                    .waypoints(Start, End)
+                    .key("AIzaSyCydYqy3SwNNILEiFKMZRyloqvEVUuTkFU")  //also define your api key here.
+                    .build();
+            routing.execute();
+        }
+    }
+
+
+
     private void requestPermission(Activity context, String permiso, String justificacion, int idCode){
         if(ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED){
             if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)){
@@ -378,161 +465,8 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         }
     }
 
-    private void webServiceObtenerRuta(String latitudInicial, String longitudInicial, String latitudFinal, String longitudFinal) {
 
-        String url="https://maps.googleapis.com/maps/api/directions/json?origin="+latitudInicial+","+longitudInicial
-                +"&destination="+latitudFinal+","+longitudFinal;
 
-        jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                //Este método PARSEA el JSONObject que retorna del API de Rutas de Google devolviendo
-                //una lista del lista de HashMap Strings con el listado de Coordenadas de Lat y Long,
-                //con la cual se podrá dibujar pollinas que describan la ruta entre 2 puntos.
-                JSONArray jRoutes = null;
-                JSONArray jLegs = null;
-                JSONArray jSteps = null;
-
-                try {
-
-                    jRoutes = response.getJSONArray("routes");
-
-                    /** Traversing all routes */
-                    for(int i=0;i<jRoutes.length();i++){
-                        jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
-                        List<HashMap<String, String>> path = new ArrayList<HashMap<String, String>>();
-
-                        /** Traversing all legs */
-                        for(int j=0;j<jLegs.length();j++){
-                            jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
-
-                            /** Traversing all steps */
-                            for(int k=0;k<jSteps.length();k++){
-                                String polyline = "";
-                                polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
-                                List<LatLng> list = decodePoly(polyline);
-
-                                /** Traversing all points */
-                                for(int l=0;l<list.size();l++){
-                                    HashMap<String, String> hm = new HashMap<String, String>();
-                                    hm.put("lat", Double.toString(((LatLng)list.get(l)).latitude) );
-                                    hm.put("lng", Double.toString(((LatLng)list.get(l)).longitude) );
-                                    path.add(hm);
-                                }
-                            }
-                            Utilitys.routes.add(path);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }catch (Exception e){
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "No se puede conectar "+error.toString(), Toast.LENGTH_LONG).show();
-                System.out.println();
-                Log.d("ERROR: ", error.toString());
-            }
-        }
-        );
-
-        request.add(jsonObjectRequest);
-    }
-
-    public List<List<HashMap<String,String>>> parse(JSONObject jObject){
-        //Este método PARSEA el JSONObject que retorna del API de Rutas de Google devolviendo
-        //una lista del lista de HashMap Strings con el listado de Coordenadas de Lat y Long,
-        //con la cual se podrá dibujar pollinas que describan la ruta entre 2 puntos.
-        JSONArray jRoutes = null;
-        JSONArray jLegs = null;
-        JSONArray jSteps = null;
-
-        try {
-
-            jRoutes = jObject.getJSONArray("routes");
-
-            /** Traversing all routes */
-            for(int i=0;i<jRoutes.length();i++){
-                jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
-                List<HashMap<String, String>> path = new ArrayList<HashMap<String, String>>();
-
-                /** Traversing all legs */
-                for(int j=0;j<jLegs.length();j++){
-                    jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
-
-                    /** Traversing all steps */
-                    for(int k=0;k<jSteps.length();k++){
-                        String polyline = "";
-                        polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
-                        List<LatLng> list = decodePoly(polyline);
-
-                        /** Traversing all points */
-                        for(int l=0;l<list.size();l++){
-                            HashMap<String, String> hm = new HashMap<String, String>();
-                            hm.put("lat", Double.toString(((LatLng)list.get(l)).latitude) );
-                            hm.put("lng", Double.toString(((LatLng)list.get(l)).longitude) );
-                            path.add(hm);
-                        }
-                    }
-                    Utilitys.routes.add(path);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }catch (Exception e){
-        }
-        return Utilitys.routes;
-    }
-
-    private List<LatLng> decodePoly(String encoded) {
-
-        List<LatLng> poly = new ArrayList<LatLng>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            LatLng p = new LatLng((((double) lat / 1E5)),
-                    (((double) lng / 1E5)));
-            poly.add(p);
-        }
-
-        return poly;
-    }
-
-    public double distancia(double lat1, double long1, double lat2, double long2) {
-        double latDistance = Math.toRadians(lat1 - lat2);
-        double lngDistance = Math.toRadians(long1 - long2);
-        double a = Math.sin(latDistance / 2) *
-                Math.sin(latDistance / 2)+
-                Math.cos(Math.toRadians(lat1))*
-                        Math.cos(Math.toRadians(lat2))*
-                        Math.sin(lngDistance / 2) *
-                        Math.sin(lngDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double result = RADIUS_OF_EARTH_KM * c;
-        return Math.round(result*100.0)/100.0;
-    }
 
     @Override
     protected void onResume() {
@@ -541,6 +475,9 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         startLocationUpdates();
         sensorManager.registerListener(lightSensorListener,
                 lightSensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(humSensorListener,
+                humSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -571,6 +508,69 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         super.onStop();
     }
 
+    //Routing call back functions.
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        View parentLayout = findViewById(android.R.id.content);
+        Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
+        snackbar.show();
+//        Findroutes(start,end);
+    }
+
+    @Override
+    public void onRoutingStart() {
+        Toast.makeText(LandingPetOwnerActivity.this,"Finding Route...",Toast.LENGTH_LONG).show();
+    }
+
+    //If Route finding success..
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+
+        CameraUpdate center = CameraUpdateFactory.newLatLng(start);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+        if(polylines!=null) {
+            polylines.clear();
+        }
+        PolylineOptions polyOptions = new PolylineOptions();
+        LatLng polylineStartLatLng=null;
+        LatLng polylineEndLatLng=null;
+
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map using polyline
+        for (int i = 0; i <route.size(); i++) {
+
+            if(i==shortestRouteIndex)
+            {
+                polyOptions.color(getResources().getColor(R.color.purple_500));
+                polyOptions.width(7);
+                polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
+                Polyline polyline = mMap.addPolyline(polyOptions);
+                polylineStartLatLng=polyline.getPoints().get(0);
+                int k=polyline.getPoints().size();
+                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylines.add(polyline);
+
+            }
+            else {
+
+            }
+
+        }
+
+
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+        Findroutes(start,end);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Findroutes(start,end);
+
+    }
 
 
 }
