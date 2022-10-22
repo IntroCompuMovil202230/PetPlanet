@@ -42,7 +42,7 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
     private FirebaseAuth mAuth;
 
 
-    public static final String PATH_USERS="users/";
+    public static final String PATH_USERS = "users/";
     Usuario walkerx = new Usuario();
 
 
@@ -52,7 +52,6 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
         super.onCreate(savedInstanceState);
         binding = ActivityUsersBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //preferenceManager = new PreferenceManager(getApplicationContext());
         mAuth = FirebaseAuth.getInstance();
         myRef = database.getReference(PATH_USERS);
         setListeners();
@@ -63,27 +62,27 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
     private void setListeners() {
         binding.imageback.setOnClickListener(v -> onBackPressed());
     }
+
     boolean currentwalkerstatus = false;
-    private void getUsers(){
+
+    private void getUsers() {
         List<Usuario> users = new ArrayList<>();
 
         myRef.getDatabase().getReference(PATH_USERS).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                //binding.progressBar2.setVisibility(View.INVISIBLE);
                 for (DataSnapshot walker : task.getResult().getChildren()) {
-                    if(mAuth.getCurrentUser().getUid().equals(walker.getKey())){
+                    if (mAuth.getCurrentUser().getUid().equals(walker.getKey())) {
                         currentwalkerstatus = walker.child("walker").getValue(Boolean.class);
                     }
-                    if(!mAuth.getCurrentUser().getUid().equals(walker.getKey())){
+                    if (!mAuth.getCurrentUser().getUid().equals(walker.getKey())) {
                         walkerx = walker.getValue(Usuario.class);
-                        Log.d("walkerx", String.valueOf(currentwalkerstatus));
-                        if (!walkerx.getWalker().equals(currentwalkerstatus) || walkerx.getWalker().equals(currentwalkerstatus)) {
-                            users.add(new Usuario(walker.getKey(),walkerx.getNombre(),walkerx.getLocalidad(),walkerx.getCorreo(),walkerx.getDireccion(),walkerx.getFoto(),walkerx.getWalker(),walkerx.getExperiencia()));
+                        if (!walkerx.getWalker().equals(currentwalkerstatus)) {
+                            users.add(new Usuario(walker.getKey(), walkerx.getNombre(), walkerx.getTelefono(), walkerx.getLocalidad(), walkerx.getCorreo(), walkerx.getDireccion(), walkerx.getFoto(), walkerx.getWalker(), walkerx.getExperiencia()));
                         }
                     }
                 }
-                if(users.size() > 0){
-                    UsersAdapter usersAdapter = new UsersAdapter(users,this);
+                if (users.size() > 0) {
+                    UsersAdapter usersAdapter = new UsersAdapter(users, this);
                     binding.progressBar.setVisibility(View.INVISIBLE);
                     binding.usersList.setAdapter(usersAdapter);
                     binding.usersList.setVisibility(View.VISIBLE);
@@ -96,8 +95,8 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
     @Override
     public void onUserClicked(Usuario user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra(Constants.KEY_USER_ID,user.getId());
-        intent.putExtra(Constants.KEY_USER,user.getCorreo());
+        intent.putExtra(Constants.KEY_USER_ID, user.getId());
+        intent.putExtra(Constants.KEY_USER, user.getCorreo());
 
         startActivity(intent);
     }

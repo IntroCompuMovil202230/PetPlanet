@@ -74,6 +74,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -87,9 +88,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     // Setup del logger para esta clase
     private static final String TAG = LandingPetWalkerActivity.class.getName();
     private Logger logger = Logger.getLogger(TAG);
-    private List<Polyline> polylines=null;
-    protected LatLng start=null;
-    protected LatLng end=null;
+    private List<Polyline> polylines = null;
+    protected LatLng start = null;
+    protected LatLng end = null;
     private GoogleMap mMap;
     private final static int INITIAL_ZOOM_LEVEL = 15;
 
@@ -104,9 +105,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private Sensor humSensor;
 
     public static final double lowerLeftLatitude = 4.4542324059959295;
-    public static final double lowerLeftLongitude= -74.31798356566968;
-    public static final double upperRightLatitude= 4.978316663093684;
-    public static final double upperRightLongitude= -73.89683495545846;
+    public static final double lowerLeftLongitude = -74.31798356566968;
+    public static final double upperRightLatitude = 4.978316663093684;
+    public static final double upperRightLongitude = -73.89683495545846;
 
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
@@ -129,7 +130,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -172,41 +173,41 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
-                aux=location;
+                aux = location;
                 Log.i(TAG, "Location update in the callback: " + location);
                 if (location != null) {
                     mCurrentLocation = location;
                 }
             }
         };
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
+            humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+            humSensorListener = new SensorEventListener() {
+                @Override
+                public void onSensorChanged(SensorEvent sensorEvent) {
 
-        humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        humSensorListener = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-
-                if(Math.abs(humActual-sensorEvent.values[0])>1){
-                    humActual = sensorEvent.values[0];
-                    Log.d("Humedad", "Humedad: "+humActual);
-                    if(humActual >  65)
-                    {
-                        Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+                    if (Math.abs(humActual - sensorEvent.values[0]) > 1) {
+                        humActual = sensorEvent.values[0];
+                        Log.d("Humedad", "Humedad: " + humActual);
+                        if (humActual > 65) {
+                            Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
-            }
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {
 
-            }
-        };
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int i) {
 
-
+                }
+            };
+        }
+        sensorManager.registerListener(humSensorListener, humSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
 
         // Initialize the sensors
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // Initialize the listener
@@ -225,8 +226,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                     }
                 }
             }
+
             @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
         };
 
         // Initialize geocoder
@@ -248,16 +251,17 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
-            public void onMapLongClick(@NonNull LatLng latLng) {mMap.clear();
+            public void onMapLongClick(@NonNull LatLng latLng) {
+                mMap.clear();
 
                 // Animating to the touched position
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
                 try {
-                    List<Address> direcciones =mGeocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
-                    if(!direcciones.isEmpty()){
-                        for(Address dir: direcciones){
-                            mMap.addMarker( new MarkerOptions()
+                    List<Address> direcciones = mGeocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    if (!direcciones.isEmpty()) {
+                        for (Address dir : direcciones) {
+                            mMap.addMarker(new MarkerOptions()
                                     .position(latLng)
                                     .title(dir.getFeatureName())
                                     .snippet(dir.getAddressLine(0))
@@ -266,27 +270,28 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             Location locationA = new Location("point A");
                             locationA.setLatitude(mCurrentLocation.getLatitude());
                             locationA.setLongitude(mCurrentLocation.getLongitude());
-                            start = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+                            start = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                             Location locationB = new Location("point B");
                             locationB.setLatitude(latLng.latitude);
                             locationB.setLongitude(latLng.longitude);
                             float distance = locationA.distanceTo(locationB);
                             float distanceKm = distance / 1000;
-                            end = new LatLng(latLng.latitude,latLng.longitude);
+                            end = new LatLng(latLng.latitude, latLng.longitude);
                             Toast.makeText(getApplicationContext(),
-                                    "Distancia : "+distanceKm+" km", Toast.LENGTH_SHORT).show();
-                            Findroutes(start,end);
+                                    "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
+                            Findroutes(start, end);
                         }
                     } else {
                         Toast.makeText(LandingPetWalkerActivity.this,
-                                "Dirección no encontrada", Toast.LENGTH_SHORT).show();}
+                                "Dirección no encontrada", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        for(int i=0;i<Utilitys.routes.size();i++){
+        for (int i = 0; i < Utilitys.routes.size(); i++) {
             points = new ArrayList<LatLng>();
             lineOptions = new PolylineOptions();
 
@@ -294,8 +299,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             List<HashMap<String, String>> path = Utilitys.routes.get(i);
 
             // Obteniendo todos los puntos y/o coordenadas de la ruta
-            for(int j=0;j<path.size();j++){
-                HashMap<String,String> point = path.get(j);
+            for (int j = 0; j < path.size(); j++) {
+                HashMap<String, String> point = path.get(j);
 
                 double lat = Double.parseDouble(point.get("lat"));
                 double lng = Double.parseDouble(point.get("lng"));
@@ -334,20 +339,20 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     }
 
-    private void startLocationUpdates(){
-        if(ContextCompat.checkSelfPermission(this,
+    private void startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED){
+                == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, null);
         }
     }
 
-    private void stopLocationUpdates(){
+    private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
-    private LocationRequest createLocationRequest(){
+    private LocationRequest createLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
@@ -355,9 +360,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         return mLocationRequest;
     }
 
-    private void requestPermission(Activity context, String permiso, String justificacion, int idCode){
-        if(ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)){
+    private void requestPermission(Activity context, String permiso, String justificacion,
+                                   int idCode) {
+        if (ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)) {
                 Toast.makeText(context, justificacion, Toast.LENGTH_SHORT).show();
             }
             ActivityCompat.requestPermissions(context, new String[]{permiso}, idCode);
@@ -365,11 +371,12 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
+        switch (requestCode) {
             case LOCATION_PERMISSION_ID: {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Ya hay permiso para acceder a la localizacion", Toast.LENGTH_LONG).show();
                     turnOnLocationAndStartUpdates();
                 } else {
@@ -380,7 +387,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         }
     }
 
-    private void turnOnLocationAndStartUpdates(){
+    private void turnOnLocationAndStartUpdates() {
         LocationSettingsRequest.Builder builder =
                 new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
         SettingsClient client = LocationServices.getSettingsClient(this);
@@ -399,7 +406,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                         try {
                             // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
                             ResolvableApiException resolvable = (ResolvableApiException) e;
-                            resolvable.startResolutionForResult(LandingPetWalkerActivity.this,REQUEST_CHECK_SETTINGS);
+                            resolvable.startResolutionForResult(LandingPetWalkerActivity.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException sendEx) {
                             // Ignore the error.
                         }
@@ -415,11 +422,11 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CHECK_SETTINGS: {
-                if (resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     startLocationUpdates();
-                }else {
+                } else {
                     Toast.makeText(this, "Sin acceso a localizacion", Toast.LENGTH_LONG).show();
                 }
             }
@@ -469,13 +476,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
 
-    public void Findroutes(LatLng Start, LatLng End)
-    {
-        if(Start==null || End==null) {
-            Toast.makeText(getApplicationContext(),"Unable to get location", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
+    public void Findroutes(LatLng Start, LatLng End) {
+        if (Start == null || End == null) {
+            Toast.makeText(getApplicationContext(), "Unable to get location", Toast.LENGTH_LONG).show();
+        } else {
 
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.DRIVING)
@@ -493,14 +497,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     @Override
     public void onRoutingFailure(RouteException e) {
         View parentLayout = findViewById(android.R.id.content);
-        Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
         snackbar.show();
 //        Findroutes(start,end);
     }
 
     @Override
     public void onRoutingStart() {
-        Toast.makeText(getApplicationContext(),"Finding Route...",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Finding Route...", Toast.LENGTH_LONG).show();
     }
 
     //If Route finding success..
@@ -509,31 +513,29 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-        if(polylines!=null) {
+        if (polylines != null) {
             polylines.clear();
         }
         PolylineOptions polyOptions = new PolylineOptions();
-        LatLng polylineStartLatLng=null;
-        LatLng polylineEndLatLng=null;
+        LatLng polylineStartLatLng = null;
+        LatLng polylineEndLatLng = null;
 
 
         polylines = new ArrayList<>();
         //add route(s) to the map using polyline
-        for (int i = 0; i <route.size(); i++) {
+        for (int i = 0; i < route.size(); i++) {
 
-            if(i==shortestRouteIndex)
-            {
+            if (i == shortestRouteIndex) {
                 polyOptions.color(getResources().getColor(R.color.purple_500));
                 polyOptions.width(7);
                 polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
                 Polyline polyline = mMap.addPolyline(polyOptions);
-                polylineStartLatLng=polyline.getPoints().get(0);
-                int k=polyline.getPoints().size();
-                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylineStartLatLng = polyline.getPoints().get(0);
+                int k = polyline.getPoints().size();
+                polylineEndLatLng = polyline.getPoints().get(k - 1);
                 polylines.add(polyline);
 
-            }
-            else {
+            } else {
 
             }
 
@@ -544,13 +546,12 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     @Override
     public void onRoutingCancelled() {
-        Findroutes(start,end);
+        Findroutes(start, end);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Findroutes(start,end);
-
+        Findroutes(start, end);
     }
 
 

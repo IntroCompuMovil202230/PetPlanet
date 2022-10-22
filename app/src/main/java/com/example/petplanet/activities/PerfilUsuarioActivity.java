@@ -11,8 +11,10 @@ import android.graphics.BitmapFactory;
 
 
 import androidx.biometric.BiometricPrompt;
+
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -42,7 +44,7 @@ import java.util.concurrent.Executor;
 
 public class PerfilUsuarioActivity extends AppCompatActivity {
     private BiometricPrompt biometricPrompt;
-   private BiometricPrompt.PromptInfo promptInfo;
+    private BiometricPrompt.PromptInfo promptInfo;
 
     private ActivityPerfilUsuarioBinding binding;
     private FirebaseAuth mAuth;
@@ -52,13 +54,15 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     DatabaseReference myUserRef;
-    public static final String PATH_USERS="users/";
-    public static final String PATH_PERROS="/mascotas/";
+    public static final String PATH_USERS = "users/";
+    public static final String PATH_PERROS = "/mascotas/";
     String fotoS;
     int SELECT_PICTURE = 200;
     int CAMERA_REQUEST = 100;
-    ArrayList<Perro> perroslist =new ArrayList<>();
+    ArrayList<Perro> perroslist = new ArrayList<>();
     Boolean iswalker;
+    ArrayList<Perro> prueba = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,58 +70,31 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
+
+
+
         binding.guardatBTN.setVisibility(View.INVISIBLE);
+        binding.profilePetUPicture.setVisibility(View.INVISIBLE);
+        binding.fullNamePet.setVisibility(View.INVISIBLE);
+        binding.direccionUsuario.setVisibility(View.INVISIBLE);
+        binding.localidadPetOwner.setVisibility(View.INVISIBLE);
+        binding.emailtxt.setVisibility(View.INVISIBLE);
+        binding.progressBarPerfilUsuario.setVisibility(View.VISIBLE);
+        binding.textViewcorreo.setVisibility(View.INVISIBLE);
+        binding.textViewdireccion.setVisibility(View.INVISIBLE);
+        binding.textViewLocalidad.setVisibility(View.INVISIBLE);
+        binding.textViewnombre.setVisibility(View.INVISIBLE);
+        binding.fingerBTN.setVisibility(View.INVISIBLE);
+        binding.changepasswordBTN.setVisibility(View.INVISIBLE);
+        binding.addpet.setVisibility(View.INVISIBLE);
 
+        cargardatos();
+        cargandodatosperros();
 
-        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Client = task.getResult().getValue(Usuario.class);
-                byte[] decodedString = Base64.decode(Client.getFoto(), Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                binding.profilePetUPicture.setImageBitmap(decodedByte);
-                binding.fullNamePet.setText(Client.getNombre());
-                binding.direccionUsuario.setText(Client.getDireccion());
-                binding.localidadPetOwner.setText(Client.getLocalidad());
-                binding.emailtxt.setText(Client.getCorreo());
-                if(Client.getWalker()) {
-                    binding.addpet.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    binding.addpet.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        ArrayList<Perro> prueba = new ArrayList<>();
 
         binding.grindPerrosdueno.setNumColumns(3);
         binding.grindPerrosdueno.setVerticalSpacing(30);
         binding.grindPerrosdueno.setHorizontalSpacing(30);
-
-        myUserRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS);
-        myUserRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
-            if (task1.isSuccessful()) {
-                Log.d("malditasea", "onComplete: "+task1.getResult().getValue());
-                task1.getResult().getChildren().forEach(perro -> {
-                    perrox = perro.getValue(Perro.class);
-                    Log.d("malditasea", "onComplete: "+perrox.getNombrecompleto());
-                    prueba.add(new Perro(perrox.getNombrecompleto(),perrox.getRaza(),perrox.getSexo(),perrox.getColor(),perrox.getFechanacimiento(),perrox.getVacunado(),perrox.getEsterilizado(),perrox.getFoto()));
-                    Log.d("malditasea", "onComplete: "+prueba.size());
-
-                    ArrayAdapter adapter = new CardAdapterUserDog(this,R.layout.perfilperroview,prueba);
-                    binding.grindPerrosdueno.setAdapter(adapter);
-                    binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
-                        Intent intent = new Intent(getApplicationContext() , PerfilPerroActivity.class);
-                        Perro items = prueba.get(position);
-                        intent.putExtra("nombredelperro",items.getNombrecompleto());
-                        intent.putExtra("imagen",items.getFoto());
-                        startActivity(intent);
-                        finish();
-                    });
-                });
-
-            }
-        });
 
 
         binding.toolbarPusuario.setTitle("");
@@ -145,12 +122,11 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
 
         binding.toolbarPusuario.setNavigationOnClickListener(v -> {
-            if(Client.getWalker()){
-                startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+            if (Client.getWalker()) {
+                startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
                 finish();
-            }
-            else{
-                startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+            } else {
+                startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
                 finish();
             }
 
@@ -159,7 +135,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
         binding.changepasswordBTN.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), CambiarPasswordActivity.class);
-            intent.putExtra("correo",Client.getCorreo());
+            intent.putExtra("correo", Client.getCorreo());
             startActivity(intent);
             finish();
         });
@@ -171,7 +147,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         });
 
 
-       binding.fingerBTN.setOnClickListener(new View.OnClickListener() {
+        binding.fingerBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -179,7 +155,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
                 biometricPrompt = new BiometricPrompt(PerfilUsuarioActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
                     @Override
-                    public void onAuthenticationError(int errorCode, @NonNull  CharSequence errString) {
+                    public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                         super.onAuthenticationError(errorCode, errString);
                     }
 
@@ -187,6 +163,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                     public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
                         super.onAuthenticationSucceeded(result);
                         //Cambiar de pantalla
+                        Log.d("malditasea", String.valueOf(result.toString()));
                     }
 
                     @Override
@@ -196,11 +173,35 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 });
 
                 promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Project").setDescription("Usa tu huella").setDeviceCredentialAllowed(true).build();
+
+
                 biometricPrompt.authenticate(promptInfo);
             }
         });
     }
 
+    public void cargandodatosperros() {
+        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
+        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                task1.getResult().getChildren().forEach(perro -> {
+                    perrox = perro.getValue(Perro.class);
+                    prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
+                    ArrayAdapter adapter = new CardAdapterUserDog(this, R.layout.perfilperroview, prueba);
+                    binding.grindPerrosdueno.setAdapter(adapter);
+                    binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
+                        Intent intent = new Intent(getApplicationContext(), PerfilPerroActivity.class);
+                        Perro items = prueba.get(position);
+                        intent.putExtra("nombredelperro", items.getNombrecompleto());
+                        intent.putExtra("fotodelperro", items.getFoto());
+                        startActivity(intent);
+                        finish();
+                    });
+                });
+
+            }
+        });
+    }
 
     void imageChooser() {
 
@@ -214,7 +215,6 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         // with the returned requestCode
         startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
     }
-
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -235,7 +235,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                         Bitmap img = (Bitmap) MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         img.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                        byte[] byteArray = byteArrayOutputStream .toByteArray();
+                        byte[] byteArray = byteArrayOutputStream.toByteArray();
                         fotoS = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
                         Log.d("imagen", "onActivityResult: " + fotoS);
@@ -253,7 +253,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             Bitmap image = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
             fotoS = Base64.encodeToString(byteArray, Base64.DEFAULT);
             Log.d("imagen", "onActivityResult: " + fotoS);
 
@@ -262,19 +262,52 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         }
         binding.guardatBTN.setOnClickListener(view -> {
             Client.setFoto(fotoS);
-            myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
+            myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
             myRef.setValue(Client).addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
                     binding.guardatBTN.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), "Error al actualizar foto de perfil", Toast.LENGTH_SHORT).show();
                 }
             });
         });
     }
 
+    public void cargardatos() {
+        myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Client = task.getResult().getValue(Usuario.class);
+                byte[] decodedString = Base64.decode(Client.getFoto(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                binding.profilePetUPicture.setImageBitmap(decodedByte);
+                binding.fullNamePet.setText(Client.getNombre());
+                binding.direccionUsuario.setText(Client.getDireccion());
+                binding.localidadPetOwner.setText(Client.getLocalidad());
+                binding.emailtxt.setText(Client.getCorreo());
+                if (Client.getWalker()) {
+                    binding.addpet.setVisibility(View.INVISIBLE);
+                }else{
+                    binding.addpet.setVisibility(View.VISIBLE);
+                }
+                SystemClock.sleep(100);
+                binding.progressBarPerfilUsuario.setVisibility(View.INVISIBLE);
+                binding.profilePetUPicture.setVisibility(View.VISIBLE);
+                binding.fullNamePet.setVisibility(View.VISIBLE);
+                binding.direccionUsuario.setVisibility(View.VISIBLE);
+                binding.localidadPetOwner.setVisibility(View.VISIBLE);
+                binding.emailtxt.setVisibility(View.VISIBLE);
+                binding.textViewcorreo.setVisibility(View.VISIBLE);
+                binding.textViewdireccion.setVisibility(View.VISIBLE);
+                binding.textViewLocalidad.setVisibility(View.VISIBLE);
+                binding.textViewnombre.setVisibility(View.VISIBLE);
+                binding.fingerBTN.setVisibility(View.VISIBLE);
+                binding.changepasswordBTN.setVisibility(View.VISIBLE);
 
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -336,9 +369,12 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        //aca toca un if para ver si es dueño o cuidador y mandarlo a la pantalla correspondiente
-        startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
-        finish();
+        if (Client.getWalker()) {
+            startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
+            finish();
+        } else {
+            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+            finish();
+        }
     }
 }

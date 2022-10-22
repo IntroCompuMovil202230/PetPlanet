@@ -17,7 +17,8 @@ public class ListarPerrosActivity extends AppCompatActivity {
 
     private ActivityListarPerrosBinding binding;
 
-    ArrayList<Perro> perroslist=new ArrayList<>();
+    ArrayList<Perro> perroslist = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,21 +38,22 @@ public class ListarPerrosActivity extends AppCompatActivity {
         binding.grindPerrosdueno.setVerticalSpacing(30);
         binding.grindPerrosdueno.setHorizontalSpacing(30);
 
-        ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
+        ArrayAdapter adapter = new CardAdapterPerro(this, R.layout.cardview, perroslist);
         if (binding.grindPerrosdueno != null) {
             binding.grindPerrosdueno.setAdapter(adapter);
         }
         binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(getApplicationContext() , PerfilPerroActivity.class);
+            Intent intent = new Intent(getApplicationContext(), PerfilPerroActivity.class);
             Perro items = perroslist.get(position);
-            intent.putExtra("nombredelperro",items.getNombrecompleto());
-            intent.putExtra("imagen",items.getFoto());
+            intent.putExtra("nombredelperro", items.getNombrecompleto());
+            intent.putExtra("imagen", items.getFoto());
             startActivity(intent);
             finish();
         });
 
 
     }
+
     @Override
     public void onResume() {
         super.onResume();

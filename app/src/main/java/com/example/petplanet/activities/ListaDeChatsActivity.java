@@ -48,12 +48,10 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     DatabaseReference myUserRef;
-    public static final String PATH_USERS="users/";
+    public static final String PATH_USERS = "users/";
 
     private List<ChatMessage> conversations;
     private RecentConversationsAdapter conversationsAdapter;
-
-
 
 
     @Override
@@ -63,13 +61,13 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
         conversations = new ArrayList<>();
-        conversationsAdapter = new RecentConversationsAdapter(conversations,this);
+        conversationsAdapter = new RecentConversationsAdapter(conversations, this);
         binding.conversationsRecyclerView.setAdapter(conversationsAdapter);
         binding.toolbarlistchat.setTitle("");
         setSupportActionBar(binding.toolbarlistchat);
 
-        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+        myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Client = task.getResult().getValue(Usuario.class);
                 byte[] decodedString = Base64.decode(Client.getFoto(), Base64.DEFAULT);
@@ -87,11 +85,11 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
                         ChatMessage chatMessage = new ChatMessage();
                         chatMessage.setSenderid(conversation.child(Constants.KEY_SENDER_ID).getValue().toString());
                         chatMessage.setReceiverid(conversation.child(Constants.KEY_RECEIVER_ID).getValue().toString());
-                        if(mAuth.getCurrentUser().getUid().equals(chatMessage.getSenderid())){
+                        if (mAuth.getCurrentUser().getUid().equals(chatMessage.getSenderid())) {
                             chatMessage.conversionImage = conversation.child(Constants.KEY_RECEIVER_IMAGE).getValue().toString();
                             chatMessage.conversionName = conversation.child(Constants.KEY_RECEIVER_NAME).getValue().toString();
                             chatMessage.conversionId = conversation.child(Constants.KEY_RECEIVER_ID).getValue().toString();
-                        }else{
+                        } else {
                             chatMessage.conversionImage = conversation.child(Constants.KEY_SENDER_IMAGE).getValue().toString();
                             chatMessage.conversionName = conversation.child(Constants.KEY_SENDER_NAME).getValue().toString();
                             chatMessage.conversionId = conversation.child(Constants.KEY_SENDER_ID).getValue().toString();
@@ -103,9 +101,11 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
                 }
                 Collections.sort(conversations, (o1, o2) -> o2.getDatetime().compareTo(o1.getDatetime()));
                 conversationsAdapter.notifyDataSetChanged();
-                binding.conversationsRecyclerView.smoothScrollToPosition(0);
-                binding.conversationsRecyclerView.setVisibility(View.VISIBLE);
-                binding.progresconversation.setVisibility(View.GONE);
+                if(conversations.size() != 0) {
+                    binding.conversationsRecyclerView.smoothScrollToPosition(0);
+                    binding.conversationsRecyclerView.setVisibility(View.VISIBLE);
+                    binding.progresconversation.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -118,7 +118,7 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.toolbarlistchat.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));// esto cambia si el usuario es dueño o walker
+            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));// esto cambia si el usuario es dueño o walker
             finish();
         });
 
@@ -133,8 +133,8 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
     @Override
     public void onConversationClicked(Usuario user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra(Constants.KEY_USER_ID,user.getId());
-        intent.putExtra(Constants.KEY_USER,"me han tocado jejeje");
+        intent.putExtra(Constants.KEY_USER_ID, user.getId());
+        intent.putExtra(Constants.KEY_USER, "me han tocado jejeje");
         startActivity(intent);
     }
 

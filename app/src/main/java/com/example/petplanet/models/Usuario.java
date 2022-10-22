@@ -25,11 +25,12 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String id,String nombre, String localidad, String correo, String direccion,String foto,boolean isWalker,String experiencia) {
+    public Usuario(String id,String nombre,String telefono, String localidad, String correo, String direccion,String foto,boolean isWalker,String experiencia) {
         this.id = id;
         this.nombre = nombre;
         this.localidad = localidad;
         this.correo = correo;
+        this.telefono = telefono;
         this.direccion = direccion;
         this.foto = foto;
         this.isWalker = isWalker;

@@ -211,18 +211,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
         // Initialize the sensors
 
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
@@ -348,6 +336,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
         mMap.animateCamera(CameraUpdateFactory.newLatLng(location));
 
     }

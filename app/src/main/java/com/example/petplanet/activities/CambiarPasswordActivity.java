@@ -29,6 +29,7 @@ public class CambiarPasswordActivity extends AppCompatActivity {
     private ActivityCambiarPasswordBinding binding;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String correo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +38,8 @@ public class CambiarPasswordActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                correo= null;
+            if (extras == null) {
+                correo = null;
 
             } else {
                 correo = extras.getString("correo");
@@ -48,7 +49,6 @@ public class CambiarPasswordActivity extends AppCompatActivity {
         } else {
             correo = (String) savedInstanceState.getSerializable("correo");
         }
-
 
 
         binding.toolbarCPassword.setTitle("");

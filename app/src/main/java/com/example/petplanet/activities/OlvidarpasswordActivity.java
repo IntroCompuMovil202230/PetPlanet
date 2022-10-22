@@ -21,6 +21,7 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
     private ActivityOlvidarpasswordBinding binding;
 
     private FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,19 +35,18 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.toolbarolv.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
         });
 
 
         binding.enviarLinkBTN.setOnClickListener(v -> {
             String email = binding.editTextCorreoCambiopsw.getText().toString();
-            if(!isEmail(binding.editTextCorreoCambiopsw)){
+            if (!isEmail(binding.editTextCorreoCambiopsw)) {
                 binding.editTextCorreoCambiopsw.setError("Introduce un correo electronico");
                 binding.editTextCorreoCambiopsw.requestFocus();
                 return;
-            }
-            else {
+            } else {
                 auth.sendPasswordResetEmail(email)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
@@ -64,10 +64,12 @@ public class OlvidarpasswordActivity extends AppCompatActivity {
             }
         });
     }
+
     public boolean isEmail(EditText text) {
         CharSequence email = text.getText().toString();
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
+
     @Override
     public void onResume() {
         super.onResume();

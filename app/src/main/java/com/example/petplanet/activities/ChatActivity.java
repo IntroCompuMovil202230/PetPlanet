@@ -51,11 +51,11 @@ public class ChatActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     DatabaseReference myChat;
-    public static final String PATH_USERS="users/";
+    public static final String PATH_USERS = "users/";
     public List<ChatMessage> chatMessages;
     private ChatAdapter chatAdapter;
     ChatMessage chatM = new ChatMessage();
-    public String uid2 ;
+    public String uid2;
 
     public String getUid2() {
         return uid2;
@@ -66,6 +66,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public String foto;
+
     public String getFotoUid2() {
         return foto;
     }
@@ -81,9 +82,9 @@ public class ChatActivity extends AppCompatActivity {
     Usuario usuariochat = new Usuario();
 
 
-    private String conversionId =null;
+    private String conversionId = null;
 
-    int count =0;
+    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,19 +93,19 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         chatMessages = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
-        Log.d("TAG", "onCreate: "+mAuth.getCurrentUser().getUid());
+        Log.d("TAG", "onCreate: " + mAuth.getCurrentUser().getUid());
         String correo;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                correo= null;
+            if (extras == null) {
+                correo = null;
 
             } else {
-                correo= extras.getString(Constants.KEY_USER);
+                correo = extras.getString(Constants.KEY_USER);
                 setUid2(extras.getString(Constants.KEY_USER_ID));
             }
         } else {
-            correo= (String) savedInstanceState.getSerializable(Constants.KEY_USER);
+            correo = (String) savedInstanceState.getSerializable(Constants.KEY_USER);
             setUid2((String) savedInstanceState.getSerializable(Constants.KEY_USER_ID));
         }
         Log.d("CrHATerrrr112", "asdasd2: " + correo);
@@ -130,43 +131,42 @@ public class ChatActivity extends AppCompatActivity {
                     chatM.setDatetime(chat.getDatetime());
                     Log.d("CrHATerrrr222", "onCreate244444444444444444: " + getUid2());
                     Log.d("CrHATerrrr27722", "asdasd39: " + chatM.getMessage());
-                        if(chatM.getSenderid().equals(mAuth.getCurrentUser().getUid()) && chatM.getReceiverid().equals(getUid2())){
+                    if (chatM.getSenderid().equals(mAuth.getCurrentUser().getUid()) && chatM.getReceiverid().equals(getUid2())) {
 
-                            chatMessages.add(chatM);
-                        }
+                        chatMessages.add(chatM);
+                    }
                     Log.d("CrHATerrrr66", "222uto: " + mAuth.getCurrentUser().getUid());
                     Log.d("CrHATerrrr66", "222uto: " + getUid2());
-                        if(chatM.getReceiverid().equals(mAuth.getCurrentUser().getUid()) && chatM.getSenderid().equals(getUid2())){
-                            Log.d("CrHATerrrr66", "222uto: " + chatM.getMessage());
-                            Log.d("CrHATerrrrss", "contadorrrr: " + count);
-                            chatMessages.add(chatM);
-                        }
-                        chatM = new ChatMessage();
-                        Log.d("CrHATerrrr", "onCreate: " + chatMessages.size());
+                    if (chatM.getReceiverid().equals(mAuth.getCurrentUser().getUid()) && chatM.getSenderid().equals(getUid2())) {
+                        Log.d("CrHATerrrr66", "222uto: " + chatM.getMessage());
+                        Log.d("CrHATerrrrss", "contadorrrr: " + count);
+                        chatMessages.add(chatM);
+                    }
+                    chatM = new ChatMessage();
+                    Log.d("CrHATerrrr", "onCreate: " + chatMessages.size());
                 }
                 Log.d("CrHATerrrrss", "mnmhhhhhhhhhhhh: " + chatMessages.size());
                 chatMessages.sort(Comparator.comparing(ChatMessage::getDatetime));
-                if(chatMessages.isEmpty()){
+                if (chatMessages.isEmpty()) {
                     //chatAdapter.notifyDataSetChanged();
-                }
-                else{
-                    if(chatAdapter == null){
+                } else {
+                    if (chatAdapter == null) {
                         llenarUsuariochat();
                         llenarWalkerx();
                         binding.chatRecyclerView.setVisibility(View.VISIBLE);
                         binding.progressBar.setVisibility(View.GONE);
-                    }
-                    else {
+                    } else {
                         chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
                         binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
                         binding.chatRecyclerView.setVisibility(View.VISIBLE);
                         binding.progressBar.setVisibility(View.GONE);
                     }
                 }
-                if(conversionId== null){
+                if (conversionId == null) {
                     checkForConversion();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(ChatActivity.this, "Error al cargar los chats", Toast.LENGTH_SHORT).show();
@@ -176,16 +176,16 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void llenarWalkerx(){
-        myRef=database.getReference(PATH_USERS+getUid2());
-        myRef.getDatabase().getReference(PATH_USERS+getUid2()).get().addOnCompleteListener(task -> {
+    private void llenarWalkerx() {
+        myRef = database.getReference(PATH_USERS + getUid2());
+        myRef.getDatabase().getReference(PATH_USERS + getUid2()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 walkerx = task.getResult().getValue(Usuario.class);
                 byte[] decodedString = Base64.decode(walkerx.getFoto(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 binding.TextName.setText(walkerx.getNombre());
                 binding.imagePerson.setImageBitmap(decodedByte);
-                chatAdapter = new ChatAdapter(decodeFromFirebaseBase64(walkerx.getFoto()),chatMessages,mAuth.getCurrentUser().getUid());
+                chatAdapter = new ChatAdapter(decodeFromFirebaseBase64(walkerx.getFoto()), chatMessages, mAuth.getCurrentUser().getUid());
                 setFotoUid2(walkerx.getFoto());
                 binding.chatRecyclerView.setAdapter(chatAdapter);
             }
@@ -193,9 +193,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    private void llenarUsuariochat(){
-        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+    private void llenarUsuariochat() {
+        myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 usuariochat = task.getResult().getValue(Usuario.class);
             }
@@ -205,30 +205,28 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         HashMap<String, Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
-        message.put(Constants.KEY_RECEIVER_ID,getUid2());
+        message.put(Constants.KEY_RECEIVER_ID, getUid2());
         message.put(Constants.KEY_MESSAGE, binding.inputmessage.getText().toString());
-        message.put(Constants.KEY_TIMESTAMP,java.text.DateFormat.getDateTimeInstance().format(new Date()));
+        message.put(Constants.KEY_TIMESTAMP, java.text.DateFormat.getDateTimeInstance().format(new Date()));
         myRef = database.getReference(Constants.PATH_CHATS);
         myRef.push().setValue(message);
         Log.d("CrHATerrrr", "onCreatetttt: " + conversionId);
-        if(conversionId != null){
+        if (conversionId != null) {
             updateConversion(binding.inputmessage.getText().toString());
-        }
-        else{
+        } else {
             HashMap<String, Object> conversion = new HashMap<>();
             conversion.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
             conversion.put(Constants.KEY_SENDER_NAME, usuariochat.getNombre());
-            conversion.put(Constants.KEY_SENDER_IMAGE,usuariochat.getFoto());
-            conversion.put(Constants.KEY_RECEIVER_ID,getUid2());
+            conversion.put(Constants.KEY_SENDER_IMAGE, usuariochat.getFoto());
+            conversion.put(Constants.KEY_RECEIVER_ID, getUid2());
             conversion.put(Constants.KEY_RECEIVER_NAME, walkerx.getNombre());
-            conversion.put(Constants.KEY_RECEIVER_IMAGE,walkerx.getFoto());
+            conversion.put(Constants.KEY_RECEIVER_IMAGE, walkerx.getFoto());
             conversion.put(Constants.KEY_LAST_MESSAGE, binding.inputmessage.getText().toString());
-            conversion.put(Constants.KEY_TIMESTAMP,java.text.DateFormat.getDateTimeInstance().format(new Date()));
+            conversion.put(Constants.KEY_TIMESTAMP, java.text.DateFormat.getDateTimeInstance().format(new Date()));
             addConversion(conversion);
         }
         binding.inputmessage.setText("");
     }
-
 
 
     private Bitmap decodeFromFirebaseBase64(String image) {
@@ -237,9 +235,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-
-
-    private void setListeners(){
+    private void setListeners() {
         binding.imageback.setOnClickListener(v -> {
             Intent intent = new Intent(ChatActivity.this, ListaDeChatsActivity.class);
             startActivity(intent);
@@ -251,23 +247,23 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void checkForConversion(){
-        if(chatMessages.size() != 0){
+    private void checkForConversion() {
+        if (chatMessages.size() != 0) {
             checkForConversionRemotely(
-                    mAuth.getCurrentUser().getUid(),getUid2()
+                    mAuth.getCurrentUser().getUid(), getUid2()
             );
             checkForConversionRemotely(
-                    getUid2(),mAuth.getCurrentUser().getUid()
+                    getUid2(), mAuth.getCurrentUser().getUid()
             );
         }
     }
 
-    private void addConversion(HashMap<String, Object> conversion){
+    private void addConversion(HashMap<String, Object> conversion) {
         myRef = database.getReference(Constants.KEY_COLLECTION_CONVERSATIONS);
         myRef.push().setValue(conversion);
     }
 
-    private void updateConversion(String message){
+    private void updateConversion(String message) {
         myRef = database.getReference(Constants.KEY_COLLECTION_CONVERSATIONS);
         myRef.child(conversionId).child(Constants.KEY_LAST_MESSAGE).setValue(message);
         myRef.child(conversionId).child(Constants.KEY_TIMESTAMP).setValue(java.text.DateFormat.getDateTimeInstance().format(new Date()));

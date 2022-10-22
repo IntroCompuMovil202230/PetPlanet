@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 public class IniciarPaseoActivity extends AppCompatActivity {
     private ActivityIniciarPaseoBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,14 +31,14 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         binding = ActivityIniciarPaseoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ArrayList<Perro> perrosList=new ArrayList<>();
+        ArrayList<Perro> perrosList = new ArrayList<>();
         setSupportActionBar(binding.toolbarPerDispo);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.toolbarPerDispo.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+            startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
             finish();
         });
 
@@ -46,27 +47,23 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         binding.grindDispo.setHorizontalSpacing(30);
         try {
 
-            ArrayAdapter<Perro> adapter = new CardAdapterIniciarpaseo(this,R.layout.cardviewiniciarpaseo,perrosList);
+            ArrayAdapter<Perro> adapter = new CardAdapterIniciarpaseo(this, R.layout.cardviewiniciarpaseo, perrosList);
             if (binding.grindDispo != null) {
                 binding.grindDispo.setAdapter(adapter);
             }
             binding.grindDispo.setOnItemClickListener((parent, view, position, id) -> {
-                Intent intent = new Intent(getApplicationContext() , ChatActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
                 Perro items = perrosList.get(position);
-                intent.putExtra("nombre",items.getNombrecompleto());
-                intent.putExtra("imagen",items.getFoto());
+                intent.putExtra("nombre", items.getNombrecompleto());
+                intent.putExtra("imagen", items.getFoto());
                 startActivity(intent);
                 finish();
             });
 
 
-
-
-
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
 
 
     }

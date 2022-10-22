@@ -28,6 +28,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
     String encoded;
     int SELECT_PICTURE = 200;
     int CAMERA_REQUEST = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,51 +64,54 @@ public class RegistroPerroActivity extends AppCompatActivity {
                 });
 
         binding.fotodelperroBTN.setOnClickListener(v -> {
-                    final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
-                    AlertDialog.Builder builder = new AlertDialog.Builder(RegistroPerroActivity.this);
-                    builder.setTitle("Elige una opcion");
-                    builder.setItems(options, (dialog, item) -> {
-                        if (options[item].equals("Tomar foto")) {
-                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_REQUEST);
-                            binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+            final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistroPerroActivity.this);
+            builder.setTitle("Elige una opcion");
+            builder.setItems(options, (dialog, item) -> {
+                if (options[item].equals("Tomar foto")) {
+                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, CAMERA_REQUEST);
+                    binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
 
-                        } else if (options[item].equals("Elegir de galeria")) {
-                            imageChooser();
-                        } else if (options[item].equals("Cancelar")) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.show();
-                });
+                } else if (options[item].equals("Elegir de galeria")) {
+                    imageChooser();
+                } else if (options[item].equals("Cancelar")) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        });
 
 
         binding.seguirconelregistroBTN.setOnClickListener(v -> {
-            String nombrep =binding.registroNombrePet.getText().toString();
+            String nombrep = binding.registroNombrePet.getText().toString();
             String colorS = binding.spinnercolor.getSelectedItem().toString();
             String sexoS = binding.spinnersexo.getSelectedItem().toString();
             String fechanacimientoS = binding.registrofechanacimientoperro.getText().toString();
-            if(nombrep.isEmpty()){
+            if (nombrep.isEmpty()) {
                 binding.registroNombrePet.setError("Ingrese el nombre de la mascota");
                 binding.registroNombrePet.requestFocus();
                 return;
-            }if(sexoS.equals("Seleccione el sexo")){
-                ((TextView)binding.spinnersexo.getSelectedView()).setError("Error message");
-            }if(colorS.equals("Selecciona un color")){
-                ((TextView)binding.spinnercolor.getSelectedView()).setError("Error message");
-            }if(fechanacimientoS.isEmpty()){
+            }
+            if (sexoS.equals("Seleccione el sexo")) {
+                ((TextView) binding.spinnersexo.getSelectedView()).setError("Error message");
+            }
+            if (colorS.equals("Selecciona un color")) {
+                ((TextView) binding.spinnercolor.getSelectedView()).setError("Error message");
+            }
+            if (fechanacimientoS.isEmpty()) {
                 binding.registrofechanacimientoperro.setError("Ingrese una fecha de nacimiento valida");
                 binding.registrofechanacimientoperro.requestFocus();
                 return;
-            }else{
+            } else {
                 Intent intent = new Intent(getApplicationContext(), RazasActivity.class);
-                intent.putExtra("nombredelamascota",nombrep);
-                intent.putExtra("colordelperro",colorS);
-                intent.putExtra("sexoselamascota",sexoS);
-                intent.putExtra("foto",encoded);
-                intent.putExtra("esterilizado",binding.EsterilizadoCheck.isChecked());
-                intent.putExtra("vacunado",binding.carnetVacunacionCheck.isChecked());
-                intent.putExtra("fechadenacimiento",fechanacimientoS);
+                intent.putExtra("nombredelamascota", nombrep);
+                intent.putExtra("colordelperro", colorS);
+                intent.putExtra("sexoselamascota", sexoS);
+                intent.putExtra("foto", encoded);
+                intent.putExtra("esterilizado", binding.EsterilizadoCheck.isChecked());
+                intent.putExtra("vacunado", binding.carnetVacunacionCheck.isChecked());
+                intent.putExtra("fechadenacimiento", fechanacimientoS);
                 startActivity(intent);
                 finish();
             }
@@ -129,7 +133,6 @@ public class RegistroPerroActivity extends AppCompatActivity {
     }
 
 
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -148,7 +151,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
                         Bitmap img = (Bitmap) MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         img.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                        byte[] byteArray = byteArrayOutputStream .toByteArray();
+                        byte[] byteArray = byteArrayOutputStream.toByteArray();
                         encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         Log.d("imagen", "onActivityResult: " + encoded);
                     } catch (IOException e) {
@@ -165,14 +168,13 @@ public class RegistroPerroActivity extends AppCompatActivity {
             Bitmap image = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
             encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
             Log.d("imagen", "onActivityResult: " + encoded);
 
             binding.fotodelperroBTN.setImageBitmap(image);
         }
     }
-
 
 
     @Override

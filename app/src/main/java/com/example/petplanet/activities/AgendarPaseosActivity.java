@@ -52,13 +52,14 @@ public class AgendarPaseosActivity extends AppCompatActivity {
     DatabaseReference myRef;
     DatabaseReference myUserRef;
     private FirebaseAuth mAuth;
-    public static final String PATH_USERS="users/";
-    public static final String PATH_PERROS="/mascotas/";
-    public static final String PATH_PASEOS="paseos/";
+    public static final String PATH_USERS = "users/";
+    public static final String PATH_PERROS = "/mascotas/";
+    public static final String PATH_PASEOS = "paseos/";
     Perro perrox = new Perro();
     Usuario walkerx = new Usuario();
     Usuario Client = new Usuario();
     int hour, minute;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,8 +82,8 @@ public class AgendarPaseosActivity extends AppCompatActivity {
         ArrayList<Perro> prueba = new ArrayList<>();
         ArrayList<String> menuperros = new ArrayList<>();
         menuperros.add("Seleccione un perro");
-        myUserRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS);
-        myUserRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()+PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
+        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
+        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
                 binding.progressBarAgendar.setVisibility(View.INVISIBLE);
                 binding.spinnerMascota.setVisibility(View.VISIBLE);
@@ -90,14 +91,14 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                 binding.AgendarHora.setVisibility(View.VISIBLE);
                 binding.AgendarFecha.setVisibility(View.VISIBLE);
                 binding.buttonAgendar.setVisibility(View.VISIBLE);
-                Log.d("malditasea", "onComplete: "+task1.getResult().getValue());
+                Log.d("malditasea", "onComplete: " + task1.getResult().getValue());
                 task1.getResult().getChildren().forEach(perro -> {
                     perrox = perro.getValue(Perro.class);
-                    Log.d("malditasea", "onComplete: "+perrox.getNombrecompleto());
-                    prueba.add(new Perro(perrox.getNombrecompleto(),perrox.getRaza(),perrox.getSexo(),perrox.getColor(),perrox.getFechanacimiento(),perrox.getVacunado(),perrox.getEsterilizado(),perrox.getFoto()));
+                    Log.d("malditasea", "onComplete: " + perrox.getNombrecompleto());
+                    prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
                     menuperros.add(perrox.getNombrecompleto());
 
-                    Log.d("malditasea", "onComplete: "+prueba.size());
+                    Log.d("malditasea", "onComplete: " + prueba.size());
                     ArrayAdapter adapter = new ArrayAdapter(AgendarPaseosActivity.this, android.R.layout.simple_spinner_dropdown_item, menuperros);
                     binding.spinnerMascota.setAdapter(adapter);
                 });
@@ -105,14 +106,12 @@ public class AgendarPaseosActivity extends AppCompatActivity {
         });
 
 
-
-        myRef=database.getReference(PATH_USERS+mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(PATH_USERS+mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+        myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Client = task.getResult().getValue(Usuario.class);
             }
         });
-
 
 
         binding.AgendarHora.setOnClickListener(v -> popTimePicker(v));
@@ -122,17 +121,18 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             String fecha = binding.AgendarFecha.getText().toString();
             String hora = binding.AgendarHora.getText().toString();
             String mascota = binding.spinnerMascota.getSelectedItem().toString();
-            if(mascota.equals("Selecciona una mascota")){
-                ((TextView)binding.spinnerMascota.getSelectedView()).setError("Error message");
-            }if(fecha.isEmpty()){
+            if (mascota.equals("Selecciona una mascota")) {
+                ((TextView) binding.spinnerMascota.getSelectedView()).setError("Error message");
+            }
+            if (fecha.isEmpty()) {
                 binding.AgendarFecha.setError("Selecciona una fecha valida");
                 binding.AgendarFecha.requestFocus();
-            }if(hora.isEmpty()){
+            }
+            if (hora.isEmpty()) {
                 binding.AgendarHora.setError("Selecciona una hora valida");
                 binding.AgendarHora.requestFocus();
-            }
-            else{
-            agendarpaseo(fecha,hora,mascota);
+            } else {
+                agendarpaseo(fecha, hora, mascota);
             }
         });
 
@@ -153,9 +153,9 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                 });
 
 
-
     }
-    public void agendarpaseo(String fecha, String hora, String mascota){
+
+    public void agendarpaseo(String fecha, String hora, String mascota) {
 
        /* Paseo paseo = new Paseo(Client.getNombre(),mascota,Client.getLocalidad(),fecha,hora,Client.getDireccion());
         myRef = database.getReference(PATH_PASEOS+mAuth.getCurrentUser().getUid());
@@ -168,12 +168,11 @@ public class AgendarPaseosActivity extends AppCompatActivity {
     }
 
 
-    public void popTimePicker(View view)
-    {
+    public void popTimePicker(View view) {
         TimePickerDialog.OnTimeSetListener onTimeSetListener = (timePicker, selectedHour, selectedMinute) -> {
             hour = selectedHour;
             minute = selectedMinute;
-            binding.AgendarHora.setText(String.format(Locale.getDefault(), "%02d:%02d",hour, minute));
+            binding.AgendarHora.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
         };
 
         // int style = AlertDialog.THEME_HOLO_DARK;

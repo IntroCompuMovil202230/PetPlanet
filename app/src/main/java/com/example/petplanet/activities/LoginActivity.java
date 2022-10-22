@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.petplanet.databinding.ActivityLoginBinding;
 import com.example.petplanet.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,13 +27,13 @@ public class LoginActivity extends AppCompatActivity {
     DatabaseReference myRef;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
         mAuth = FirebaseAuth.getInstance();
 
         binding.nuevousuario.setOnClickListener(v -> {
@@ -53,15 +54,16 @@ public class LoginActivity extends AppCompatActivity {
             String pass = binding.loginPassword.getText().toString();
 
 
-            if(!isEmail(binding.loginCorreo)){
+            if (!isEmail(binding.loginCorreo)) {
                 binding.loginCorreo.setError("Introduce un correo electonico valido");
                 binding.loginCorreo.requestFocus();
                 return;
-            }if(pass.isEmpty()){
+            }
+            if (pass.isEmpty()) {
                 binding.loginPassword.setError("Introduce una contraseña");
                 binding.loginPassword.requestFocus();
                 return;
-            }else{
+            } else {
 
                 login(String.valueOf(binding.loginCorreo.getText()), String.valueOf(binding.loginPassword.getText()));
             }
@@ -71,11 +73,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 updateUI(mAuth.getCurrentUser());
-            }
-            else {
+            } else {
                 showMessage(task.getException().getMessage());
             }
         });
@@ -83,23 +84,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showMessage(String text) {
-        Toast.makeText(getApplicationContext(),text, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
     }
+
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             myRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
             myRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
 
-                    if(task.getResult().exists()){
+                    if (task.getResult().exists()) {
                         Usuario usuario = task.getResult().getValue(Usuario.class);
 
                         assert usuario != null;
-                        if(usuario.getWalker())
-                            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+                        if (usuario.getWalker())
+                            startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
                         else
-                            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
                     }
                 }
             });
@@ -112,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
         CharSequence email = text.getText().toString();
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -131,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
+        if (currentUser != null) {
             updateUI(currentUser);
         }
     }

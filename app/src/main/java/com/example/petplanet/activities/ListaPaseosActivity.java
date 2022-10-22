@@ -21,7 +21,8 @@ import java.util.ArrayList;
 
 public class ListaPaseosActivity extends AppCompatActivity {
     private ActivityListaPaseosBinding binding;
-    ArrayList<Perro> perroslist=new ArrayList<>();
+    ArrayList<Perro> perroslist = new ArrayList<>();
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class ListaPaseosActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.toolbarListar.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+            startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
             finish();
         });
 
@@ -44,9 +45,10 @@ public class ListaPaseosActivity extends AppCompatActivity {
         binding.grind.setVerticalSpacing(30);
         binding.grind.setHorizontalSpacing(30);
 
-        ArrayAdapter adapter = new CardAdapterPerro(this,R.layout.cardview,perroslist);
+        ArrayAdapter adapter = new CardAdapterPerro(this, R.layout.cardview, perroslist);
         binding.grind.setAdapter(adapter);
     }
+
     @Override
     public void onResume() {
         super.onResume();
