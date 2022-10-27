@@ -12,8 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import com.example.petplanet.adapters.CardAdapterPerro;
+import com.example.petplanet.adapters.CardListaPaseo;
 import com.example.petplanet.databinding.ActivityListaDeChatsBinding;
 import com.example.petplanet.databinding.ActivityListaPaseosBinding;
+import com.example.petplanet.models.Paseo;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.R;
 
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 
 public class ListaPaseosActivity extends AppCompatActivity {
     private ActivityListaPaseosBinding binding;
-    ArrayList<Perro> perroslist = new ArrayList<>();
+    ArrayList<Paseo> paseolist = new ArrayList<>();
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -45,7 +47,7 @@ public class ListaPaseosActivity extends AppCompatActivity {
         binding.grind.setVerticalSpacing(30);
         binding.grind.setHorizontalSpacing(30);
 
-        ArrayAdapter adapter = new CardAdapterPerro(this, R.layout.cardview, perroslist);
+        ArrayAdapter adapter = new CardListaPaseo(this, R.layout.listapaseocard, paseolist);
         binding.grind.setAdapter(adapter);
     }
 

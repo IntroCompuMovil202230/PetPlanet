@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,6 +13,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,6 +39,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
+import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -59,6 +62,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -118,8 +122,27 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
-    Location mCurrentLocation;
+    public Location mCurrentLocation;
+
+    public Location getmCurrentLocation() {
+        return mCurrentLocation;
+    }
+
+    public void setmCurrentLocation(Location mCurrentLocation) {
+        this.mCurrentLocation = mCurrentLocation;
+    }
+
     Location aux;
+
+    public String direcciondelOwner;
+
+    public String getDirecciondelOwner() {
+        return direcciondelOwner;
+    }
+
+    public void setDirecciondelOwner(String direcciondelOwner) {
+        this.direcciondelOwner = direcciondelOwner;
+    }
 
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
@@ -129,9 +152,13 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
+        binding.confirmarpaseoBTN.setVisibility(View.INVISIBLE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
+
+
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             switch (id) {
@@ -158,6 +185,20 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             }
             return true;
         });
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                direcciondelOwner = null;
+
+            } else {
+                setDirecciondelOwner(extras.getString("direccion"));
+            }
+        } else {
+            setDirecciondelOwner((String) savedInstanceState.getSerializable("direccion"));
+        }
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -169,17 +210,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
         requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, "El permiso es necesario para acceder a la localizacion", LOCATION_PERMISSION_ID);
 
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                aux = location;
-                Log.i(TAG, "Location update in the callback: " + location);
-                if (location != null) {
-                    mCurrentLocation = location;
-                }
-            }
-        };
+
+        currentlocation();
+
         if (sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
             humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
             humSensorListener = new SensorEventListener() {
@@ -237,105 +270,166 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     }
 
+    private double currentLat = 0;
+    private double currentLong = 0;
+
+    public void currentlocation() {
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                aux = location;
+                Log.d("asdasdasd", "Location update in the callback: " + location);
+                if (location != null) {
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                    // Enable touch gestures
+                    mMap.getUiSettings().setAllGesturesEnabled(true);
+                    // UI controls
+
+                    mMap.getUiSettings().setCompassEnabled(true);
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
+
+                    setmCurrentLocation(location);
+                    mCurrentLocation = location;
+
+                    currentLat = location.getLatitude();
+                    currentLong = location.getLongitude();
+                    Log.d("pitoooooooo", "Location update in the pitodoble: " + location.getAccuracy());
+                }
+            }
+        };
+    }
+
+
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
+        currentlocation();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
+        // Set  zoom level
+
         mMap.setMyLocationEnabled(true);
 
         LatLng center = null;
         ArrayList<LatLng> points = null;
         PolylineOptions lineOptions = null;
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(@NonNull LatLng latLng) {
-                mMap.clear();
+        mMap.setOnMapLongClickListener(latLng -> {
+            mMap.clear();
 
-                // Animating to the touched position
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            // Animating to the touched position
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                try {
-                    List<Address> direcciones = mGeocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                    if (!direcciones.isEmpty()) {
-                        for (Address dir : direcciones) {
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(dir.getFeatureName())
-                                    .snippet(dir.getAddressLine(0))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                            Location locationA = new Location("point A");
-                            locationA.setLatitude(mCurrentLocation.getLatitude());
-                            locationA.setLongitude(mCurrentLocation.getLongitude());
-                            start = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                            Location locationB = new Location("point B");
-                            locationB.setLatitude(latLng.latitude);
-                            locationB.setLongitude(latLng.longitude);
-                            float distance = locationA.distanceTo(locationB);
-                            float distanceKm = distance / 1000;
-                            end = new LatLng(latLng.latitude, latLng.longitude);
-                            Toast.makeText(getApplicationContext(),
-                                    "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
-                            Findroutes(start, end);
-                        }
-                    } else {
-                        Toast.makeText(LandingPetWalkerActivity.this,
-                                "Dirección no encontrada", Toast.LENGTH_SHORT).show();
+            try {
+                List<Address> direcciones = mGeocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                if (!direcciones.isEmpty()) {
+                    for (Address dir : direcciones) {
+                        mMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(dir.getFeatureName())
+                                .snippet(dir.getAddressLine(0))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                        Location locationA = new Location("point A");
+                        locationA.setLatitude(mCurrentLocation.getLatitude());
+                        locationA.setLongitude(mCurrentLocation.getLongitude());
+                        start = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                        Location locationB = new Location("point B");
+                        locationB.setLatitude(latLng.latitude);
+                        locationB.setLongitude(latLng.longitude);
+                        float distance = locationA.distanceTo(locationB);
+                        float distanceKm = distance / 1000;
+                        end = new LatLng(latLng.latitude, latLng.longitude);
+                        Toast.makeText(getApplicationContext(),
+                                "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
+                        Findroutes(start, end);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } else {
+                    Toast.makeText(LandingPetWalkerActivity.this,
+                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 
-        for (int i = 0; i < Utilitys.routes.size(); i++) {
-            points = new ArrayList<LatLng>();
-            lineOptions = new PolylineOptions();
 
-            // Obteniendo el detalle de la ruta
-            List<HashMap<String, String>> path = Utilitys.routes.get(i);
+        if (getDirecciondelOwner() != null) {
 
-            // Obteniendo todos los puntos y/o coordenadas de la ruta
-            for (int j = 0; j < path.size(); j++) {
-                HashMap<String, String> point = path.get(j);
-
-                double lat = Double.parseDouble(point.get("lat"));
-                double lng = Double.parseDouble(point.get("lng"));
-                LatLng position = new LatLng(lat, lng);
-
-                if (center == null) {
-                    //Obtengo la 1ra coordenada para centrar el mapa en la misma.
-                    center = new LatLng(lat, lng);
-                }
-                points.add(position);
+            Log.d("pitoooooooo", "Location update in the asdasd: " + currentLat);
+            if (currentLat != 0.0) {
+                Log.d("pitoooooooo", "Location update in the pitooo: " + currentLat);
             }
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
+                    if (location != null) {
+                        Geocoder coder = new Geocoder(getApplicationContext());
+                        List<Address> addresses;
+                        String strAddress = getDirecciondelOwner();
+                        try {
+                            addresses = coder.getFromLocationName(strAddress + "Bogotá", 5);
+                            if (!addresses.isEmpty()) {
+                                Address address = addresses.get(0);
+                                LatLng latLng2 = new LatLng(address.getLatitude(), address.getLongitude());
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+                                mMap.addMarker(new MarkerOptions().position(latLng2).title("Direccion del Owner"));
+                                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, INITIAL_ZOOM_LEVEL));
+                                Location dis3 = new Location("localizacion 1");
+                                Log.d("Direccion", "onMapReady: " + location.getLatitude());
+                                dis3.setLatitude(location.getLatitude());  //latitud
+                                dis3.setLongitude(location.getLongitude()); //longitud
+                                Location dis2 = new Location("localizacion 2");
+                                dis2.setLatitude(address.getLatitude());  //latitud
+                                dis2.setLongitude(address.getLongitude()); //longitud
+                                double distance = dis3.distanceTo(dis2);
+                                double distanceKm = 0;
+                                distanceKm = distance / 1000;
+                                Toast.makeText(getApplicationContext(),
+                                        "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
+                                LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
+                                end = destination;
+                                start = new LatLng(getmCurrentLocation().getLatitude(), mCurrentLocation.getLongitude());
+                                Findroutes(start, end);
+                                binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
 
-            // Agregamos todos los puntos en la ruta al objeto LineOptions
-            lineOptions.addAll(points);
-            //Definimos el grosor de las Polilíneas
-            lineOptions.width(2);
-            //Definimos el color de la Polilíneas
-            lineOptions.color(Color.BLUE);
+
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
         }
 
-        LatLng location = new LatLng(4.62867, -74.06461);
 
-        //int auxiliar = (int) Math.round(mCurrentLocation.getLatitude());
-        //LatLng location = new LatLng(auxiliar,-74.06461);
-        mMap.addMarker(new MarkerOptions().position(location));
+        binding.confirmarpaseoBTN.setOnClickListener(view -> {
+            final CharSequence[] options = {"Si, iniciar paseo ya mismo", "No, prefiero buscar otro"};
 
-        // Set  zoom level
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
-        // Enable touch gestures
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        // UI controls
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(location));
+            AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
+            builder.setTitle("Elige una opcion");
+            builder.setItems(options, (dialog, item) -> {
+                if (options[item].equals("Si, iniciar paseo ya mismo")) {
+                    Toast.makeText(LandingPetWalkerActivity.this, "Paseo iniciado", Toast.LENGTH_SHORT).show();
+                    binding.confirmarpaseoBTN.setVisibility(View.GONE);
+
+                } else if (options[item].equals("No, prefiero buscar otro")) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        });
+
+
+        mMap.clear();
+        startLocationUpdates();
 
     }
 
@@ -354,8 +448,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     private LocationRequest createLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return mLocationRequest;
     }
@@ -504,7 +597,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     @Override
     public void onRoutingStart() {
-        Toast.makeText(getApplicationContext(), "Finding Route...", Toast.LENGTH_LONG).show();
+
     }
 
     //If Route finding success..

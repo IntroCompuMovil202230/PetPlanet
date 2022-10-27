@@ -45,7 +45,7 @@
     <string name="nombredelperro">Nombre del perro:</string>
     <string name="nombredeldueno">Nombre del dueño:</string>
     <string name="horario">Horario:</string>
-    <string name="listar">Listar paseos</string>
+    <string name="listar">Lista de ultimos paseos</string>
     <string name="seleccion_de_cuenta">Selecciona el tipo de cuenta</string>
 
     <string name="perfil">Perfil</string>

@@ -13,6 +13,7 @@ public class Perro {
     String fechanacimiento;
     Boolean vacunado;
     Boolean esterilizado;
+    Boolean disponibleparapaseo;
     String  foto;
 
     public Perro() {
@@ -42,7 +43,13 @@ public class Perro {
         this.foto = foto;
     }
 
+    public Boolean getDisponibleparapaseo() {
+        return disponibleparapaseo;
+    }
 
+    public void setDisponibleparapaseo(Boolean disponibleparapaseo) {
+        this.disponibleparapaseo = disponibleparapaseo;
+    }
 
     public String getHorario() {
         return Horario;

@@ -108,12 +108,10 @@ public class ChatActivity extends AppCompatActivity {
             correo = (String) savedInstanceState.getSerializable(Constants.KEY_USER);
             setUid2((String) savedInstanceState.getSerializable(Constants.KEY_USER_ID));
         }
-        Log.d("CrHATerrrr112", "asdasd2: " + correo);
         llenarUsuariochat();
         llenarWalkerx();
         setListeners();
 
-        Log.d("CrHATerrrr112", "asdasd2: " + getUid2());
 
         myChat = database.getReference(Constants.PATH_CHATS);
         myChat.addValueEventListener(new ValueEventListener() {
@@ -129,23 +127,17 @@ public class ChatActivity extends AppCompatActivity {
                     chatM.setSenderid(chat.getSenderid());
                     chatM.setReceiverid(chat.getReceiverid());
                     chatM.setDatetime(chat.getDatetime());
-                    Log.d("CrHATerrrr222", "onCreate244444444444444444: " + getUid2());
-                    Log.d("CrHATerrrr27722", "asdasd39: " + chatM.getMessage());
                     if (chatM.getSenderid().equals(mAuth.getCurrentUser().getUid()) && chatM.getReceiverid().equals(getUid2())) {
 
                         chatMessages.add(chatM);
                     }
-                    Log.d("CrHATerrrr66", "222uto: " + mAuth.getCurrentUser().getUid());
-                    Log.d("CrHATerrrr66", "222uto: " + getUid2());
+
                     if (chatM.getReceiverid().equals(mAuth.getCurrentUser().getUid()) && chatM.getSenderid().equals(getUid2())) {
-                        Log.d("CrHATerrrr66", "222uto: " + chatM.getMessage());
-                        Log.d("CrHATerrrrss", "contadorrrr: " + count);
                         chatMessages.add(chatM);
                     }
                     chatM = new ChatMessage();
-                    Log.d("CrHATerrrr", "onCreate: " + chatMessages.size());
                 }
-                Log.d("CrHATerrrrss", "mnmhhhhhhhhhhhh: " + chatMessages.size());
+
                 chatMessages.sort(Comparator.comparing(ChatMessage::getDatetime));
                 if (chatMessages.isEmpty()) {
                     //chatAdapter.notifyDataSetChanged();

@@ -1,20 +1,55 @@
 package com.example.petplanet.models;
 
+import java.util.ArrayList;
+
 public class Paseo {
+    private String fotodelperro;
     private String nombredelowner;
     private String nombredelperro;
+    private String nombredelwalker;
     private String fecha;
     private String hora;
     private String direcciondelowner;
     private String Localidad;
+    private String distanciarecorrida;
+    private String duracion;
 
-    public Paseo(String nombredelowner, String nombredelperro,String Localidad, String fecha, String hora, String direcciondelowner) {
+    public Paseo(String fotodelperro,String nombredelowner, String nombredelperro,String localidad, String fecha, String hora, String direcciondelowner) {
+        this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
-        this.Localidad = Localidad;
+        this.Localidad = localidad;
         this.fecha = fecha;
         this.hora = hora;
         this.direcciondelowner = direcciondelowner;
+    }
+
+    public Paseo(){
+
+    }
+
+    public String getFotodelperro() {
+        return fotodelperro;
+    }
+
+    public void setFotodelperro(String fotodelperro) {
+        this.fotodelperro = fotodelperro;
+    }
+
+    public String getDuracion() {
+        return duracion;
+    }
+
+    public void setDuracion(String duracion) {
+        this.duracion = duracion;
+    }
+
+    public String getDistanciarecorrida() {
+        return distanciarecorrida;
+    }
+
+    public void setDistanciarecorrida(String distanciarecorrida) {
+        this.distanciarecorrida = distanciarecorrida;
     }
 
     public String getLocalidad() {

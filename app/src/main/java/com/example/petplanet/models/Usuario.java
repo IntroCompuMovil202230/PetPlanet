@@ -14,6 +14,7 @@ public class Usuario {
     private String fcmToken;
     private String foto;
     private String id;
+    private Boolean paseoencurso;
     private ArrayList<Perro> perros;    //Array de perros
 
 
@@ -51,6 +52,14 @@ public class Usuario {
         this.experiencia = experiencia;
         this.linkhojadevida = linkhojadevida;
         this.linkdocumentoid = linkdocumentoid;
+    }
+
+    public Boolean getPaseoencurso() {
+        return paseoencurso;
+    }
+
+    public void setPaseoencurso(Boolean paseoencurso) {
+        this.paseoencurso = paseoencurso;
     }
 
     public String getId() {

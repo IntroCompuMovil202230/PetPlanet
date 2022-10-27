@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.petplanet.databinding.ActivityAgendarPaseosBinding;
+import com.example.petplanet.utilities.Constants;
 import com.google.android.material.datepicker.MaterialDatePicker;
 
 import android.widget.Adapter;
@@ -55,6 +56,10 @@ public class AgendarPaseosActivity extends AppCompatActivity {
     public static final String PATH_USERS = "users/";
     public static final String PATH_PERROS = "/mascotas/";
     public static final String PATH_PASEOS = "paseos/";
+
+    ArrayList<Perro> prueba = new ArrayList<>();
+
+
     Perro perrox = new Perro();
     Usuario walkerx = new Usuario();
     Usuario Client = new Usuario();
@@ -79,7 +84,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
             finish();
         });
-        ArrayList<Perro> prueba = new ArrayList<>();
+
         ArrayList<String> menuperros = new ArrayList<>();
         menuperros.add("Seleccione un perro");
         myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
@@ -155,14 +160,23 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
     }
 
+    String fotodelperro;
+
     public void agendarpaseo(String fecha, String hora, String mascota) {
 
-       /* Paseo paseo = new Paseo(Client.getNombre(),mascota,Client.getLocalidad(),fecha,hora,Client.getDireccion());
-        myRef = database.getReference(PATH_PASEOS+mAuth.getCurrentUser().getUid());
-        myRef.child(id).setValue(paseo);
+        prueba.forEach(perro -> {
+            if (perro.getNombrecompleto().equals(mascota)) {
+                perrox = perro;
+                fotodelperro = perro.getFoto();
+            }
+        });
+
+        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion());
+        myRef = database.getReference(Constants.PATH_PASEOS);
+        myRef.push().setValue(paseo);
         Toast.makeText(this, "Paseo agendado", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
-        finish();*/
+        finish();
 
 
     }

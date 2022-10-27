@@ -118,8 +118,14 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.toolbarlistchat.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));// esto cambia si el usuario es dueño o walker
-            finish();
+            if (Client.getWalker()) {
+                startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
+                finish();
+            } else {
+                startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+                finish();
+            }
+
         });
 
         binding.addChatBTN.setOnClickListener(v -> {
@@ -171,7 +177,13 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
-        finish();
+        if (Client.getWalker()) {
+            startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
+            finish();
+        } else {
+            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
+            finish();
+        }
+
     }
 }
