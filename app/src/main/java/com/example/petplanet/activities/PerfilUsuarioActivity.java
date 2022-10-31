@@ -32,6 +32,7 @@ import com.example.petplanet.adapters.CardAdapterUserDog;
 import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
+import com.example.petplanet.utilities.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -70,7 +71,6 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         binding = ActivityPerfilUsuarioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
-
 
 
         binding.guardatBTN.setVisibility(View.INVISIBLE);
@@ -181,8 +181,8 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     }
 
     public void cargandodatosperros() {
-        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
-        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
+        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
                 task1.getResult().getChildren().forEach(perro -> {
                     perrox = perro.getValue(Perro.class);
@@ -198,7 +198,6 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                         finish();
                     });
                 });
-
             }
         });
     }
@@ -261,10 +260,15 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             binding.profilePetUPicture.setImageBitmap(image);
         }
         binding.guardatBTN.setOnClickListener(view -> {
-            Client.setFoto(fotoS);
-            myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
-            myRef.setValue(Client).addOnCompleteListener(task -> {
+            cargardatos();
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
+                    Client = task.getResult().getValue(Usuario.class);
+                    Log.d("malditasea", String.valueOf(prueba.get(0).getNombrecompleto()));
+                    Client.setFoto(fotoS);
+                    Client.setPerros(prueba);
+                    myRef.setValue(Client);
                     Toast.makeText(getApplicationContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
                     binding.guardatBTN.setVisibility(View.INVISIBLE);
                 } else {
@@ -288,7 +292,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 binding.emailtxt.setText(Client.getCorreo());
                 if (Client.getWalker()) {
                     binding.addpet.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     binding.addpet.setVisibility(View.VISIBLE);
                 }
                 SystemClock.sleep(100);

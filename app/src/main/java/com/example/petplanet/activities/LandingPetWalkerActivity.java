@@ -7,6 +7,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,10 +17,13 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -39,6 +44,10 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
+import com.example.petplanet.adapters.CardAdapterUserDog;
+import com.example.petplanet.models.Paseo;
+import com.example.petplanet.models.Perro;
+import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
@@ -86,6 +95,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LandingPetWalkerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RoutingListener {
     private ActivityLandingPetWalkerBinding binding;
@@ -99,10 +111,13 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private final static int INITIAL_ZOOM_LEVEL = 15;
 
     private Geocoder mGeocoder;
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
     SensorManager sensorManager;
     Sensor lightSensor;
     SensorEventListener lightSensorListener;
+    private FirebaseAuth mAuth;
+    Usuario Client = new Usuario();
 
     private float humActual;
     private SensorEventListener humSensorListener;
@@ -144,8 +159,31 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         this.direcciondelOwner = direcciondelOwner;
     }
 
+
+    public String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String nombredelowner;
+
+    public String getNombredelowner() {
+        return nombredelowner;
+    }
+
+    public void setNombredelowner(String nombredelowner) {
+        this.nombredelowner = nombredelowner;
+    }
+
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
+
+    Paseo paseo = new Paseo();
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -157,8 +195,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         binding.confirmarpaseoBTN.setVisibility(View.INVISIBLE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
-
-
+        mAuth = FirebaseAuth.getInstance();
+        cargardatos();
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             switch (id) {
@@ -193,9 +231,13 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
             } else {
                 setDirecciondelOwner(extras.getString("direccion"));
+                setNombredelowner(extras.getString("nombredelowner"));
+                setId(extras.getString("id"));
             }
         } else {
             setDirecciondelOwner((String) savedInstanceState.getSerializable("direccion"));
+            setNombredelowner((String) savedInstanceState.getSerializable("nombredelowner"));
+            setId((String) savedInstanceState.getSerializable("id"));
         }
 
 
@@ -417,7 +459,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             builder.setTitle("Elige una opcion");
             builder.setItems(options, (dialog, item) -> {
                 if (options[item].equals("Si, iniciar paseo ya mismo")) {
-                    Toast.makeText(LandingPetWalkerActivity.this, "Paseo iniciado", Toast.LENGTH_SHORT).show();
+
+                    sacarpaseo();
                     binding.confirmarpaseoBTN.setVisibility(View.GONE);
 
                 } else if (options[item].equals("No, prefiero buscar otro")) {
@@ -432,6 +475,40 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         startLocationUpdates();
 
     }
+ public void cargarpaseo(){
+
+
+
+
+
+
+
+ }
+    Paseo nPaseo = new Paseo();
+    public void sacarpaseo(){
+Log.d("paseoasd", "sacarpaseo: "+getId());
+        myRef = database.getReference(Constants.PATH_PASEOS+getId());
+        myRef.getDatabase().getReference(Constants.PATH_PASEOS+getId()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                nPaseo = task.getResult().getValue(Paseo.class);
+                nPaseo.setNombredelwalker(Client.getNombre());
+                Log.d("paseoasd", "sacarpaseo: "+nPaseo.getNombredelwalker());
+                myRef.setValue(nPaseo);
+            }
+        });
+        myRef = database.getReference(Constants.PATH_USERS+ mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS+ mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Client = task.getResult().getValue(Usuario.class);
+                Client.setPaseoencurso(true);
+                myRef.setValue(Client);
+            }
+        });
+
+
+
+    }
+
 
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this,
@@ -540,6 +617,20 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 humSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
+
+
+
+    public void cargardatos() {
+        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Client = task.getResult().getValue(Usuario.class);
+            }
+        });
+    }
+
+
+
 
     @Override
     protected void onPause() {

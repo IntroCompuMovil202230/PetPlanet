@@ -41,7 +41,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
     DatabaseReference myRef;
     ArrayList<Paseo> paseos = new ArrayList<>();
     private FirebaseAuth mAuth;
-
+    Paseo paseox = new Paseo();
     Usuario walkerx = new Usuario();
 
     @Override
@@ -84,11 +84,13 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         myRef = database.getReference(Constants.PATH_PASEOS);
         myRef.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                task.getResult().getChildren().forEach(paseo -> {
-                    Paseo paseox = paseo.getValue(Paseo.class);
+                for (DataSnapshot paseo : task.getResult().getChildren()) {
+                    paseox = paseo.getValue(Paseo.class);
                     Log.d("Paseoxxx", paseox.getFecha());
+
                     if (paseox.getLocalidad().equals(walkerx.getLocalidad())) {
                         Log.d("Paseoxxx", paseox.getFotodelperro());
+                        paseox.setId(paseo.getKey());
                         paseos.add(paseox);
                     }
                     if (paseos.size() > 0) {
@@ -99,12 +101,14 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                         binding.grindDispo.setOnItemClickListener((parent, view, position, id) -> {
                             Intent intent = new Intent(getApplicationContext(), LandingPetWalkerActivity.class);
                             Paseo items = paseos.get(position);
+                            intent.putExtra("nombredelowner", items.getNombredelperro());
+                            intent.putExtra("id", items.getId());
                             intent.putExtra("direccion", items.getDirecciondelowner());
                             startActivity(intent);
                             finish();
                         });
                     }
-                });
+                }
             }
         });
     }

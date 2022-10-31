@@ -50,7 +50,6 @@ public class FotoPerfilActivity extends AppCompatActivity {
     int CAMERA_REQUEST = 100;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,44 +86,53 @@ public class FotoPerfilActivity extends AppCompatActivity {
             experiensiaS = (String) savedInstanceState.getSerializable("experiencia");
             tipoS = (String) savedInstanceState.getSerializable("tipo");
         }
-        boolean permisos = checkAndRequestPermissions();
-        if (permisos) {
-            binding.fotodelusuarioBTN.setOnClickListener(v -> {
-                final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(FotoPerfilActivity.this);
-                builder.setTitle("Elige una opcion");
-                builder.setItems(options, (dialog, item) -> {
-                    if (options[item].equals("Tomar foto")) {
-                        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, CAMERA_REQUEST);
-                        binding.fotodelusuarioBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+        binding.fotodelusuarioBTN.setOnClickListener(v -> {
 
-                    } else if (options[item].equals("Elegir de galeria")) {
-                        imageChooser();
-                    } else if (options[item].equals("Cancelar")) {
-                        dialog.dismiss();
+            final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(FotoPerfilActivity.this);
+            builder.setTitle("Elige una opcion");
+            builder.setItems(options, (dialog, item) -> {
+                if (options[item].equals("Tomar foto")) {
+                    if (ContextCompat.checkSelfPermission(FotoPerfilActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(FotoPerfilActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                    } else {
+                        if(checkAndRequestPermissions()){
+                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, CAMERA_REQUEST);
+                            binding.fotodelusuarioBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                        }
                     }
-                });
-                builder.show();
-            });
-
-            binding.registrarUBTN.setOnClickListener(v -> {
-                if (fotoS.isEmpty()) {
-                    binding.mensajedeerror.setError("Introduce una foto");
-                    binding.fotodelusuarioBTN.requestFocus();
-                    return;
-                }if(binding.editTextPhone.getText().toString().isEmpty()){
-                    binding.editTextPhone.setError("Introduce un numero de telefono");
-                    binding.editTextPhone.requestFocus();
-                    return;
-                }else {
-                    createFirebaseAuthUser(emailS, passwordS);
+                } else if (options[item].equals("Elegir de galeria")) {
+                    if (checkAndRequestPermissionsStorage()) {
+                        imageChooser();
+                    } else {
+                        Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
+                    }
+                } else if (options[item].equals("Cancelar")) {
+                    dialog.dismiss();
                 }
             });
-        } else {
-            Toast.makeText(this, "No se puede acceder a la camara", Toast.LENGTH_SHORT).show();
-        }
+            builder.show();
+
+
+        });
+
+        binding.registrarUBTN.setOnClickListener(v -> {
+            if (fotoS.isEmpty()) {
+                binding.mensajedeerror.setError("Introduce una foto");
+                binding.fotodelusuarioBTN.requestFocus();
+                return;
+            }
+            if (binding.editTextPhone.getText().toString().isEmpty()) {
+                binding.editTextPhone.setError("Introduce un numero de telefono");
+                binding.editTextPhone.requestFocus();
+                return;
+            } else {
+                createFirebaseAuthUser(emailS, passwordS);
+            }
+        });
     }
+
 
     void imageChooser() {
         // create an instance of the
@@ -182,8 +190,6 @@ public class FotoPerfilActivity extends AppCompatActivity {
     }
 
 
-
-
     private void createFirebaseAuthUser(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -194,10 +200,10 @@ public class FotoPerfilActivity extends AppCompatActivity {
 
     private Usuario createUserObject() {
         if (tipoS.equals("petowner")) {
-            return new Usuario(mAuth.getCurrentUser().getUid(), nombreS,binding.editTextPhone.getText().toString(), localidadS, emailS, direccionS, fotoS, false, "");
+            return new Usuario(mAuth.getCurrentUser().getUid(), nombreS, binding.editTextPhone.getText().toString(), localidadS, emailS, direccionS, fotoS, false, "");
         }
         if (tipoS.equals("petwalker")) {
-            return new Usuario(mAuth.getCurrentUser().getUid(), nombreS,binding.editTextPhone.getText().toString(), localidadS, emailS, direccionS, fotoS, true, experiensiaS);
+            return new Usuario(mAuth.getCurrentUser().getUid(), nombreS, binding.editTextPhone.getText().toString(), localidadS, emailS, direccionS, fotoS, true, experiensiaS);
         }
         return null;
     }
@@ -210,10 +216,8 @@ public class FotoPerfilActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 Toast.makeText(getApplicationContext(), "Usuario registrado", Toast.LENGTH_SHORT).show();
                 if (tipoS.equals("petowner")) {
-
                     startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class), ActivityOptions.makeSceneTransitionAnimation(FotoPerfilActivity.this).toBundle());
                     finish();
-
                 }
                 if (tipoS.equals("petwalker")) {
                     startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
@@ -228,14 +232,9 @@ public class FotoPerfilActivity extends AppCompatActivity {
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
     private boolean checkAndRequestPermissions() {
-        int permissionWritestorage = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permissionCamera = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA);
         List<String> listPermissionsNeeded = new ArrayList<>();
-        if (permissionWritestorage != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
         if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
         }
@@ -243,8 +242,22 @@ public class FotoPerfilActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
         }
+
         return true;
     }
 
+    private boolean checkAndRequestPermissionsStorage() {
+        int permissionWritestorage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionWritestorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -3,6 +3,7 @@ package com.example.petplanet.models;
 import java.util.ArrayList;
 
 public class Paseo {
+    private String id;
     private String fotodelperro;
     private String nombredelowner;
     private String nombredelperro;
@@ -14,18 +15,36 @@ public class Paseo {
     private String distanciarecorrida;
     private String duracion;
 
-    public Paseo(String fotodelperro,String nombredelowner, String nombredelperro,String localidad, String fecha, String hora, String direcciondelowner) {
+    public Paseo(String fotodelperro,String nombredelowner, String nombredelperro,String localidad, String fecha, String hora, String direcciondelowner,String nombredelwalker) {
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
         this.Localidad = localidad;
         this.fecha = fecha;
         this.hora = hora;
+        this.nombredelwalker = nombredelwalker;
         this.direcciondelowner = direcciondelowner;
     }
 
     public Paseo(){
 
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getNombredelwalker() {
+        return nombredelwalker;
+    }
+
+    public void setNombredelwalker(String nombredelwalker) {
+        this.nombredelwalker = nombredelwalker;
     }
 
     public String getFotodelperro() {

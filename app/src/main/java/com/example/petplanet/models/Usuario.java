@@ -15,6 +15,7 @@ public class Usuario {
     private String foto;
     private String id;
     private Boolean paseoencurso;
+
     private ArrayList<Perro> perros;    //Array de perros
 
 

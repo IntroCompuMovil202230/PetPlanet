@@ -163,7 +163,6 @@ public class AgendarPaseosActivity extends AppCompatActivity {
     String fotodelperro;
 
     public void agendarpaseo(String fecha, String hora, String mascota) {
-
         prueba.forEach(perro -> {
             if (perro.getNombrecompleto().equals(mascota)) {
                 perrox = perro;
@@ -171,9 +170,11 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             }
         });
 
-        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion());
+        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion(), "Pendiente");
         myRef = database.getReference(Constants.PATH_PASEOS);
+        Log.d("malditasea", "agendarpaseo: " + myRef.getDatabase().getReference().push().getKey());
         myRef.push().setValue(paseo);
+        Log.d("malditasea", "agendarpaseo: " + myRef.getKey());
         Toast.makeText(this, "Paseo agendado", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
         finish();

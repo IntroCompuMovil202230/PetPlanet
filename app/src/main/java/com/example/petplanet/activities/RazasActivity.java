@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.petplanet.databinding.ActivityRazasBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
+import com.example.petplanet.utilities.Constants;
 import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 public class RazasActivity extends AppCompatActivity {
 
     String raza[] = {"Beagle", "Bulldog", "Chihuahua", "Dalmata", "Golden Retriever", "Labrador", "Pitbull", "Poodle", "Rottweiler", "San Bernardo", "Schnauzer", "Shih Tzu", "Terrier", "Yorkshire"};
-
     private ActivityRazasBinding binding;
     private FirebaseAuth mAuth;
     Usuario Client = new Usuario();
@@ -56,8 +56,8 @@ public class RazasActivity extends AppCompatActivity {
                 nombredueno = Client.getNombre();
             }
         });
-        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
-        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
+        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
                 Log.d("putoelquelolea", "onComplete: " + task1.getResult().getValue());
                 task1.getResult().getChildren().forEach(perro -> {
@@ -117,12 +117,7 @@ public class RazasActivity extends AppCompatActivity {
             }
         });
 
-        binding.registrarMascotaBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                registrarperro();
-            }
-        });
+        binding.registrarMascotaBT.setOnClickListener(view -> registrarperro());
 
     }
 
@@ -146,22 +141,37 @@ public class RazasActivity extends AppCompatActivity {
         return usuario;
     }
 
-    private void registrarperro() {
+    Usuario nUp = new Usuario();
 
+    private void registrarperro() {
+        perros.add(createPerroObject());
+        Log.d("putoelquelolea", "registrarperro: " + perros.size());
         if (perros.size() == 0) {
-            Usuario Client = createUserObject();
-            myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
-            myRef.setValue(Client).addOnSuccessListener(aVoid -> {
-                Toast.makeText(RazasActivity.this, "Perro registrado", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
-                finish();
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    nUp = task.getResult().getValue(Usuario.class);
+                    nUp.setPerros(perros);
+                    myRef.setValue(nUp);
+                    startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                }
+
             });
         } else {
-            myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
-            myRef.setValue(createUserObject()).addOnSuccessListener(aVoid -> {
-                Toast.makeText(RazasActivity.this, "Perro registrado", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
-                finish();
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Client = task.getResult().getValue(Usuario.class);
+                    Client.setPerros(perros);
+                    myRef.setValue(Client);
+                    startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
