@@ -105,6 +105,10 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
                     binding.conversationsRecyclerView.smoothScrollToPosition(0);
                     binding.conversationsRecyclerView.setVisibility(View.VISIBLE);
                     binding.progresconversation.setVisibility(View.GONE);
+                }if(conversations.size() == 0){
+                    binding.conversationsRecyclerView.setVisibility(View.GONE);
+                    binding.progresconversation.setVisibility(View.GONE);
+                    binding.nohaychatstxt.setVisibility(View.VISIBLE);
                 }
             }
 

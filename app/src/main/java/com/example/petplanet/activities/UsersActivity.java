@@ -99,6 +99,7 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
         intent.putExtra(Constants.KEY_USER, user.getCorreo());
 
         startActivity(intent);
+        finish();
     }
 
     @Override

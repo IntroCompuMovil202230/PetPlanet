@@ -72,6 +72,7 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.snackbar.Snackbar;
@@ -99,12 +100,12 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     Sensor lightSensor;
     private Sensor humSensor;
     private SensorEventListener lightSensorListener;
-    private List<Polyline> polylines=null;
+    private List<Polyline> polylines = null;
 
     public static final double lowerLeftLatitude = 4.4542324059959295;
-    public static final double lowerLeftLongitude= -74.31798356566968;
-    public static final double upperRightLatitude= 4.978316663093684;
-    public static final double upperRightLongitude= -73.89683495545846;
+    public static final double lowerLeftLongitude = -74.31798356566968;
+    public static final double upperRightLatitude = 4.978316663093684;
+    public static final double upperRightLongitude = -73.89683495545846;
 
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
@@ -120,8 +121,8 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
-    protected LatLng start=null;
-    protected LatLng end=null;
+    protected LatLng start = null;
+    protected LatLng end = null;
 
 
     private float humActual;
@@ -134,7 +135,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         binding = ActivityLandingPetOwnerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
 
 
         humActual = 0;
@@ -180,7 +180,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
-                aux=location;
+                aux = location;
                 Log.i(TAG, "Location update in the callback: " + location);
                 if (location != null) {
                     mCurrentLocation = location;
@@ -192,17 +192,17 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
 
-                    if(Math.abs(humActual-sensorEvent.values[0])>1){
+                if (Math.abs(humActual - sensorEvent.values[0]) > 1) {
                     humActual = sensorEvent.values[0];
-                    Log.d("Humedad", "Humedad: "+humActual);
-                    if(humActual >  65)
-                    {
+                    Log.d("Humedad", "Humedad: " + humActual);
+                    if (humActual > 65) {
                         Toast.makeText(LandingPetOwnerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         Toast.makeText(LandingPetOwnerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
+
             @Override
             public void onAccuracyChanged(Sensor sensor, int i) {
 
@@ -210,8 +210,9 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         };
 
 
-
         // Initialize the sensors
+
+        currentlocation();
 
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
@@ -231,19 +232,54 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                     }
                 }
             }
+
             @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
         };
 
         // Initialize geocoder
         mGeocoder = new Geocoder(getBaseContext());
     }
 
+    private double currentLat = 0;
+    private double currentLong = 0;
+
+    public void currentlocation() {
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                aux = location;
+                Log.d("asdasdasd", "Location update in the callback: " + location);
+                if (location != null) {
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                    // Enable touch gestures
+                    mMap.getUiSettings().setAllGesturesEnabled(true);
+                    // UI controls
+
+                    mMap.getUiSettings().setCompassEnabled(true);
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
+                    binding.progressmaps.setVisibility(View.GONE);
+
+                    mCurrentLocation = location;
+
+                    currentLat = location.getLatitude();
+                    currentLong = location.getLongitude();
+                }
+            }
+        };
+    }
 
 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
+
+        currentlocation();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -253,16 +289,17 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         ArrayList<LatLng> points = null;
         PolylineOptions lineOptions = null;
 
-        mMap.setOnMapLongClickListener(latLng -> {mMap.clear();
+        mMap.setOnMapLongClickListener(latLng -> {
+            mMap.clear();
 
             // Animating to the touched position
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
             try {
-                List<Address> direcciones =mGeocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
-                if(!direcciones.isEmpty()){
-                    for(Address dir: direcciones){
-                        mMap.addMarker( new MarkerOptions()
+                List<Address> direcciones = mGeocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                if (!direcciones.isEmpty()) {
+                    for (Address dir : direcciones) {
+                        mMap.addMarker(new MarkerOptions()
                                 .position(latLng)
                                 .title(dir.getFeatureName())
                                 .snippet(dir.getAddressLine(0))
@@ -271,90 +308,43 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                         Location locationA = new Location("point A");
                         locationA.setLatitude(mCurrentLocation.getLatitude());
                         locationA.setLongitude(mCurrentLocation.getLongitude());
-                        start = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+                        start = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                         Location locationB = new Location("point B");
                         locationB.setLatitude(latLng.latitude);
                         locationB.setLongitude(latLng.longitude);
                         float distance = locationA.distanceTo(locationB);
                         float distanceKm = distance / 1000;
-                        end = new LatLng(latLng.latitude,latLng.longitude);
+                        end = new LatLng(latLng.latitude, latLng.longitude);
                         Toast.makeText(LandingPetOwnerActivity.this,
-                                "Distancia : "+distanceKm+" km", Toast.LENGTH_SHORT).show();
-                        Findroutes(start,end);
+                                "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
+                        Findroutes(start, end);
 
 
                     }
                 } else {
                     Toast.makeText(LandingPetOwnerActivity.this,
-                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();}
+                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-
-        for(int i=0;i<Utilitys.routes.size();i++){
-            points = new ArrayList<LatLng>();
-            lineOptions = new PolylineOptions();
-
-            // Obteniendo el detalle de la ruta
-            List<HashMap<String, String>> path = Utilitys.routes.get(i);
-
-            // Obteniendo todos los puntos y/o coordenadas de la ruta
-            for(int j=0;j<path.size();j++){
-                HashMap<String,String> point = path.get(j);
-
-                double lat = Double.parseDouble(point.get("lat"));
-                double lng = Double.parseDouble(point.get("lng"));
-                LatLng position = new LatLng(lat, lng);
-
-                if (center == null) {
-                    //Obtengo la 1ra coordenada para centrar el mapa en la misma.
-                    center = new LatLng(lat, lng);
-                }
-                points.add(position);
-            }
-
-            // Agregamos todos los puntos en la ruta al objeto LineOptions
-            lineOptions.addAll(points);
-            //Definimos el grosor de las Polilíneas
-            lineOptions.width(2);
-            //Definimos el color de la Polilíneas
-            lineOptions.color(Color.BLUE);
-        }
-
-        LatLng location = new LatLng(4.62867, -74.06461);
-
-        //int auxiliar = (int) Math.round(mCurrentLocation.getLatitude());
-        //LatLng location = new LatLng(auxiliar,-74.06461);
-        mMap.addMarker(new MarkerOptions().position(location));
-
-        // Set  zoom level
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
-        // Enable touch gestures
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        // UI controls
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(location));
-
     }
 
-    private void startLocationUpdates(){
-        if(ContextCompat.checkSelfPermission(this,
+    private void startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED){
+                == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, null);
         }
     }
 
-    private void stopLocationUpdates(){
+    private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
-    private LocationRequest createLocationRequest(){
+    private LocationRequest createLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
@@ -362,13 +352,10 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         return mLocationRequest;
     }
 
-    public void Findroutes(LatLng Start, LatLng End)
-    {
-        if(Start==null || End==null) {
-            Toast.makeText(LandingPetOwnerActivity.this,"Unable to get location", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
+    public void Findroutes(LatLng Start, LatLng End) {
+        if (Start == null || End == null) {
+            Toast.makeText(LandingPetOwnerActivity.this, "Unable to get location", Toast.LENGTH_LONG).show();
+        } else {
 
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.DRIVING)
@@ -382,10 +369,9 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     }
 
 
-
-    private void requestPermission(Activity context, String permiso, String justificacion, int idCode){
-        if(ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)){
+    private void requestPermission(Activity context, String permiso, String justificacion, int idCode) {
+        if (ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)) {
                 Toast.makeText(context, justificacion, Toast.LENGTH_SHORT).show();
             }
             ActivityCompat.requestPermissions(context, new String[]{permiso}, idCode);
@@ -395,9 +381,9 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
+        switch (requestCode) {
             case LOCATION_PERMISSION_ID: {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Ya hay permiso para acceder a la localizacion", Toast.LENGTH_LONG).show();
                     turnOnLocationAndStartUpdates();
                 } else {
@@ -408,7 +394,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         }
     }
 
-    private void turnOnLocationAndStartUpdates(){
+    private void turnOnLocationAndStartUpdates() {
         LocationSettingsRequest.Builder builder =
                 new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
         SettingsClient client = LocationServices.getSettingsClient(this);
@@ -427,7 +413,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                         try {
                             // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
                             ResolvableApiException resolvable = (ResolvableApiException) e;
-                            resolvable.startResolutionForResult(LandingPetOwnerActivity.this,REQUEST_CHECK_SETTINGS);
+                            resolvable.startResolutionForResult(LandingPetOwnerActivity.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException sendEx) {
                             // Ignore the error.
                         }
@@ -443,18 +429,16 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CHECK_SETTINGS: {
-                if (resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     startLocationUpdates();
-                }else {
+                } else {
                     Toast.makeText(this, "Sin acceso a localizacion", Toast.LENGTH_LONG).show();
                 }
             }
         }
     }
-
-
 
 
     @Override
@@ -501,14 +485,14 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     @Override
     public void onRoutingFailure(RouteException e) {
         View parentLayout = findViewById(android.R.id.content);
-        Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
         snackbar.show();
 //        Findroutes(start,end);
     }
 
     @Override
     public void onRoutingStart() {
-        Toast.makeText(LandingPetOwnerActivity.this,"Finding Route...",Toast.LENGTH_LONG).show();
+        Toast.makeText(LandingPetOwnerActivity.this, "Finding Route...", Toast.LENGTH_LONG).show();
     }
 
     //If Route finding success..
@@ -517,31 +501,29 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-        if(polylines!=null) {
+        if (polylines != null) {
             polylines.clear();
         }
         PolylineOptions polyOptions = new PolylineOptions();
-        LatLng polylineStartLatLng=null;
-        LatLng polylineEndLatLng=null;
+        LatLng polylineStartLatLng = null;
+        LatLng polylineEndLatLng = null;
 
 
         polylines = new ArrayList<>();
         //add route(s) to the map using polyline
-        for (int i = 0; i <route.size(); i++) {
+        for (int i = 0; i < route.size(); i++) {
 
-            if(i==shortestRouteIndex)
-            {
+            if (i == shortestRouteIndex) {
                 polyOptions.color(getResources().getColor(R.color.purple_500));
                 polyOptions.width(7);
                 polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
                 Polyline polyline = mMap.addPolyline(polyOptions);
-                polylineStartLatLng=polyline.getPoints().get(0);
-                int k=polyline.getPoints().size();
-                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylineStartLatLng = polyline.getPoints().get(0);
+                int k = polyline.getPoints().size();
+                polylineEndLatLng = polyline.getPoints().get(k - 1);
                 polylines.add(polyline);
 
-            }
-            else {
+            } else {
 
             }
 
@@ -552,12 +534,12 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onRoutingCancelled() {
-        Findroutes(start,end);
+        Findroutes(start, end);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Findroutes(start,end);
+        Findroutes(start, end);
 
     }
 

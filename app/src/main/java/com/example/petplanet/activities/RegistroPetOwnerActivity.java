@@ -101,6 +101,7 @@ public class RegistroPetOwnerActivity extends AppCompatActivity {
                     intent.putExtra("password", binding.registroPassword.getText().toString());
                     intent.putExtra("tipo", "petowner");
                     startActivity(intent);
+                    finish();
                 } else {
                     // Existe el usuario
                     Toast.makeText(getApplicationContext(), "El usuario ya existe", Toast.LENGTH_SHORT).show();

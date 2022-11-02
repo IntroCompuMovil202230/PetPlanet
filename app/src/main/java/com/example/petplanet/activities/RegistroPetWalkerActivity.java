@@ -97,6 +97,7 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
                     intent.putExtra("experiencia",binding.registroExperiencia.getText().toString());
                     intent.putExtra("tipo","petwalker");
                     startActivity(intent);
+                    finish();
                 } else {
                     // Existe el usuario
                     Toast.makeText(getApplicationContext(), "El usuario ya existe", Toast.LENGTH_SHORT).show();

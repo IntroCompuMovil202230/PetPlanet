@@ -31,28 +31,27 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="410dp"
         android:layout_height="92dp"
-        >
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/sbottom_navigation"
-            app:fabCradleMargin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="?android:attr/windowBackground">
+            android:background="?android:attr/windowBackground"
+            app:fabCradleMargin="10dp">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_navigationWalker"
-                app:menu="@menu/navigation_menu_walker"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
-                android:background="@android:color/transparent">
+                android:background="@android:color/transparent"
+                app:menu="@menu/navigation_menu_walker">
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>
 

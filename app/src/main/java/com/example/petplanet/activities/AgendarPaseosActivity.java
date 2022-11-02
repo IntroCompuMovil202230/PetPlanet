@@ -72,10 +72,6 @@ public class AgendarPaseosActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
         binding.progressBarAgendar.setVisibility(View.VISIBLE);
-        binding.spinnerMascota.setVisibility(View.INVISIBLE);
-        binding.AgendarHora.setVisibility(View.INVISIBLE);
-        binding.AgendarFecha.setVisibility(View.INVISIBLE);
-        binding.buttonAgendar.setVisibility(View.INVISIBLE);
         setSupportActionBar(binding.toolbarAgendar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -87,29 +83,43 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
         ArrayList<String> menuperros = new ArrayList<>();
         menuperros.add("Seleccione un perro");
-        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS);
-        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid() + PATH_PERROS).child("perros").get().addOnCompleteListener(task1 -> {
+        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
+        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
-                binding.progressBarAgendar.setVisibility(View.INVISIBLE);
-                binding.spinnerMascota.setVisibility(View.VISIBLE);
 
-                binding.AgendarHora.setVisibility(View.VISIBLE);
-                binding.AgendarFecha.setVisibility(View.VISIBLE);
-                binding.buttonAgendar.setVisibility(View.VISIBLE);
                 Log.d("malditasea", "onComplete: " + task1.getResult().getValue());
-                task1.getResult().getChildren().forEach(perro -> {
-                    perrox = perro.getValue(Perro.class);
-                    Log.d("malditasea", "onComplete: " + perrox.getNombrecompleto());
-                    prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
-                    menuperros.add(perrox.getNombrecompleto());
+                if (task1.getResult().getValue() != null) {
+                    task1.getResult().getChildren().forEach(perro -> {
+                        perrox = perro.getValue(Perro.class);
 
-                    Log.d("malditasea", "onComplete: " + prueba.size());
-                    ArrayAdapter adapter = new ArrayAdapter(AgendarPaseosActivity.this, android.R.layout.simple_spinner_dropdown_item, menuperros);
-                    binding.spinnerMascota.setAdapter(adapter);
-                });
+
+                        binding.progressBarAgendar.setVisibility(View.INVISIBLE);
+                        binding.spinnerMascota.setVisibility(View.VISIBLE);
+
+                        binding.AgendarHora.setVisibility(View.VISIBLE);
+                        binding.AgendarFecha.setVisibility(View.VISIBLE);
+                        binding.buttonAgendar.setVisibility(View.VISIBLE);
+                        Log.d("malditasea", "onComplete: " + perrox.getNombrecompleto());
+                        prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
+                        menuperros.add(perrox.getNombrecompleto());
+
+                        Log.d("malditasea", "onComplete: " + prueba.size());
+                        ArrayAdapter adapter = new ArrayAdapter(AgendarPaseosActivity.this, android.R.layout.simple_spinner_dropdown_item, menuperros);
+                        binding.spinnerMascota.setAdapter(adapter);
+
+                    });
+                } else {
+                    binding.progressBarAgendar.setVisibility(View.INVISIBLE);
+                    binding.moverregistrarperroBTN.setVisibility(View.VISIBLE);
+                    binding.nohayperrostxt.setVisibility(View.VISIBLE);
+                }
+
             }
         });
-
+        binding.moverregistrarperroBTN.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), RegistroPerroActivity.class));
+            finish();
+        });
 
         myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {

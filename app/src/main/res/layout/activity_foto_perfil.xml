@@ -40,9 +40,9 @@
         android:layout_height="70dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        app:cornerRadius="15dp"
         android:layout_marginBottom="30dp"
         android:text="@string/crearCuenta"
+        app:cornerRadius="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -87,7 +87,6 @@
             android:textColorHint="#616161"
             tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

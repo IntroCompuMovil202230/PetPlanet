@@ -17,12 +17,14 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/conversationsRecyclerView"
             android:layout_width="match_parent"
@@ -30,17 +32,30 @@
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
-            android:visibility="gone"
             android:padding="20dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
         <ProgressBar
             android:id="@+id/progresconversation"
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/nohaychatstxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            />
+            android:textColor="@color/purple_500"
+            android:textSize="20sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:visibility="gone"
+            android:textStyle="bold"
+            android:text="No hay conversaciones en este momento" />
+
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -49,13 +64,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/purple_500"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="@color/purple_500"
         app:srcCompat="@drawable/ic_add"
-        app:tint="@color/white"
-        />
+        app:tint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

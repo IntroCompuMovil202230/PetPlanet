@@ -111,7 +111,15 @@ public class ChatActivity extends AppCompatActivity {
         llenarUsuariochat();
         llenarWalkerx();
         setListeners();
-
+        binding.imageinfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ChatActivity.this, PerfilUsuarioWalkerActivity.class);
+                intent.putExtra("nombre", walkerx.getNombre());
+                intent.putExtra("vengodeunchat", true);
+                startActivity(intent);
+            }
+        });
 
         myChat = database.getReference(Constants.PATH_CHATS);
         myChat.addValueEventListener(new ValueEventListener() {

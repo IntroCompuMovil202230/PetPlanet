@@ -123,10 +123,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private SensorEventListener humSensorListener;
     private Sensor humSensor;
 
-    public static final double lowerLeftLatitude = 4.4542324059959295;
-    public static final double lowerLeftLongitude = -74.31798356566968;
-    public static final double upperRightLatitude = 4.978316663093684;
-    public static final double upperRightLongitude = -73.89683495545846;
 
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
@@ -338,7 +334,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
                     currentLat = location.getLatitude();
                     currentLong = location.getLongitude();
-                    Log.d("pitoooooooo", "Location update in the pitodoble: " + location.getAccuracy());
                 }
             }
         };
@@ -475,36 +470,33 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         startLocationUpdates();
 
     }
- public void cargarpaseo(){
+
+    public void cargarpaseo() {
 
 
+    }
 
-
-
-
-
- }
     Paseo nPaseo = new Paseo();
-    public void sacarpaseo(){
-Log.d("paseoasd", "sacarpaseo: "+getId());
-        myRef = database.getReference(Constants.PATH_PASEOS+getId());
-        myRef.getDatabase().getReference(Constants.PATH_PASEOS+getId()).get().addOnCompleteListener(task -> {
+
+    public void sacarpaseo() {
+        Log.d("paseoasd", "sacarpaseo: " + getId());
+        myRef = database.getReference(Constants.PATH_PASEOS + getId());
+        myRef.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 nPaseo = task.getResult().getValue(Paseo.class);
                 nPaseo.setNombredelwalker(Client.getNombre());
-                Log.d("paseoasd", "sacarpaseo: "+nPaseo.getNombredelwalker());
+                Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelwalker());
                 myRef.setValue(nPaseo);
             }
         });
-        myRef = database.getReference(Constants.PATH_USERS+ mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(Constants.PATH_USERS+ mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Client = task.getResult().getValue(Usuario.class);
                 Client.setPaseoencurso(true);
                 myRef.setValue(Client);
             }
         });
-
 
 
     }
@@ -619,7 +611,6 @@ Log.d("paseoasd", "sacarpaseo: "+getId());
     }
 
 
-
     public void cargardatos() {
         myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
@@ -628,8 +619,6 @@ Log.d("paseoasd", "sacarpaseo: "+getId());
             }
         });
     }
-
-
 
 
     @Override

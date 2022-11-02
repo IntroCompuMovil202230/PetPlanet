@@ -19,16 +19,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/disponibles"
         app:titleTextColor="@color/purple_500" />
-<GridView
-    android:id="@+id/grindDispo"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginStart="25dp"
-    android:layout_marginEnd="25dp"
-    android:layout_marginTop="60dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.266"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="@+id/toolbarPerDispo"/>
+
+    <GridView
+        android:id="@+id/grindDispo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbarPerDispo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

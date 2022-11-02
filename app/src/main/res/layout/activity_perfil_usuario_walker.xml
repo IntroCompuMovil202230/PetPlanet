@@ -11,18 +11,17 @@
         android:id="@+id/FotoPetWalker"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="24dp"
         android:clickable="true"
 
 
         app:civ_border_color="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tollbarPwalker"
         tools:ignore="SpeakableTextPresentCheck"
         tools:srcCompat="@tools:sample/avatars" />
-
-
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tollbarPwalker"
@@ -39,46 +38,51 @@
 
     <TextView
         android:id="@+id/nombrePetWalker"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="61dp"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_gravity="bottom|center_horizontal"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="44dp"
+
         android:layout_marginEnd="20dp"
-        android:background="@drawable/rounded_edittext"
-        android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/FotoPetWalker" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/FotoPetWalker"
+        app:layout_constraintTop_toBottomOf="@+id/tollbarPwalker" />
 
     <TextView
         android:id="@+id/TelefonoPetwalker"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="43dp"
+        android:layout_gravity="bottom|center_horizontal"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="44dp"
+
         android:layout_marginEnd="20dp"
-        android:background="@drawable/rounded_edittext"
-        android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/FotoPetWalker"
         app:layout_constraintTop_toBottomOf="@+id/nombrePetWalker" />
 
     <TextView
         android:id="@+id/experienciaPetwalker"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:minHeight="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="46dp"
         android:layout_marginEnd="20dp"
-        android:textColor="@color/black"
-        android:textAlignment="center"
         android:background="@drawable/rounded_edittext"
+        android:textAlignment="center"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TelefonoPetwalker" />
@@ -97,20 +101,20 @@
         android:id="@+id/nombreview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="38dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="24dp"
         android:text="@string/nombredelcuidador"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/FotoPetWalker" />
+        app:layout_constraintStart_toEndOf="@+id/FotoPetWalker"
+        app:layout_constraintTop_toBottomOf="@+id/tollbarPwalker" />
 
     <TextView
         android:id="@+id/telefonovieww"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="24dp"
         android:text="@string/telefonodelcuidador"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/FotoPetWalker"
         app:layout_constraintTop_toBottomOf="@+id/nombrePetWalker" />
 
     <TextView
