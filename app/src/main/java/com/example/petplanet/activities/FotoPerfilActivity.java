@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.petplanet.databinding.ActivityFotoPerfilBinding;
@@ -128,6 +129,7 @@ public class FotoPerfilActivity extends AppCompatActivity {
                 binding.editTextPhone.requestFocus();
                 return;
             } else {
+
                 createFirebaseAuthUser(emailS, passwordS);
             }
         });
@@ -193,6 +195,10 @@ public class FotoPerfilActivity extends AppCompatActivity {
     private void createFirebaseAuthUser(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                binding.fotodelusuarioBTN.setVisibility(View.GONE);
+                binding.editTextPhone.setVisibility(View.GONE);
+                binding.progressBarcrearperfil.setVisibility(View.VISIBLE);
+                binding.mensajedeerror.setText("Ya se esta creando tu perfil");
                 saveUser();
             }
         });

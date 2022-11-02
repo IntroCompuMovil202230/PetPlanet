@@ -96,6 +96,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                         binding.progressBarAgendar.setVisibility(View.INVISIBLE);
                         binding.spinnerMascota.setVisibility(View.VISIBLE);
 
+
                         binding.AgendarHora.setVisibility(View.VISIBLE);
                         binding.AgendarFecha.setVisibility(View.VISIBLE);
                         binding.buttonAgendar.setVisibility(View.VISIBLE);
