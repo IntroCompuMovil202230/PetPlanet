@@ -101,7 +101,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                         binding.AgendarFecha.setVisibility(View.VISIBLE);
                         binding.buttonAgendar.setVisibility(View.VISIBLE);
                         Log.d("malditasea", "onComplete: " + perrox.getNombrecompleto());
-                        prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
+                        prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto(),perrox.getRedomendacionesespeciales(),perrox.getRecomendaciones()));
                         menuperros.add(perrox.getNombrecompleto());
 
                         Log.d("malditasea", "onComplete: " + prueba.size());

@@ -33,6 +33,26 @@
         app:selectionRequired="true"
         app:singleSelection="true" />
 
+
+    <EditText
+        android:id="@+id/recomendacionesespecialestxt"
+        android:layout_width="match_parent"
+        android:layout_height="145dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/rounded_edittext"
+        android:gravity="center|left"
+        android:hint="@string/experiencia"
+        android:lines="8"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey_200"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchRecomendaciones" />
+
     <Button
         android:id="@+id/registrarMascotaBT"
         android:layout_width="match_parent"
@@ -53,5 +73,18 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="TextContrastCheck" />
+
+    <Switch
+        android:id="@+id/switchRecomendaciones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="100dp"
+        android:minHeight="48dp"
+        android:text="Recomendaciones especiales?"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

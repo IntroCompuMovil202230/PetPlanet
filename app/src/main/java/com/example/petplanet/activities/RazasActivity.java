@@ -62,7 +62,7 @@ public class RazasActivity extends AppCompatActivity {
                 Log.d("putoelquelolea", "onComplete: " + task1.getResult().getValue());
                 task1.getResult().getChildren().forEach(perro -> {
                     perrox = perro.getValue(Perro.class);
-                    perros.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
+                    perros.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto(), perrox.getRedomendacionesespeciales(), perrox.getRecomendaciones()));
                 });
 
             }
@@ -116,8 +116,22 @@ public class RazasActivity extends AppCompatActivity {
                 razadelperro = chip.getText().toString();
             }
         });
+        Log.d("putoelquelolea", "onCreate: " + binding.switchRecomendaciones.isChecked());
+        binding.switchRecomendaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                binding.recomendacionesespecialestxt.setVisibility(View.VISIBLE);
+            } else {
+                binding.recomendacionesespecialestxt.setVisibility(View.GONE);
+            }
+        });
 
-        binding.registrarMascotaBT.setOnClickListener(view -> registrarperro());
+        binding.registrarMascotaBT.setOnClickListener(view -> {
+            if (binding.recomendacionesespecialestxt.getText().toString().isEmpty()) {
+                binding.recomendacionesespecialestxt.setError("Este campo es obligatorio");
+            } else {
+                registrarperro();
+            }
+        });
 
     }
 
@@ -131,6 +145,8 @@ public class RazasActivity extends AppCompatActivity {
         perro.setVacunado(vacunado);
         perro.setColor(colordelperro);
         perro.setFoto(fotoS);
+        perro.setRedomendacionesespeciales(binding.switchRecomendaciones.isChecked());
+        perro.setRecomendaciones(binding.recomendacionesespecialestxt.getText().toString());
         return perro;
     }
 

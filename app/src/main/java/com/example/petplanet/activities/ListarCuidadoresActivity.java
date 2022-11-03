@@ -53,7 +53,7 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
 
         cargatlocalidadOwner();
         binding.progressBar2.setVisibility(View.VISIBLE);
-        binding.grindCuidadores.setNumColumns(2);
+        binding.grindCuidadores.setNumColumns(1);
         binding.grindCuidadores.setVerticalSpacing(30);
         binding.grindCuidadores.setHorizontalSpacing(30);
         CargarUsuariosdeLaMismaLocalidad();

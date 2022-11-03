@@ -2,10 +2,13 @@ package com.example.petplanet.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -40,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 
@@ -108,11 +112,21 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             builder.setTitle("Elige una opcion");
             builder.setItems(options, (dialog, item) -> {
                 if (options[item].equals("Tomar foto")) {
-                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, CAMERA_REQUEST);
-                    binding.profilePetUPicture.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                    if (ContextCompat.checkSelfPermission(PerfilUsuarioActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(PerfilUsuarioActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                    } else {
+                        if (checkAndRequestPermissions()) {
+                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, CAMERA_REQUEST);
+                            binding.profilePetUPicture.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                        }
+                    }
                 } else if (options[item].equals("Elegir de galeria")) {
-                    imageChooser();
+                    if (checkAndRequestPermissionsStorage()) {
+                        imageChooser();
+                    } else {
+                        Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (options[item].equals("Cancelar")) {
                     dialog.dismiss();
                 }
@@ -186,7 +200,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             if (task1.isSuccessful()) {
                 task1.getResult().getChildren().forEach(perro -> {
                     perrox = perro.getValue(Perro.class);
-                    prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto()));
+                    prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto(), perrox.getRedomendacionesespeciales(), perrox.getRecomendaciones()));
                     ArrayAdapter adapter = new CardAdapterUserDog(this, R.layout.perfilperroview, prueba);
                     binding.grindPerrosdueno.setAdapter(adapter);
                     binding.grindPerrosdueno.setOnItemClickListener((parent, view, position, id) -> {
@@ -265,9 +279,10 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Client = task.getResult().getValue(Usuario.class);
-                    Log.d("malditasea", String.valueOf(prueba.get(0).getNombrecompleto()));
                     Client.setFoto(fotoS);
-                    Client.setPerros(prueba);
+                    if (prueba.size() > 0) {
+                        Client.setPerros(prueba);
+                    }
                     myRef.setValue(Client);
                     Toast.makeText(getApplicationContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
                     binding.guardatBTN.setVisibility(View.INVISIBLE);
@@ -312,6 +327,39 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    private boolean checkAndRequestPermissions() {
+        int permissionCamera = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkAndRequestPermissionsStorage() {
+        int permissionWritestorage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionWritestorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
