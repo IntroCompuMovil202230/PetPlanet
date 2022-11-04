@@ -20,128 +20,196 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="56dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePetPicture"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="18dp"
+        android:contentDescription="@string/app_name"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/toolbarPperro">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarPperro" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/fullNamePet"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profilePetPicture"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
-            <ImageView
-                android:id="@+id/profilePetPicture"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="92dp"
-                android:layout_marginEnd="92dp"
-                android:contentDescription="@string/app_name"
-                app:srcCompat="@mipmap/pet1_foreground" />
+    <TextView
+        android:id="@+id/raza"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/profilePetPicture"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
-            <TextView
-                android:id="@+id/fullNamePet"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/rounded_edittext"
-                android:gravity="center"
+    <TextView
+        android:id="@+id/Fechadenacimientodelperro"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_gravity="bottom|center_horizontal"
 
-                android:textAlignment="center"
-                android:textColor="@color/purple_500"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sexodelperro"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
-            <TextView
-                android:id="@+id/carnetVacunacion"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/rounded_edittext"
-                android:gravity="center"
-                android:text="@string/carnetvacunacion"
-                android:textAlignment="center"
+    <TextView
+        android:id="@+id/sexodelperro"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_gravity="bottom|center_horizontal"
 
-                android:textColor="@color/purple_500"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/Fechadenacimientodelperro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
-            <TextView
-                android:id="@+id/raza"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/rounded_edittext"
-                android:gravity="center"
-                android:text="@string/raza"
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="18dp"
+        android:text="Nombre del perro"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/fullNamePet"
+        app:layout_constraintStart_toEndOf="@+id/profilePetPicture"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarPperro" />
 
-                android:textAlignment="center"
-                android:textColor="@color/purple_500"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="9dp"
+        android:text="Raza del perro"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/profilePetPicture"
+        app:layout_constraintTop_toBottomOf="@+id/fullNamePet" />
 
-            <TextView
-                android:id="@+id/numberPetOwner"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/rounded_edittext"
-                android:gravity="center"
-                android:text="@string/number"
-                android:textAlignment="center"
-                android:textColor="@color/purple_500"
-                android:textSize="20sp"
-                android:textStyle="bold"
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Sexo del perro"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profilePetPicture" />
 
-                />
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/rounded_edittext"
-                android:gravity="center"
-                android:text="@string/address"
-                android:textAlignment="center"
-                android:textColor="@color/purple_500"
-                android:textSize="20sp"
+        android:layout_marginTop="15dp"
+        android:text="Fecha de nacimiento"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.719"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/profilePetPicture" />
 
-                android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Vacunado?"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Fechadenacimientodelperro" />
 
-            <TextView
-                android:id="@+id/indicaciones"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginTop="20dp"
+    <TextView
+        android:id="@+id/vacunadoperroTxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/purple_500"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/textView14"
+        app:layout_constraintStart_toEndOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/Fechadenacimientodelperro" />
 
-                android:text="@string/indicaciones"
-                android:textAlignment="center"
-                android:textColor="@color/grey_200"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </ScrollView>
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="15dp"
+        android:text="Esterilizado?"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/Fechadenacimientodelperro" />
+
+    <TextView
+        android:id="@+id/esterilazoTXT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/purple_500"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView14"
+        app:layout_constraintTop_toBottomOf="@+id/Fechadenacimientodelperro" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Recomendaciones especiales"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vacunadoperroTxt" />
+
+    <TextView
+        android:id="@+id/recomendacionesTXT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/purple_500"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+    <ProgressBar
+        android:id="@+id/progressBarPerfilPerro"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
