@@ -1,4 +1,5 @@
 package com.example.petplanet.adapters;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,7 +43,7 @@ public class CardAdapterPerro extends ArrayAdapter {
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
         nombre.setText(perrolist.get(position).getNombrecompleto());
         horario.setText(perrolist.get(position).getHorario());
-        conoce.setText("Conoce mas de: "+ perrolist.get(position).getNombrecompleto());
+        conoce.setText("Conoce mas de: " + perrolist.get(position).getNombrecompleto());
         byte[] decodedString = Base64.decode(perrolist.get(position).getFoto(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);

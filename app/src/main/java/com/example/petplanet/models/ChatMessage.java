@@ -8,7 +8,8 @@ public class ChatMessage {
     private String message;
     private String datetime;
     public Date dateObject;
-    public String conversionId,conversionName,conversionImage;
+    public String conversionId, conversionName, conversionImage;
+
     public ChatMessage() {
     }
 
@@ -18,8 +19,6 @@ public class ChatMessage {
         this.message = message;
         this.datetime = datetime;
     }
-
-
 
 
     public void setSenderid(String senderid) {

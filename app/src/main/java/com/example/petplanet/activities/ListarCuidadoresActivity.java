@@ -42,6 +42,7 @@ public class ListarCuidadoresActivity extends AppCompatActivity {
     Usuario walkerx = new Usuario();
     Usuario Ownerx = new Usuario();
     ArrayList<Usuario> cuidadoreslist = new ArrayList<>();
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {

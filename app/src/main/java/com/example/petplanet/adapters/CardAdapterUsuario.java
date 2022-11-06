@@ -41,7 +41,7 @@ public class CardAdapterUsuario extends ArrayAdapter {
         TextView conoce = (TextView) v.findViewById(R.id.conoceperrotxt);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
         nombre.setText(usuariolist.get(position).getNombre());
-        conoce.setText("Conoce mas de: "+ usuariolist.get(position).getNombre());
+        conoce.setText("Conoce mas de: " + usuariolist.get(position).getNombre());
         byte[] decodedString = Base64.decode(usuariolist.get(position).getFoto(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);

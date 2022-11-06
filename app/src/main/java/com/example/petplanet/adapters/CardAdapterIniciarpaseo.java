@@ -18,7 +18,7 @@ import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
 
-public class CardAdapterIniciarpaseo  extends ArrayAdapter {
+public class CardAdapterIniciarpaseo extends ArrayAdapter {
 
 
     private ArrayList<Paseo> perroslist = new ArrayList<>();
@@ -42,8 +42,8 @@ public class CardAdapterIniciarpaseo  extends ArrayAdapter {
         TextView nombreperro = (TextView) v.findViewById(R.id.nombreperrotxt);
         TextView nombredueno = (TextView) v.findViewById(R.id.duenoperrotxt);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
-        nombreperro.setText("Nombre del perro: "+perroslist.get(position).getNombredelperro());
-        nombredueno.setText("Nombre del dueño: "+perroslist.get(position).getDirecciondelowner());
+        nombreperro.setText("Nombre del perro: " + perroslist.get(position).getNombredelperro());
+        nombredueno.setText("Nombre del dueño: " + perroslist.get(position).getDirecciondelowner());
         byte[] decodedString = Base64.decode(perroslist.get(position).getFotodelperro(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);

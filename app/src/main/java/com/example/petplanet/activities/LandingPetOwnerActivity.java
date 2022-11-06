@@ -167,7 +167,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.mapowner);
         mapFragment.getMapAsync(this);
 
         mLocationRequest = createLocationRequest();

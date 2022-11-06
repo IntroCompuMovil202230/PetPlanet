@@ -16,13 +16,13 @@ public class Perro {
     Boolean disponibleparapaseo;
     Boolean redomendacionesespeciales;
     String recomendaciones;
-    String  foto;
+    String foto;
 
     public Perro() {
     }
 
 
-    public Perro( String nombrecompleto, String raza, String sexo, String color, String fechanacimiento, Boolean vacunado, Boolean esterilizado, String foto,Boolean redomendacionesespeciales,String recomendaciones) {
+    public Perro(String nombrecompleto, String raza, String sexo, String color, String fechanacimiento, Boolean vacunado, Boolean esterilizado, String foto, Boolean redomendacionesespeciales, String recomendaciones) {
         this.nombrecompleto = nombrecompleto;
         this.raza = raza;
         this.sexo = sexo;
@@ -32,19 +32,18 @@ public class Perro {
         this.esterilizado = esterilizado;
         this.foto = foto;
         this.redomendacionesespeciales = redomendacionesespeciales;
-        if(redomendacionesespeciales){
+        if (redomendacionesespeciales) {
             this.recomendaciones = recomendaciones;
         }
     }
 
-    public Perro(String nombredelperro,String foto){
-        this.nombrecompleto=nombredelperro;
-        this.foto=foto;
+    public Perro(String nombredelperro, String foto) {
+        this.nombrecompleto = nombredelperro;
+        this.foto = foto;
     }
 
 
-
-    public Perro(String nombredueno,String nombrecompleto,String  foto) {
+    public Perro(String nombredueno, String nombrecompleto, String foto) {
         this.nombrecompleto = nombrecompleto;
         this.foto = foto;
     }
@@ -138,11 +137,11 @@ public class Perro {
         this.esterilizado = esterilizado;
     }
 
-    public String  getFoto() {
+    public String getFoto() {
         return foto;
     }
 
-    public void setFoto(String  foto) {
+    public void setFoto(String foto) {
         this.foto = foto;
     }
 }

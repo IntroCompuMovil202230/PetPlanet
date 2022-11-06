@@ -15,7 +15,7 @@ public class Paseo {
     private String distanciarecorrida;
     private String duracion;
 
-    public Paseo(String fotodelperro,String nombredelowner, String nombredelperro,String localidad, String fecha, String hora, String direcciondelowner,String nombredelwalker) {
+    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner, String nombredelwalker) {
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
@@ -26,7 +26,7 @@ public class Paseo {
         this.direcciondelowner = direcciondelowner;
     }
 
-    public Paseo(){
+    public Paseo() {
 
     }
 

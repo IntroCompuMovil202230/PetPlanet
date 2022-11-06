@@ -20,6 +20,7 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
 
     private final List<ChatMessage> chatMessageList;
     private final ConversationListener conversationListener;
+
     public RecentConversationsAdapter(List<ChatMessage> chatMessageList, ConversationListener conversationListener) {
         this.conversationListener = conversationListener;
         this.chatMessageList = chatMessageList;
@@ -56,11 +57,11 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
             binding = itemContainerRecentConversationsBinding;
         }
 
-        void setData(ChatMessage chatmessage){
+        void setData(ChatMessage chatmessage) {
             binding.imageprofile.setImageBitmap(getConversationImage(chatmessage.conversionImage));
             binding.TextName.setText(chatmessage.conversionName);
             binding.textRecentMessage.setText(chatmessage.getMessage());
-            binding.getRoot().setOnClickListener(v ->{
+            binding.getRoot().setOnClickListener(v -> {
                 Usuario usuario = new Usuario();
                 usuario.setId(chatmessage.conversionId);
                 usuario.setNombre(chatmessage.conversionName);
