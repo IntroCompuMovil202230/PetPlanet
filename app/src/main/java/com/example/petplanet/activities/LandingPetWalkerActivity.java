@@ -383,7 +383,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
             binding.confirmarpaseoBTN.setOnClickListener(view -> {
                 final CharSequence[] options = {"Si, iniciar paseo ya mismo", "No, prefiero buscar otro"};
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
                 builder.setTitle("Elige una opcion");
                 builder.setItems(options, (dialog, item) -> {
@@ -436,33 +435,44 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
 
             binding.canelarpaseoBTN.setOnClickListener(view -> {
-                setDirecciondelOwner(null);
-                Log.d("asdasdasd33", "Loc: " + getId());
-                myPaseos = database.getReference(Constants.PATH_PASEOS+getId());
-                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS+getId()).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Paseo paseo = task.getResult().getValue(Paseo.class);
-                        paseo.setNombredelwalker("pendiente");
-                        myPaseos.setValue(paseo);
+                final CharSequence[] options = {"Si, deseo cancelar el paseo", "No cancelar"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
+                builder.setTitle("Elige una opcion");
+                builder.setItems(options, (dialog, item) -> {
+                    if (options[item].equals("Si, deseo cancelar el paseo")) {
+                        setDirecciondelOwner(null);
+                        Log.d("asdasdasd33", "Loc: " + getId());
+                        myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                        myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Paseo paseo = task.getResult().getValue(Paseo.class);
+                                paseo.setNombredelwalker("pendiente");
+                                myPaseos.setValue(paseo);
 
+                            }
+                        });
+                        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                Client = task1.getResult().getValue(Usuario.class);
+                                Client.setPaseoencurso(false);
+                                myRef.setValue(Client);
+                                binding.cardpaseo.setVisibility(View.GONE);
+                                binding.paseoencursoBTN.setVisibility(View.GONE);
+                                binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                                binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                            }
+                        });
+                        mMap.clear();
+
+                    } else if (options[item].equals("No cancelar")) {
+                        dialog.dismiss();
                     }
                 });
-                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
-                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
-                        Client = task1.getResult().getValue(Usuario.class);
-                        Client.setPaseoencurso(false);
-                        myRef.setValue(Client);
-                        binding.cardpaseo.setVisibility(View.GONE);
-                        binding.paseoencursoBTN.setVisibility(View.GONE);
-                        binding.coordinatorLayout.setVisibility(View.VISIBLE);
-                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                    }
-                });
-                mMap.clear();
+                builder.show();
+
+
             });
-
-
             startLocationUpdates();
         }
 
@@ -494,7 +504,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 binding.distanciaTXT.setText(String.valueOf(distanceKm));
                 LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
                 end = destination;
-                if(start ==null){
+                if (start == null) {
                     start = new LatLng(dis3.getLatitude(), dis3.getLongitude());
                 }
                 Findroutes(start, end);
