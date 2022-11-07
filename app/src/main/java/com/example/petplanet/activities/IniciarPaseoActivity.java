@@ -75,7 +75,10 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 walkerx = task.getResult().getValue(Usuario.class);
-                cargarPerros();
+                if (!walkerx.getPaseoencurso()) {
+                    cargarPerros();
+                }
+
             }
         });
     }

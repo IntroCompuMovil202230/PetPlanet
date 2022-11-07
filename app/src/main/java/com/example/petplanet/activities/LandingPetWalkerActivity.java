@@ -15,17 +15,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.Uri;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -34,7 +30,6 @@ import androidx.core.content.ContextCompat;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.widget.Toast;
 
@@ -44,9 +39,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
-import com.example.petplanet.adapters.CardAdapterUserDog;
 import com.example.petplanet.models.Paseo;
-import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
@@ -68,34 +61,25 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -118,11 +102,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     SensorEventListener lightSensorListener;
     private FirebaseAuth mAuth;
     Usuario Client = new Usuario();
-
+    private LocationCallback mLocationCallback;
     private float humActual;
     private SensorEventListener humSensorListener;
     private Sensor humSensor;
-
 
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
@@ -130,9 +113,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     String locationPerm = Manifest.permission.ACCESS_FINE_LOCATION;
 
     //Variables de localizacion
-    private FusedLocationProviderClient mFusedLocationClient;
+    private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest mLocationRequest;
-    private LocationCallback mLocationCallback;
     public Location mCurrentLocation;
 
     public Location getmCurrentLocation() {
@@ -188,11 +170,11 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
-        binding.confirmarpaseoBTN.setVisibility(View.INVISIBLE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
         mAuth = FirebaseAuth.getInstance();
         cargardatos();
+        binding.coordinatorLayout.setVisibility(View.VISIBLE);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             switch (id) {
@@ -235,21 +217,19 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             setNombredelowner((String) savedInstanceState.getSerializable("nombredelowner"));
             setId((String) savedInstanceState.getSerializable("id"));
         }
+        mLocationRequest = createLocationRequest();
 
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapwalker);
         mapFragment.getMapAsync(this);
 
-        mLocationRequest = createLocationRequest();
+
         //Location
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, "El permiso es necesario para acceder a la localizacion", LOCATION_PERMISSION_ID);
 
-
-        currentlocation();
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
             humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
@@ -312,181 +292,236 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private double currentLong = 0;
 
     public void currentlocation() {
+
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
                 aux = location;
-                Log.d("asdasdasd", "Location update in the callback: " + location);
+
                 if (location != null) {
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
                     // Enable touch gestures
-                    mMap.getUiSettings().setAllGesturesEnabled(true);
-                    // UI controls
 
-                    mMap.getUiSettings().setCompassEnabled(true);
-                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
                     LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
 
-                    setmCurrentLocation(location);
                     mCurrentLocation = location;
 
                     currentLat = location.getLatitude();
                     currentLong = location.getLongitude();
+                    start = new LatLng(currentLat, currentLong);
                 }
             }
         };
     }
 
-
+    @SuppressLint("MissingPermission")
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
-        currentlocation();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        // UI controls
 
-        // Set  zoom level
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        if (checkPermissions()) {
+            mMap.setMyLocationEnabled(true);
+            mMap.isMyLocationEnabled();
+            currentlocation();
 
-        mMap.setMyLocationEnabled(true);
+            // Set  zoom level
 
-        LatLng center = null;
-        ArrayList<LatLng> points = null;
-        PolylineOptions lineOptions = null;
+            mMap.setMyLocationEnabled(true);
 
-        mMap.setOnMapLongClickListener(latLng -> {
-            mMap.clear();
+            LatLng center = null;
+            ArrayList<LatLng> points = null;
+            PolylineOptions lineOptions = null;
+            Log.d("asdasdasd33", "Location update in the callback: " + getDirecciondelOwner());
+            if (getDirecciondelOwner() != null) {
 
-            // Animating to the touched position
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                mLocationCallback = new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        Location location = locationResult.getLastLocation();
+                        aux = location;
 
-            try {
-                List<Address> direcciones = mGeocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                if (!direcciones.isEmpty()) {
-                    for (Address dir : direcciones) {
-                        mMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title(dir.getFeatureName())
-                                .snippet(dir.getAddressLine(0))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                        Location locationA = new Location("point A");
-                        locationA.setLatitude(mCurrentLocation.getLatitude());
-                        locationA.setLongitude(mCurrentLocation.getLongitude());
-                        start = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                        Location locationB = new Location("point B");
-                        locationB.setLatitude(latLng.latitude);
-                        locationB.setLongitude(latLng.longitude);
-                        float distance = locationA.distanceTo(locationB);
-                        float distanceKm = distance / 1000;
-                        end = new LatLng(latLng.latitude, latLng.longitude);
-                        Toast.makeText(getApplicationContext(),
-                                "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
-                        Findroutes(start, end);
-                    }
-                } else {
-                    Toast.makeText(LandingPetWalkerActivity.this,
-                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+                        if (location != null) {
+                            mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                            // Enable touch gestures
 
+                            LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
 
-        if (getDirecciondelOwner() != null) {
+                            mCurrentLocation = location;
 
-            Log.d("pitoooooooo", "Location update in the asdasd: " + currentLat);
-            if (currentLat != 0.0) {
-                Log.d("pitoooooooo", "Location update in the pitooo: " + currentLat);
-            }
-            mLocationCallback = new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    Location location = locationResult.getLastLocation();
-                    if (location != null) {
-                        Geocoder coder = new Geocoder(getApplicationContext());
-                        List<Address> addresses;
-                        String strAddress = getDirecciondelOwner();
-                        try {
-                            addresses = coder.getFromLocationName(strAddress + "Bogotá", 5);
-                            if (!addresses.isEmpty()) {
-                                Address address = addresses.get(0);
-                                LatLng latLng2 = new LatLng(address.getLatitude(), address.getLongitude());
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-                                mMap.addMarker(new MarkerOptions().position(latLng2).title("Direccion del Owner"));
-                                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, INITIAL_ZOOM_LEVEL));
-                                Location dis3 = new Location("localizacion 1");
-                                Log.d("Direccion", "onMapReady: " + location.getLatitude());
-                                dis3.setLatitude(location.getLatitude());  //latitud
-                                dis3.setLongitude(location.getLongitude()); //longitud
-                                Location dis2 = new Location("localizacion 2");
-                                dis2.setLatitude(address.getLatitude());  //latitud
-                                dis2.setLongitude(address.getLongitude()); //longitud
-                                double distance = dis3.distanceTo(dis2);
-                                double distanceKm = 0;
-                                distanceKm = distance / 1000;
-                                Toast.makeText(getApplicationContext(),
-                                        "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
-                                LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
-                                end = destination;
-                                start = new LatLng(getmCurrentLocation().getLatitude(), mCurrentLocation.getLongitude());
-                                Findroutes(start, end);
-                                binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
-
-
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            currentLat = location.getLatitude();
+                            currentLong = location.getLongitude();
+                            start = new LatLng(currentLat, currentLong);
+                            pintarrutahaciaelowner(getDirecciondelOwner());
                         }
                     }
-                }
-            };
+                };
+
+                binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
+            } else {
+                SystemClock.sleep(200);
+                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Client = task.getResult().getValue(Usuario.class);
+                        if (Client.getPaseoencurso()) {
+                            binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+            }
+
+
+            binding.confirmarpaseoBTN.setOnClickListener(view -> {
+                final CharSequence[] options = {"Si, iniciar paseo ya mismo", "No, prefiero buscar otro"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
+                builder.setTitle("Elige una opcion");
+                builder.setItems(options, (dialog, item) -> {
+                    if (options[item].equals("Si, iniciar paseo ya mismo")) {
+                        binding.cardpaseo.setVisibility(View.VISIBLE);
+                        binding.coordinatorLayout.setVisibility(View.GONE);
+                        sacarpaseo();
+
+                    } else if (options[item].equals("No, prefiero buscar otro")) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            });
+            binding.paseoencursoBTN.setOnClickListener(view -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS);
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                            Paseo paseo = snapshot.getValue(Paseo.class);
+                            Log.d("Paseo", "cargarpaseo: " + paseo.getDirecciondelowner());
+                            if (Client.getPaseoencurso()) {
+                                if (paseo.getNombredelwalker().equals(Client.getNombre())) {
+                                    binding.cardpaseo.setVisibility(View.VISIBLE);
+                                    binding.paseoencursoBTN.setVisibility(View.GONE);
+                                    binding.coordinatorLayout.setVisibility(View.GONE);
+                                    binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                                    setId(paseo.getId());
+                                    byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
+                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                    binding.imagePerson.setImageBitmap(decodedByte);
+                                    binding.Nombreperro.setText(paseo.getNombredelperro());
+                                    pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                                }
+                            }
+
+                        }
+                    }
+                });
+            });
+
+
+            binding.volveralmenuBTN.setOnClickListener(view -> {
+                binding.cardpaseo.setVisibility(View.GONE);
+                binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                mMap.clear();
+            });
+
+
+            binding.canelarpaseoBTN.setOnClickListener(view -> {
+                setDirecciondelOwner(null);
+                myPaseos = database.getReference(Constants.PATH_PASEOS+getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS+getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        paseo.setNombredelwalker("pendiente");
+                        myPaseos.setValue(paseo);
+
+                    }
+                });
+                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        Client = task1.getResult().getValue(Usuario.class);
+                        Client.setPaseoencurso(false);
+                        myRef.setValue(Client);
+                        binding.cardpaseo.setVisibility(View.GONE);
+                        binding.paseoencursoBTN.setVisibility(View.GONE);
+                        binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                    }
+                });
+                mMap.clear();
+            });
+
+
+            startLocationUpdates();
         }
 
+    }
 
-        binding.confirmarpaseoBTN.setOnClickListener(view -> {
-            final CharSequence[] options = {"Si, iniciar paseo ya mismo", "No, prefiero buscar otro"};
+    public void pintarrutahaciaelowner(String direcciondelOwner) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
-            builder.setTitle("Elige una opcion");
-            builder.setItems(options, (dialog, item) -> {
-                if (options[item].equals("Si, iniciar paseo ya mismo")) {
 
-                    sacarpaseo();
-                    binding.confirmarpaseoBTN.setVisibility(View.GONE);
-
-                } else if (options[item].equals("No, prefiero buscar otro")) {
-                    dialog.dismiss();
+        Log.d("Paseoasd", "cargarpaseo0: " + currentLat);
+        Geocoder coder = new Geocoder(getApplicationContext());
+        List<Address> addresses;
+        String strAddress = direcciondelOwner;
+        try {
+            addresses = coder.getFromLocationName(strAddress + "Bogotá", 5);
+            Log.d("Pasesso", "Location update in the callback: " + currentLat);
+            if (!addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                LatLng latLng2 = new LatLng(address.getLatitude(), address.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(latLng2).title("Direccion del Owner"));
+                Location dis3 = new Location("localizacion 1");
+                dis3.setLatitude(currentLat);  //latitud
+                dis3.setLongitude(currentLong); //longitud
+                Location dis2 = new Location("localizacion 2");
+                dis2.setLatitude(address.getLatitude());  //latitud
+                dis2.setLongitude(address.getLongitude()); //longitud
+                double distance = dis3.distanceTo(dis2);
+                double distanceKm = 0;
+                distanceKm = distance / 1000;
+                binding.distanciaTXT.setText(String.valueOf(distanceKm));
+                LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
+                end = destination;
+                if(start ==null){
+                    start = new LatLng(dis3.getLatitude(), dis3.getLongitude());
                 }
-            });
-            builder.show();
-        });
-
-
-        mMap.clear();
-        startLocationUpdates();
-
+                Findroutes(start, end);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void cargarpaseo() {
-
-
-    }
-
-    Paseo nPaseo = new Paseo();
+    private Paseo nPaseo = new Paseo();
+    DatabaseReference myPaseos;
 
     public void sacarpaseo() {
         Log.d("paseoasd", "sacarpaseo: " + getId());
-        myRef = database.getReference(Constants.PATH_PASEOS + getId());
-        myRef.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+        myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+        myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 nPaseo = task.getResult().getValue(Paseo.class);
+                Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelowner());
                 nPaseo.setNombredelwalker(Client.getNombre());
                 Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelwalker());
-                myRef.setValue(nPaseo);
+                myPaseos.setValue(nPaseo);
+                byte[] decodedString = Base64.decode(nPaseo.getFotodelperro(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                binding.imagePerson.setImageBitmap(decodedByte);
+                binding.Nombreperro.setText(nPaseo.getNombredelperro());
+                binding.confirmarpaseoBTN.setVisibility(View.GONE);
+
             }
         });
         myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
@@ -502,24 +537,41 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
 
+    @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, null);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
         }
     }
 
+
+    private boolean checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+    }
+
     private void stopLocationUpdates() {
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        fusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     private LocationRequest createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
+        LocationRequest locationRequest = LocationRequest.create()
+                .setInterval(3000)
+                .setFastestInterval(500)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
     }
 
     private void requestPermission(Activity context, String permiso, String justificacion,
@@ -599,8 +651,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     @Override
     protected void onResume() {
         super.onResume();
-        turnOnLocationAndStartUpdates();
-        startLocationUpdates();
+        if (checkPermissions()) {
+            turnOnLocationAndStartUpdates();
+        }
         sensorManager.registerListener(lightSensorListener,
                 lightSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);

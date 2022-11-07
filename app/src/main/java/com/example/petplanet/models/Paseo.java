@@ -14,15 +14,16 @@ public class Paseo {
     private String Localidad;
     private String distanciarecorrida;
     private String duracion;
+    private String Latitud;
+    private String Longitud;
 
-    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner, String nombredelwalker) {
+    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner) {
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
         this.Localidad = localidad;
         this.fecha = fecha;
         this.hora = hora;
-        this.nombredelwalker = nombredelwalker;
         this.direcciondelowner = direcciondelowner;
     }
 

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.example.petplanet.databinding.ActivityWelcomeBinding;
 import com.example.petplanet.models.Usuario;
@@ -35,7 +36,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
-
         new Handler().postDelayed(() -> {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
@@ -56,10 +56,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
             myRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-
                     if (task.getResult().exists()) {
                         Usuario usuario = task.getResult().getValue(Usuario.class);
-
                         assert usuario != null;
                         if (usuario.getWalker()) {
                             startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
