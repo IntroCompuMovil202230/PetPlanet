@@ -411,7 +411,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                     binding.paseoencursoBTN.setVisibility(View.GONE);
                                     binding.coordinatorLayout.setVisibility(View.GONE);
                                     binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                                    setId(paseo.getId());
+                                    setId(snapshot.getKey());
                                     byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
                                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                                     binding.imagePerson.setImageBitmap(decodedByte);
@@ -437,6 +437,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
             binding.canelarpaseoBTN.setOnClickListener(view -> {
                 setDirecciondelOwner(null);
+                Log.d("asdasdasd33", "Loc: " + getId());
                 myPaseos = database.getReference(Constants.PATH_PASEOS+getId());
                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS+getId()).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

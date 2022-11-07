@@ -77,6 +77,8 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                 walkerx = task.getResult().getValue(Usuario.class);
                 if (!walkerx.getPaseoencurso()) {
                     cargarPerros();
+                }else{
+                    binding.adTXT.setText("Ya tienes un paseo en curso");
                 }
 
             }
@@ -97,6 +99,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                         paseos.add(paseox);
                     }
                     if (paseos.size() > 0) {
+                        binding.grindDispo.setVisibility(View.VISIBLE);
                         ArrayAdapter<Paseo> adapter = new CardAdapterIniciarpaseo(this, R.layout.cardviewiniciarpaseo, paseos);
                         if (binding.grindDispo != null) {
                             binding.grindDispo.setAdapter(adapter);
@@ -110,6 +113,8 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         });
+                    }else{
+                        binding.adTXT.setText("No hay paseos disponibles en tu localidad");
                     }
                 }
             }
