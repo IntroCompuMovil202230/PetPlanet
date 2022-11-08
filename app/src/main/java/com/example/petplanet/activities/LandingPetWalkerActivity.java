@@ -160,7 +160,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
-
+    boolean paseoencurso = false;
     Paseo paseo = new Paseo();
 
     @SuppressLint("WrongViewCast")
@@ -402,7 +402,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (DataSnapshot snapshot : task.getResult().getChildren()) {
-                            Paseo paseo = snapshot.getValue(Paseo.class);
+                            paseo = snapshot.getValue(Paseo.class);
                             Log.d("Paseo", "cargarpaseo: " + paseo.getDirecciondelowner());
                             if (Client.getPaseoencurso()) {
                                 if (paseo.getNombredelwalker().equals(Client.getNombre())) {
@@ -410,12 +410,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                     binding.paseoencursoBTN.setVisibility(View.GONE);
                                     binding.coordinatorLayout.setVisibility(View.GONE);
                                     binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                                    binding.escriDuenoBTN.setVisibility(View.GONE);
                                     setId(snapshot.getKey());
                                     byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
                                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                                     binding.imagePerson.setImageBitmap(decodedByte);
                                     binding.Nombreperro.setText(paseo.getNombredelperro());
                                     pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                                    paseoencurso = true;
                                 }
                             }
 
@@ -423,6 +425,53 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                     }
                 });
             });
+
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
+                    aux = location;
+
+                    if (location != null) {
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                        // Enable touch gestures
+
+                        LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
+
+                        mCurrentLocation = location;
+
+                        currentLat = location.getLatitude();
+                        currentLong = location.getLongitude();
+
+                        if (getId() != null) {
+                            myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Paseo paseo = task.getResult().getValue(Paseo.class);
+                                    paseo.setLatitudwalker(currentLat);
+                                    paseo.setLongitudwalker(currentLong);
+                                    myPaseos.setValue(paseo);
+                                }
+                            });
+
+                            start = new LatLng(currentLat, currentLong);
+                            Location dis3 = new Location("localizacion 1");
+                            dis3.setLatitude(currentLat);  //latitud
+                            dis3.setLongitude(currentLong); //longitud
+                            Location dis2 = new Location("localizacion 2");
+                            dis2.setLatitude(paseo.getLatitud());  //latitud
+                            dis2.setLongitude(paseo.getLongitud()); //longitud
+                            double distance = dis3.distanceTo(dis2);
+                            binding.distanciaTXT.setText(String.valueOf(distance) + " metros");
+                            if (distance < 100) {
+                                binding.escriDuenoBTN.setVisibility(View.VISIBLE);
+                                //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+            };
 
 
             binding.volveralmenuBTN.setOnClickListener(view -> {
@@ -434,12 +483,31 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             });
 
 
+            binding.escriDuenoBTN.setOnClickListener(view -> {
+                myRef = database.getReference(Constants.PATH_USERS);
+                myRef.getDatabase().getReference(Constants.PATH_USERS).get().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        task1.getResult().getChildren().forEach(snapshot -> {
+                            Usuario user = snapshot.getValue(Usuario.class);
+                            if (user.getNombre().equals(paseo.getNombredelowner())) {
+                                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                                intent.putExtra(Constants.KEY_USER_ID, snapshot.getKey());
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                });
+            });
+
+
             binding.canelarpaseoBTN.setOnClickListener(view -> {
                 final CharSequence[] options = {"Si, deseo cancelar el paseo", "No cancelar"};
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
                 builder.setTitle("Elige una opcion");
                 builder.setItems(options, (dialog, item) -> {
                     if (options[item].equals("Si, deseo cancelar el paseo")) {
+
                         setDirecciondelOwner(null);
                         Log.d("asdasdasd33", "Loc: " + getId());
                         myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
@@ -470,17 +538,18 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                     }
                 });
                 builder.show();
-
-
             });
+
+
+            // localizacion del walker
+
+
             startLocationUpdates();
         }
 
     }
 
     public void pintarrutahaciaelowner(String direcciondelOwner) {
-
-
         Log.d("Paseoasd", "cargarpaseo0: " + currentLat);
         Geocoder coder = new Geocoder(getApplicationContext());
         List<Address> addresses;
@@ -504,6 +573,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 binding.distanciaTXT.setText(String.valueOf(distanceKm));
                 LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
                 end = destination;
+                paseo.setLatitud(end.latitude);
+                paseo.setLongitud(end.longitude);
                 if (start == null) {
                     start = new LatLng(dis3.getLatitude(), dis3.getLongitude());
                 }

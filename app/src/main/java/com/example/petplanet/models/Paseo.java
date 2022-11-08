@@ -14,8 +14,12 @@ public class Paseo {
     private String Localidad;
     private String distanciarecorrida;
     private String duracion;
-    private String Latitud;
-    private String Longitud;
+    private double Latitud;
+    private double Longitud;
+    private double latitudwalker;
+    private double longitudwalker;
+
+
 
     public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner) {
         this.fotodelperro = fotodelperro;
@@ -31,6 +35,38 @@ public class Paseo {
 
     }
 
+
+    public double getLatitudwalker() {
+        return latitudwalker;
+    }
+
+    public void setLatitudwalker(double latitudwalker) {
+        this.latitudwalker = latitudwalker;
+    }
+
+    public double getLongitudwalker() {
+        return longitudwalker;
+    }
+
+    public void setLongitudwalker(double longitudwalker) {
+        this.longitudwalker = longitudwalker;
+    }
+
+    public double getLatitud() {
+        return Latitud;
+    }
+
+    public void setLatitud(double latitud) {
+        Latitud = latitud;
+    }
+
+    public double getLongitud() {
+        return Longitud;
+    }
+
+    public void setLongitud(double longitud) {
+        Longitud = longitud;
+    }
 
     public String getId() {
         return id;

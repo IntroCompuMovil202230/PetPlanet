@@ -204,26 +204,30 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage() {
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
-        message.put(Constants.KEY_RECEIVER_ID, getUid2());
-        message.put(Constants.KEY_MESSAGE, binding.inputmessage.getText().toString());
-        message.put(Constants.KEY_TIMESTAMP, java.text.DateFormat.getDateTimeInstance().format(new Date()));
-        myRef = database.getReference(Constants.PATH_CHATS);
-        myRef.push().setValue(message);
-        Log.d("CrHATerrrr", "onCreatetttt: " + conversionId);
-        if (conversionId != null) {
-            updateConversion(binding.inputmessage.getText().toString());
+        if (binding.inputmessage.getText().toString().equals("")) {
+            binding.inputmessage.setError("No se puede enviar un mensaje vacío");
         } else {
-            HashMap<String, Object> conversion = new HashMap<>();
-            conversion.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
-            conversion.put(Constants.KEY_SENDER_NAME, usuariochat.getNombre());
-            conversion.put(Constants.KEY_SENDER_IMAGE, usuariochat.getFoto());
-            conversion.put(Constants.KEY_RECEIVER_ID, getUid2());
-            conversion.put(Constants.KEY_RECEIVER_NAME, walkerx.getNombre());
-            conversion.put(Constants.KEY_RECEIVER_IMAGE, walkerx.getFoto());
-            conversion.put(Constants.KEY_LAST_MESSAGE, binding.inputmessage.getText().toString());
-            conversion.put(Constants.KEY_TIMESTAMP, java.text.DateFormat.getDateTimeInstance().format(new Date()));
-            addConversion(conversion);
+            message.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
+            message.put(Constants.KEY_RECEIVER_ID, getUid2());
+            message.put(Constants.KEY_MESSAGE, binding.inputmessage.getText().toString());
+            message.put(Constants.KEY_TIMESTAMP, java.text.DateFormat.getDateTimeInstance().format(new Date()));
+            myRef = database.getReference(Constants.PATH_CHATS);
+            myRef.push().setValue(message);
+            Log.d("CrHATerrrr", "onCreatetttt: " + conversionId);
+            if (conversionId != null) {
+                updateConversion(binding.inputmessage.getText().toString());
+            } else {
+                HashMap<String, Object> conversion = new HashMap<>();
+                conversion.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
+                conversion.put(Constants.KEY_SENDER_NAME, usuariochat.getNombre());
+                conversion.put(Constants.KEY_SENDER_IMAGE, usuariochat.getFoto());
+                conversion.put(Constants.KEY_RECEIVER_ID, getUid2());
+                conversion.put(Constants.KEY_RECEIVER_NAME, walkerx.getNombre());
+                conversion.put(Constants.KEY_RECEIVER_IMAGE, walkerx.getFoto());
+                conversion.put(Constants.KEY_LAST_MESSAGE, binding.inputmessage.getText().toString());
+                conversion.put(Constants.KEY_TIMESTAMP, java.text.DateFormat.getDateTimeInstance().format(new Date()));
+                addConversion(conversion);
+            }
         }
         binding.inputmessage.setText("");
     }
