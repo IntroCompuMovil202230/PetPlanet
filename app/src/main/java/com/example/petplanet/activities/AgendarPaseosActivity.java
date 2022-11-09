@@ -147,7 +147,12 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             if (hora.isEmpty()) {
                 binding.AgendarHora.setError("Selecciona una hora valida");
                 binding.AgendarHora.requestFocus();
-            } else {
+            } if(binding.duracionminimadelpaseo.getText().toString().isEmpty()){
+
+                binding.duracionminimadelpaseo.setError("Ingresa la duracion minima del paseo");
+                binding.duracionminimadelpaseo.requestFocus();
+            }
+            else {
                 agendarpaseo(fecha, hora, mascota);
             }
         });
@@ -181,12 +186,10 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             }
         });
 
-        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion());
+        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion(),binding.duracionminimadelpaseo.getText().toString());
         myRef = database.getReference(Constants.PATH_PASEOS);
-        Log.d("malditasea", "agendarpaseo: " + myRef.getDatabase().getReference().push().getKey());
         myRef.getDatabase().getReference().child(Constants.PATH_PASEOS).child(myRef.getDatabase().getReference().push().getKey()).setValue(paseo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d("malditasea", "agendarpaseo: " + myRef.getKey());
                 Toast.makeText(this, "Paseo agendado", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
                 finish();

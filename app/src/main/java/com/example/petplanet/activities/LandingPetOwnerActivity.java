@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,6 +17,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -41,6 +44,9 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityLandingPetOwnerBinding;
+import com.example.petplanet.models.Paseo;
+import com.example.petplanet.models.Usuario;
+import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -76,6 +82,10 @@ import org.json.JSONObject;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -128,6 +138,17 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     private float humActual;
     private SensorEventListener humSensorListener;
 
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    private FirebaseAuth mAuth;
+    Usuario Client = new Usuario();
+    Usuario Walker = new Usuario();
+
+    private Paseo nPaseo = new Paseo();
+    DatabaseReference myPaseos;
+    DatabaseReference myRef;
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +156,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         binding = ActivityLandingPetOwnerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
+        mAuth = FirebaseAuth.getInstance();
 
         humActual = 0;
         binding.bottomNavigation.setBackground(null);
@@ -329,6 +350,38 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                 e.printStackTrace();
             }
         });
+
+
+        myPaseos = database.getReference(Constants.PATH_PASEOS);
+        myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                    nPaseo = snapshot.getValue(Paseo.class);
+                    if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                        if (!nPaseo.getNombredelwalker().isEmpty()) {
+                            //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
+                            binding.coordinatorLayout.setVisibility(View.GONE);
+                            binding.cardpaseo.setVisibility(View.VISIBLE);
+                            myRef = database.getReference(Constants.PATH_USERS);
+                            myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Walker = task1.getResult().getValue(Usuario.class);
+                                    binding.Nombrewalker.setText(Walker.getNombre());
+                                    byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
+                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                    binding.imagePerson.setImageBitmap(decodedByte);
+                                }
+                            });
+
+
+                        }
+                    }
+
+                }
+            }
+        });
+
+
     }
 
     private void startLocationUpdates() {

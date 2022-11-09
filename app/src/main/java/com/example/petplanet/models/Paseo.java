@@ -8,12 +8,17 @@ public class Paseo {
     private String nombredelowner;
     private String nombredelperro;
     private String nombredelwalker;
+    private String uidWalker;
     private String fecha;
     private String hora;
     private String direcciondelowner;
     private String Localidad;
     private String distanciarecorrida;
     private String duracion;
+
+    private boolean seacaboelpaseo;
+
+
     private double Latitud;
     private double Longitud;
     private double latitudwalker;
@@ -21,7 +26,7 @@ public class Paseo {
 
 
 
-    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner) {
+    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner,String duracion) {
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
@@ -29,12 +34,28 @@ public class Paseo {
         this.fecha = fecha;
         this.hora = hora;
         this.direcciondelowner = direcciondelowner;
+        this.duracion = duracion;
     }
 
     public Paseo() {
 
     }
 
+    public String getUidWalker() {
+        return uidWalker;
+    }
+
+    public void setUidWalker(String uidWalker) {
+        this.uidWalker = uidWalker;
+    }
+
+    public boolean isSeacaboelpaseo() {
+        return seacaboelpaseo;
+    }
+
+    public void setSeacaboelpaseo(boolean seacaboelpaseo) {
+        this.seacaboelpaseo = seacaboelpaseo;
+    }
 
     public double getLatitudwalker() {
         return latitudwalker;

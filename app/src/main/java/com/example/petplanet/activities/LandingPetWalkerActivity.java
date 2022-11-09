@@ -107,6 +107,12 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private SensorEventListener humSensorListener;
     private Sensor humSensor;
 
+
+    private Paseo nPaseo = new Paseo();
+    DatabaseReference myPaseos;
+
+
+
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
     public static final int REQUEST_CHECK_SETTINGS = 201;
@@ -338,7 +344,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             LatLng center = null;
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
-            Log.d("asdasdasd33", "Location update in the callback: " + getDirecciondelOwner());
             if (getDirecciondelOwner() != null) {
 
                 mLocationCallback = new LocationCallback() {
@@ -515,6 +520,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             if (task.isSuccessful()) {
                                 Paseo paseo = task.getResult().getValue(Paseo.class);
                                 paseo.setNombredelwalker("pendiente");
+                                paseo.setUidWalker("0");
                                 myPaseos.setValue(paseo);
 
                             }
@@ -585,8 +591,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         }
     }
 
-    private Paseo nPaseo = new Paseo();
-    DatabaseReference myPaseos;
 
     public void sacarpaseo() {
         Log.d("paseoasd", "sacarpaseo: " + getId());
@@ -596,6 +600,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 nPaseo = task.getResult().getValue(Paseo.class);
                 Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelowner());
                 nPaseo.setNombredelwalker(Client.getNombre());
+                nPaseo.setUidWalker(Client.getId());
                 Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelwalker());
                 myPaseos.setValue(nPaseo);
                 byte[] decodedString = Base64.decode(nPaseo.getFotodelperro(), Base64.DEFAULT);
