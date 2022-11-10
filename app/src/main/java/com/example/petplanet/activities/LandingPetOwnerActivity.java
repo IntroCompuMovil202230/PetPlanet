@@ -16,7 +16,9 @@ import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -138,6 +140,8 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     private float humActual;
     private SensorEventListener humSensorListener;
 
+    //Variables de localizacion
+    private FusedLocationProviderClient fusedLocationClient;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -187,27 +191,20 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
             return true;
         });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        mLocationRequest = createLocationRequest();
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapowner);
         mapFragment.getMapAsync(this);
 
-        mLocationRequest = createLocationRequest();
+
         //Location
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, "El permiso es necesario para acceder a la localizacion", LOCATION_PERMISSION_ID);
 
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                aux = location;
-                Log.i(TAG, "Location update in the callback: " + location);
-                if (location != null) {
-                    mCurrentLocation = location;
-                }
-            }
-        };
+
         humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         humSensorListener = new SensorEventListener() {
             @Override
@@ -295,114 +292,136 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         };
     }
 
-
+    @SuppressLint("MissingPermission")
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
+        mMap.setBuildingsEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        // UI controls
 
-        currentlocation();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
-
-        LatLng center = null;
-        ArrayList<LatLng> points = null;
-        PolylineOptions lineOptions = null;
-
-        mMap.setOnMapLongClickListener(latLng -> {
-            mMap.clear();
-
-            // Animating to the touched position
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-            try {
-                List<Address> direcciones = mGeocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                if (!direcciones.isEmpty()) {
-                    for (Address dir : direcciones) {
-                        mMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title(dir.getFeatureName())
-                                .snippet(dir.getAddressLine(0))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                        Location locationA = new Location("point A");
-                        locationA.setLatitude(mCurrentLocation.getLatitude());
-                        locationA.setLongitude(mCurrentLocation.getLongitude());
-                        start = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                        Location locationB = new Location("point B");
-                        locationB.setLatitude(latLng.latitude);
-                        locationB.setLongitude(latLng.longitude);
-                        float distance = locationA.distanceTo(locationB);
-                        float distanceKm = distance / 1000;
-                        end = new LatLng(latLng.latitude, latLng.longitude);
-                        Toast.makeText(LandingPetOwnerActivity.this,
-                                "Distancia : " + distanceKm + " km", Toast.LENGTH_SHORT).show();
-                        Findroutes(start, end);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        if (checkPermissions()) {
+            mMap.setMyLocationEnabled(true);
+            mMap.isMyLocationEnabled();
 
 
-                    }
-                } else {
-                    Toast.makeText(LandingPetOwnerActivity.this,
-                            "Dirección no encontrada", Toast.LENGTH_SHORT).show();
+            // Set  zoom level
+
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Client = task.getResult().getValue(Usuario.class);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-
-        myPaseos = database.getReference(Constants.PATH_PASEOS);
-        myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DataSnapshot snapshot : task.getResult().getChildren()) {
-                    nPaseo = snapshot.getValue(Paseo.class);
-                    if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
-                        if (!nPaseo.getNombredelwalker().isEmpty()) {
-                            //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
-                            binding.coordinatorLayout.setVisibility(View.GONE);
-                            binding.cardpaseo.setVisibility(View.VISIBLE);
-                            myRef = database.getReference(Constants.PATH_USERS);
-                            myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Walker = task1.getResult().getValue(Usuario.class);
-                                    binding.Nombrewalker.setText(Walker.getNombre());
-                                    byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
-                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                                    binding.imagePerson.setImageBitmap(decodedByte);
+            });
+            myPaseos = database.getReference(Constants.PATH_PASEOS);
+            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                        nPaseo = snapshot.getValue(Paseo.class);
+                        if (nPaseo.getNombredelowner() != null) {
+                            if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                                if (!nPaseo.getNombredelwalker().equals("pendiente")) {
+                                    //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
+                                    binding.coordinatorLayout.setVisibility(View.GONE);
+                                    binding.cardpaseo.setVisibility(View.VISIBLE);
+                                    myRef = database.getReference(Constants.PATH_USERS);
+                                    myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            Walker = task1.getResult().getValue(Usuario.class);
+                                            binding.Nombrewalker.setText(Walker.getNombre());
+                                            byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
+                                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                            binding.imagePerson.setImageBitmap(decodedByte);
+                                        }
+                                    });
                                 }
-                            });
-
-
+                            }
                         }
                     }
-
                 }
-            }
-        });
+            });
 
 
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
+                    aux = location;
+
+                    if (location != null) {
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                        // Enable touch gestures
+
+                        LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
+
+                        mCurrentLocation = location;
+
+                        currentLat = location.getLatitude();
+                        currentLong = location.getLongitude();
+                        if (nPaseo.getNombredelwalker() != null) {
+                            if (!nPaseo.getNombredelwalker().equals("pendiente")) {
+                                Location dis3 = new Location("localizacion 1");
+                                dis3.setLatitude(currentLat);  //latitud
+                                dis3.setLongitude(currentLong); //longitud
+                                Location dis2 = new Location("localizacion 2");
+                                dis2.setLatitude(nPaseo.getLatitudwalker());  //latitud
+                                dis2.setLongitude(nPaseo.getLongitudwalker()); //longitud
+                                double distance = dis3.distanceTo(dis2);
+                                binding.distanciaTXT.setText(String.valueOf(distance) + " metros");
+                            }
+                        }
+                    }
+                }
+            };
+
+
+            binding.volveralmenuBTN.setOnClickListener(view -> {
+                binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                binding.cardpaseo.setVisibility(View.GONE);
+            });
+            startLocationUpdates();
+        }
     }
 
-    private void startLocationUpdates() {
+    private boolean checkPermissions() {
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, null);
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
         }
     }
 
     private void stopLocationUpdates() {
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        fusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
+
     private LocationRequest createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
+        LocationRequest locationRequest = LocationRequest.create()
+                .setInterval(3000)
+                .setFastestInterval(500)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
     }
 
     public void Findroutes(LatLng Start, LatLng End) {

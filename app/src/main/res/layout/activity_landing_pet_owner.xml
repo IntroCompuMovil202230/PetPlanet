@@ -13,6 +13,10 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context=".activities.LandingPetOwnerActivity" />
     <ProgressBar
         android:id="@+id/progressmaps"
@@ -93,7 +97,7 @@
             android:layout_marginTop="5dp"
             android:text="Distancia"
             app:layout_constraintStart_toEndOf="@+id/imagePerson"
-            app:layout_constraintTop_toBottomOf="@+id/Nombreperro" />
+            app:layout_constraintTop_toBottomOf="@+id/Nombrewalker" />
 
         <TextView
             android:id="@+id/distanciaTXT"
@@ -135,15 +139,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="410dp"
         android:layout_height="92dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.bottomappbar.BottomAppBar

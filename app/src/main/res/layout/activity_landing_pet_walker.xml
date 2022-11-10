@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".activities.LandingPetWalkerActivity">
 
- <androidx.fragment.app.FragmentContainerView
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mapwalker"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
@@ -117,6 +117,7 @@
             android:layout_marginTop="14dp"
             android:layout_marginEnd="20dp"
             android:text="Escribirle al dueño"
+            android:visibility="gone"
             app:cornerRadius="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imagePerson"

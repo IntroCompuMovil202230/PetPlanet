@@ -77,7 +77,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                 walkerx = task.getResult().getValue(Usuario.class);
                 if (!walkerx.getPaseoencurso()) {
                     cargarPerros();
-                }else{
+                } else {
                     binding.adTXT.setText("Ya tienes un paseo en curso");
                 }
 
@@ -94,9 +94,11 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                     Log.d("Paseoxxx", paseox.getFecha());
 
                     if (paseox.getLocalidad().equals(walkerx.getLocalidad())) {
-                        Log.d("Paseoxxx", paseox.getFotodelperro());
-                        paseox.setId(paseo.getKey());
-                        paseos.add(paseox);
+                        if (paseox.getNombredelwalker().equals("pendiente") || paseox.getNombredelwalker() == null) {
+                            paseox.setId(paseo.getKey());
+                            paseos.add(paseox);
+                        }
+
                     }
                     if (paseos.size() > 0) {
                         binding.grindDispo.setVisibility(View.VISIBLE);
@@ -113,7 +115,7 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         });
-                    }else{
+                    } else {
                         binding.adTXT.setText("No hay paseos disponibles en tu localidad");
                     }
                 }

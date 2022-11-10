@@ -112,7 +112,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     DatabaseReference myPaseos;
 
 
-
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
     public static final int REQUEST_CHECK_SETTINGS = 201;
@@ -344,46 +343,18 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             LatLng center = null;
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
-            if (getDirecciondelOwner() != null) {
 
-                mLocationCallback = new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        Location location = locationResult.getLastLocation();
-                        aux = location;
-
-                        if (location != null) {
-                            mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
-                            // Enable touch gestures
-
-                            LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
-
-                            mCurrentLocation = location;
-
-                            currentLat = location.getLatitude();
-                            currentLong = location.getLongitude();
-                            start = new LatLng(currentLat, currentLong);
-                            pintarrutahaciaelowner(getDirecciondelOwner());
-                        }
+            SystemClock.sleep(200);
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Client = task.getResult().getValue(Usuario.class);
+                    if (Client.getPaseoencurso()) {
+                        binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
                     }
-                };
-
-                binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
-            } else {
-                SystemClock.sleep(200);
-                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
-                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Client = task.getResult().getValue(Usuario.class);
-                        if (Client.getPaseoencurso()) {
-                            binding.paseoencursoBTN.setVisibility(View.VISIBLE);
-                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                        }
-                    }
-                });
-
-            }
+                }
+            });
 
 
             binding.confirmarpaseoBTN.setOnClickListener(view -> {
@@ -392,11 +363,17 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 builder.setTitle("Elige una opcion");
                 builder.setItems(options, (dialog, item) -> {
                     if (options[item].equals("Si, iniciar paseo ya mismo")) {
+                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
                         binding.cardpaseo.setVisibility(View.VISIBLE);
                         binding.coordinatorLayout.setVisibility(View.GONE);
                         sacarpaseo();
+                        setDirecciondelOwner(null);
 
                     } else if (options[item].equals("No, prefiero buscar otro")) {
+                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                        mMap.clear();
+                        setDirecciondelOwner(null);
+
                         dialog.dismiss();
                     }
                 });
@@ -415,7 +392,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                     binding.paseoencursoBTN.setVisibility(View.GONE);
                                     binding.coordinatorLayout.setVisibility(View.GONE);
                                     binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                                    binding.escriDuenoBTN.setVisibility(View.GONE);
+
                                     setId(snapshot.getKey());
                                     byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
                                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -454,9 +431,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Paseo paseo = task.getResult().getValue(Paseo.class);
-                                    paseo.setLatitudwalker(currentLat);
-                                    paseo.setLongitudwalker(currentLong);
-                                    myPaseos.setValue(paseo);
+                                    if (paseo.getUidWalker() != null) {
+                                        if (paseo.getUidWalker().equals(mAuth.getCurrentUser().getUid())) {
+                                            paseo.setLatitudwalker(currentLat);
+                                            paseo.setLongitudwalker(currentLong);
+                                            myPaseos.setValue(paseo);
+                                        }
+                                    }
+
                                 }
                             });
 
@@ -473,6 +455,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                 binding.escriDuenoBTN.setVisibility(View.VISIBLE);
                                 //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
                             }
+                        }
+                        if (getDirecciondelOwner() != null) {
+                            start = new LatLng(currentLat, currentLong);
+                            Log.d("Pasessoxx", "Location updxdfvate in the callback: " + currentLat);
+                            Log.d("Pasessoxx", "Location update sdfsdfin the callback: " + getDirecciondelOwner());
+                            pintarrutahaciaelowner(getDirecciondelOwner());
+
+                            binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
                         }
                     }
                 }
@@ -521,6 +511,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                 Paseo paseo = task.getResult().getValue(Paseo.class);
                                 paseo.setNombredelwalker("pendiente");
                                 paseo.setUidWalker("0");
+                                paseo.setLatitudwalker(0);
+                                paseo.setLongitudwalker(0);
                                 myPaseos.setValue(paseo);
 
                             }
