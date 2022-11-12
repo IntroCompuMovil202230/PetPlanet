@@ -1,6 +1,7 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,7 +26,7 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
 
-    public static final String PATH_USERS="users/";
+    public static final String PATH_USERS = "users/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.toolbarRegPetW.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(),SelecciondeCuentaActivity.class));
+            startActivity(new Intent(getApplicationContext(), SelecciondeCuentaActivity.class));
             finish();
         });
 
@@ -51,30 +52,34 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
             String passwordS = binding.registroPassword.getText().toString();
             String localidadS = binding.registroLocalidad.getSelectedItem().toString();
             String experienciaS = binding.registroExperiencia.getText().toString();
-            if(nombreS.isEmpty()) {
+            if (nombreS.isEmpty()) {
                 binding.registroNombreCompleto.setError("Introduce un nombre");
                 binding.registroNombreCompleto.requestFocus();
                 return;
-            }if(localidadS.equals("Selecciona una localidad")) {
-                ((TextView)binding.registroLocalidad.getSelectedView()).setError("Error message");
-            }if(direccionS.isEmpty()) {
+            }
+            if (localidadS.equals("Selecciona una localidad")) {
+                ((TextView) binding.registroLocalidad.getSelectedView()).setError("Error message");
+            }
+            if (direccionS.isEmpty()) {
                 binding.registrotDireccion.setError("Introduce una direccion");
                 binding.registrotDireccion.requestFocus();
                 return;
-            }if(!isEmail(binding.registroCorreo)){
+            }
+            if (!isEmail(binding.registroCorreo)) {
                 binding.registroCorreo.setError("Introduce un correo electonico valido");
                 binding.registroCorreo.requestFocus();
                 return;
-            }if(passwordS.isEmpty()) {
+            }
+            if (passwordS.isEmpty()) {
                 binding.registroPassword.setError("Introduce una contraseña");
                 binding.registroPassword.requestFocus();
                 return;
-            }if(experienciaS.isEmpty()) {
+            }
+            if (experienciaS.isEmpty()) {
                 binding.registroExperiencia.setError("Introduce una experiencia");
                 binding.registroExperiencia.requestFocus();
                 return;
-            }
-            else{
+            } else {
                 validateIfUsersAlreadyExists();
             }
         });
@@ -89,13 +94,13 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
                 if (task.getResult().getSignInMethods().isEmpty()) {
                     // No existe el usuario
                     Intent intent = new Intent(getApplicationContext(), FotoPerfilActivity.class);
-                    intent.putExtra("nombre",binding.registroNombreCompleto.getText().toString());
-                    intent.putExtra("direccion",binding.registrotDireccion.getText().toString());
-                    intent.putExtra("localidad",binding.registroLocalidad.getSelectedItem().toString());
-                    intent.putExtra("correo",binding.registroCorreo.getText().toString());
-                    intent.putExtra("password",binding.registroPassword.getText().toString());
-                    intent.putExtra("experiencia",binding.registroExperiencia.getText().toString());
-                    intent.putExtra("tipo","petwalker");
+                    intent.putExtra("nombre", binding.registroNombreCompleto.getText().toString());
+                    intent.putExtra("direccion", binding.registrotDireccion.getText().toString());
+                    intent.putExtra("localidad", binding.registroLocalidad.getSelectedItem().toString());
+                    intent.putExtra("correo", binding.registroCorreo.getText().toString());
+                    intent.putExtra("password", binding.registroPassword.getText().toString());
+                    intent.putExtra("experiencia", binding.registroExperiencia.getText().toString());
+                    intent.putExtra("tipo", "petwalker");
                     startActivity(intent);
                     finish();
                 } else {

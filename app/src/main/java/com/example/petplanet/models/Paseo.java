@@ -11,12 +11,17 @@ public class Paseo {
     private String uidWalker;
     private String fecha;
     private String hora;
+    private String horaderecogida;
+    private String horaderegreso;
     private String direcciondelowner;
     private String Localidad;
     private String distanciarecorrida;
     private String duracion;
 
     private boolean seacaboelpaseo;
+    private boolean yallegoelpaseador;
+    private boolean yatengoelperro;
+    private boolean yarecibielperro;
 
 
     private double Latitud;
@@ -39,6 +44,47 @@ public class Paseo {
 
     public Paseo() {
 
+    }
+
+
+    public boolean isYarecibielperro() {
+        return yarecibielperro;
+    }
+
+    public void setYarecibielperro(boolean yarecibielperro) {
+        this.yarecibielperro = yarecibielperro;
+    }
+
+    public boolean isYatengoelperro() {
+        return yatengoelperro;
+    }
+
+    public void setYatengoelperro(boolean yatengoelperro) {
+        this.yatengoelperro = yatengoelperro;
+    }
+
+    public boolean isYallegoelpaseador() {
+        return yallegoelpaseador;
+    }
+
+    public void setYallegoelpaseador(boolean yallegoelpaseador) {
+        this.yallegoelpaseador = yallegoelpaseador;
+    }
+
+    public String getHoraderecogida() {
+        return horaderecogida;
+    }
+
+    public void setHoraderecogida(String horaderecogida) {
+        this.horaderecogida = horaderecogida;
+    }
+
+    public String getHoraderegreso() {
+        return horaderegreso;
+    }
+
+    public void setHoraderegreso(String horaderegreso) {
+        this.horaderegreso = horaderegreso;
     }
 
     public String getUidWalker() {

@@ -147,12 +147,12 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             if (hora.isEmpty()) {
                 binding.AgendarHora.setError("Selecciona una hora valida");
                 binding.AgendarHora.requestFocus();
-            } if(binding.duracionminimadelpaseo.getText().toString().isEmpty()){
+            }
+            if (binding.duracionminimadelpaseo.getText().toString().isEmpty()) {
 
                 binding.duracionminimadelpaseo.setError("Ingresa la duracion minima del paseo");
                 binding.duracionminimadelpaseo.requestFocus();
-            }
-            else {
+            } else {
                 agendarpaseo(fecha, hora, mascota);
             }
         });
@@ -186,7 +186,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             }
         });
 
-        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion(),binding.duracionminimadelpaseo.getText().toString());
+        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion(), binding.duracionminimadelpaseo.getText().toString());
         myRef = database.getReference(Constants.PATH_PASEOS);
         myRef.getDatabase().getReference().child(Constants.PATH_PASEOS).child(myRef.getDatabase().getReference().push().getKey()).setValue(paseo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

@@ -79,7 +79,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
                     if (ContextCompat.checkSelfPermission(RegistroPerroActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(RegistroPerroActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
                     } else {
-                        if(checkAndRequestPermissions()){
+                        if (checkAndRequestPermissions()) {
                             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                             startActivityForResult(intent, CAMERA_REQUEST);
                             binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
@@ -149,7 +149,6 @@ public class RegistroPerroActivity extends AppCompatActivity {
     }
 
 
-
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
     private boolean checkAndRequestPermissions() {
@@ -180,7 +179,6 @@ public class RegistroPerroActivity extends AppCompatActivity {
         }
         return true;
     }
-
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

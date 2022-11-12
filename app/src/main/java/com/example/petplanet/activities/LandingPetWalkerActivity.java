@@ -455,18 +455,47 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                 binding.escriDuenoBTN.setVisibility(View.VISIBLE);
                                 //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
                             }
+                            if (distance < 5) {
+                                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                                        paseo.setYallegoelpaseador(true);
+                                        myPaseos.setValue(paseo);
+                                    }
+                                });
+
+                                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                                        if (paseo.isYarecibielperro()) {
+                                            binding.confirmarperroBTN.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                });
+                            }
                         }
                         if (getDirecciondelOwner() != null) {
                             start = new LatLng(currentLat, currentLong);
-                            Log.d("Pasessoxx", "Location updxdfvate in the callback: " + currentLat);
-                            Log.d("Pasessoxx", "Location update sdfsdfin the callback: " + getDirecciondelOwner());
                             pintarrutahaciaelowner(getDirecciondelOwner());
-
                             binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
                         }
                     }
                 }
             };
+
+            binding.confirmarperroBTN.setOnClickListener(view -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        paseo.setYarecibielperro(true);
+                        myPaseos.setValue(paseo);
+                    }
+                });
+                binding.confirmarperroBTN.setVisibility(View.GONE);
+            });
 
 
             binding.volveralmenuBTN.setOnClickListener(view -> {
@@ -513,6 +542,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                 paseo.setUidWalker("0");
                                 paseo.setLatitudwalker(0);
                                 paseo.setLongitudwalker(0);
+                                paseo.setYallegoelpaseador(false);
                                 myPaseos.setValue(paseo);
 
                             }

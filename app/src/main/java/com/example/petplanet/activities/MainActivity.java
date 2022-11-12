@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -68,10 +70,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
     }
-
-
-
-
 
 
     @Override

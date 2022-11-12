@@ -106,12 +106,12 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.tollbarPwalker.setNavigationOnClickListener(v -> {
-            if(chat) {
+            if (chat) {
                 Intent intent = new Intent(PerfilUsuarioWalkerActivity.this, ChatActivity.class);
                 intent.putExtra(Constants.KEY_USER_ID, getUid2());
                 startActivity(intent);
                 finish();
-            }else{
+            } else {
                 startActivity(new Intent(getApplicationContext(), ListarCuidadoresActivity.class));// esto cambia si el usuario es dueño o walker
                 finish();
             }

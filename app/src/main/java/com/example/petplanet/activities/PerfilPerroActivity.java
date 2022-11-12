@@ -79,9 +79,6 @@ public class PerfilPerroActivity extends AppCompatActivity {
                     if (perrox.getNombrecompleto().equals(nombreS)) {
 
 
-
-
-
                         binding.fullNamePet.setText(perrox.getNombrecompleto());
                         byte[] decodedString = Base64.decode(perrox.getFoto(), Base64.DEFAULT);
                         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -99,7 +96,7 @@ public class PerfilPerroActivity extends AppCompatActivity {
                         } else {
                             binding.esterilazoTXT.setText("No");
                         }
-                        if(perrox.getRedomendacionesespeciales()){
+                        if (perrox.getRedomendacionesespeciales()) {
                             binding.textView16.setVisibility(View.VISIBLE);
                             binding.recomendacionesTXT.setVisibility(View.VISIBLE);
                             binding.recomendacionesTXT.setText(perrox.getRecomendaciones());
@@ -125,9 +122,6 @@ public class PerfilPerroActivity extends AppCompatActivity {
                 });
             }
         });
-
-
-
 
 
     }

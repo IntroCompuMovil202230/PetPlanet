@@ -86,8 +86,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -152,6 +154,16 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     private Paseo nPaseo = new Paseo();
     DatabaseReference myPaseos;
     DatabaseReference myRef;
+
+    public String idpaseo;
+
+    public String getIdpaseo() {
+        return idpaseo;
+    }
+
+    public void setIdpaseo(String idpaseo) {
+        this.idpaseo = idpaseo;
+    }
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -327,6 +339,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                                     //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
                                     binding.coordinatorLayout.setVisibility(View.GONE);
                                     binding.cardpaseo.setVisibility(View.VISIBLE);
+                                    setIdpaseo(snapshot.getKey());
                                     myRef = database.getReference(Constants.PATH_USERS);
                                     myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
                                         if (task1.isSuccessful()) {
@@ -341,6 +354,30 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                             }
                         }
                     }
+                }
+            });
+
+
+            myPaseos = database.getReference(Constants.PATH_PASEOS + getIdpaseo());
+            myPaseos.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                        nPaseo = snapshot1.getValue(Paseo.class);
+                        if (nPaseo.getNombredelowner() != null) {
+                            if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                                if (nPaseo.isYallegoelpaseador()) {
+                                    Toast.makeText(LandingPetOwnerActivity.this, "Ya esta por llegar el paseador", Toast.LENGTH_SHORT).show();
+                                    binding.entregarperroBTN.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
             });
 
@@ -378,6 +415,29 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                 }
             };
 
+            binding.entregarperroBTN.setOnClickListener(v -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS);
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+                    task.getResult().getChildren().forEach(snapshot -> {
+                        nPaseo = snapshot.getValue(Paseo.class);
+                        if (nPaseo.getNombredelowner() != null) {
+                            if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                                myPaseos = database.getReference(Constants.PATH_PASEOS + snapshot.getKey());
+                                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + snapshot.getKey()).get().addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        nPaseo = task1.getResult().getValue(Paseo.class);
+                                        if (nPaseo.isYallegoelpaseador()) {
+                                            nPaseo.setYarecibielperro(true);
+                                            myPaseos.setValue(nPaseo);
+                                            binding.entregarperroBTN.setVisibility(View.GONE);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            });
 
             binding.volveralmenuBTN.setOnClickListener(view -> {
                 binding.coordinatorLayout.setVisibility(View.VISIBLE);
