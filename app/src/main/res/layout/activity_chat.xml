@@ -98,10 +98,11 @@
         app:layout_constraintTop_toTopOf="@+id/viewBackGround"
         app:stackFromEnd="true" />
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
         app:layout_constraintBottom_toBottomOf="@id/viewBackGround"
         app:layout_constraintEnd_toEndOf="@id/viewBackGround"
         app:layout_constraintStart_toStartOf="@id/viewBackGround"

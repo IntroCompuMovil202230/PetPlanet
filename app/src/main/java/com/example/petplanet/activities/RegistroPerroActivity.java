@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityRegistroPerroBinding;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -71,31 +72,30 @@ public class RegistroPerroActivity extends AppCompatActivity {
                 });
 
         binding.fotodelperroBTN.setOnClickListener(v -> {
-            final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(RegistroPerroActivity.this);
-            builder.setTitle("Elige una opcion");
-            builder.setItems(options, (dialog, item) -> {
-                if (options[item].equals("Tomar foto")) {
-                    if (ContextCompat.checkSelfPermission(RegistroPerroActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(RegistroPerroActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                    } else {
-                        if (checkAndRequestPermissions()) {
-                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_REQUEST);
-                            binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Elige una opcion para subir tu foto")
+                    .setPositiveButton("Tomar foto", (dialogInterface, i) -> {
+                        if (ContextCompat.checkSelfPermission(RegistroPerroActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(RegistroPerroActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                        } else {
+                            if (checkAndRequestPermissions()) {
+                                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, CAMERA_REQUEST);
+                                binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                            }
                         }
-                    }
-                } else if (options[item].equals("Elegir de galeria")) {
-                    if (checkAndRequestPermissionsStorage()) {
-                        imageChooser();
-                    } else {
-                        Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
-                    }
-                } else if (options[item].equals("Cancelar")) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
+                    })
+                    .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                    })
+                    .setNegativeButton("Elegir de galeria", (dialogInterface, i) -> {
+                        if (checkAndRequestPermissionsStorage()) {
+                            imageChooser();
+                        } else {
+                            Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+
+                    .show();
         });
 
 

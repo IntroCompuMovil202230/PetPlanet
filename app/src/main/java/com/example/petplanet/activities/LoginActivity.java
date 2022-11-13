@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,6 +36,15 @@ public class LoginActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+
+
+        binding.editTextLayoutCorreo.setVisibility(View.VISIBLE);
+        binding.editTextLayoutPassword.setVisibility(View.VISIBLE);
+        binding.bienvenidotxt.setVisibility(View.VISIBLE);
+        binding.registrarselayout.setVisibility(View.VISIBLE);
+        binding.olvidocontra.setVisibility(View.VISIBLE);
+        binding.loginBTN.setVisibility(View.VISIBLE);
+
 
         binding.nuevousuario.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
@@ -75,6 +85,13 @@ public class LoginActivity extends AppCompatActivity {
     private void login(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                binding.editTextLayoutCorreo.setVisibility(View.GONE);
+                binding.editTextLayoutPassword.setVisibility(View.GONE);
+                binding.bienvenidotxt.setVisibility(View.GONE);
+                binding.registrarselayout.setVisibility(View.GONE);
+                binding.olvidocontra.setVisibility(View.GONE);
+                binding.loginBTN.setVisibility(View.GONE);
+                binding.progressLogin.setVisibility(View.VISIBLE);
                 updateUI(mAuth.getCurrentUser());
             } else {
                 showMessage(task.getException().getMessage());

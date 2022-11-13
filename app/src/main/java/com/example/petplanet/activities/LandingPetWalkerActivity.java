@@ -16,6 +16,7 @@ import android.hardware.SensorManager;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
@@ -79,6 +80,7 @@ import java.util.logging.Logger;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -360,26 +362,22 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
 
             binding.confirmarpaseoBTN.setOnClickListener(view -> {
-                final CharSequence[] options = {"Si, iniciar paseo ya mismo", "No, prefiero buscar otro"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
-                builder.setTitle("Elige una opcion");
-                builder.setItems(options, (dialog, item) -> {
-                    if (options[item].equals("Si, iniciar paseo ya mismo")) {
-                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                        binding.cardpaseo.setVisibility(View.VISIBLE);
-                        binding.coordinatorLayout.setVisibility(View.GONE);
-                        sacarpaseo();
-                        setDirecciondelOwner(null);
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Elige una opcion para subir tu foto")
+                        .setPositiveButton("Si, iniciar paseo ya mismo", (dialogInterface, i) -> {
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                            binding.cardpaseo.setVisibility(View.VISIBLE);
+                            binding.coordinatorLayout.setVisibility(View.GONE);
+                            sacarpaseo();
+                            setDirecciondelOwner(null);
+                        })
+                        .setNegativeButton("No, prefiero buscar otro", (dialogInterface, i) -> {
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                            mMap.clear();
+                            setDirecciondelOwner(null);
+                        })
 
-                    } else if (options[item].equals("No, prefiero buscar otro")) {
-                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                        mMap.clear();
-                        setDirecciondelOwner(null);
-
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
+                        .show();
             });
             binding.paseoencursoBTN.setOnClickListener(view -> {
                 myPaseos = database.getReference(Constants.PATH_PASEOS);
@@ -484,6 +482,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                         if (getDirecciondelOwner() != null) {
                             start = new LatLng(currentLat, currentLong);
                             pintarrutahaciaelowner(getDirecciondelOwner());
+                            Log.d("paseoasd", "sacarpaseo: " + getId());
                             binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
                         }
                     }
@@ -530,47 +529,44 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
 
             binding.canelarpaseoBTN.setOnClickListener(view -> {
-                final CharSequence[] options = {"Si, deseo cancelar el paseo", "No cancelar"};
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Deseas cancelar el paseo?")
+                        .setMessage("Si cancelas el paseo, el dueño del perro no podra ver tu ubicacion")
+                        .setPositiveButton("Si, deseo cancelar el paseo", (dialogInterface, i) -> {
+                            setDirecciondelOwner(null);
+                            Log.d("asdasdasd33", "Loc: " + getId());
+                            myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Paseo paseo = task.getResult().getValue(Paseo.class);
+                                    paseo.setNombredelwalker("pendiente");
+                                    paseo.setUidWalker("0");
+                                    paseo.setLatitudwalker(0);
+                                    paseo.setLongitudwalker(0);
+                                    paseo.setYallegoelpaseador(false);
+                                    myPaseos.setValue(paseo);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(LandingPetWalkerActivity.this);
-                builder.setTitle("Elige una opcion");
-                builder.setItems(options, (dialog, item) -> {
-                    if (options[item].equals("Si, deseo cancelar el paseo")) {
+                                }
+                            });
+                            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Client = task1.getResult().getValue(Usuario.class);
+                                    Client.setPaseoencurso(false);
+                                    myRef.setValue(Client);
+                                    binding.cardpaseo.setVisibility(View.GONE);
+                                    binding.paseoencursoBTN.setVisibility(View.GONE);
+                                    binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                                    binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                                }
+                            });
+                            mMap.clear();
+                        })
+                        .setNegativeButton("No cancelar", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        })
 
-                        setDirecciondelOwner(null);
-                        Log.d("asdasdasd33", "Loc: " + getId());
-                        myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
-                        myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Paseo paseo = task.getResult().getValue(Paseo.class);
-                                paseo.setNombredelwalker("pendiente");
-                                paseo.setUidWalker("0");
-                                paseo.setLatitudwalker(0);
-                                paseo.setLongitudwalker(0);
-                                paseo.setYallegoelpaseador(false);
-                                myPaseos.setValue(paseo);
-
-                            }
-                        });
-                        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
-                        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()) {
-                                Client = task1.getResult().getValue(Usuario.class);
-                                Client.setPaseoencurso(false);
-                                myRef.setValue(Client);
-                                binding.cardpaseo.setVisibility(View.GONE);
-                                binding.paseoencursoBTN.setVisibility(View.GONE);
-                                binding.coordinatorLayout.setVisibility(View.VISIBLE);
-                                binding.confirmarpaseoBTN.setVisibility(View.GONE);
-                            }
-                        });
-                        mMap.clear();
-
-                    } else if (options[item].equals("No cancelar")) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
+                        .show();
             });
 
 

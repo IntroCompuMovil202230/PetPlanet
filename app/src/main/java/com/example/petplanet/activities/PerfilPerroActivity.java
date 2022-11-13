@@ -42,7 +42,7 @@ public class PerfilPerroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityPerfilPerroBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        binding.progressBarPerfilPerro.setVisibility(View.VISIBLE);
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
@@ -102,7 +102,7 @@ public class PerfilPerroActivity extends AppCompatActivity {
                             binding.recomendacionesTXT.setText(perrox.getRecomendaciones());
                         }
 
-                        SystemClock.sleep(1000);
+                        SystemClock.sleep(100);
                         binding.fullNamePet.setVisibility(View.VISIBLE);
                         binding.profilePetPicture.setVisibility(View.VISIBLE);
                         binding.esterilazoTXT.setVisibility(View.VISIBLE);
@@ -118,6 +118,7 @@ public class PerfilPerroActivity extends AppCompatActivity {
                         binding.vacunadoperroTxt.setVisibility(View.VISIBLE);
                         binding.raza.setVisibility(View.VISIBLE);
                         binding.progressBarPerfilPerro.setVisibility(View.GONE);
+
                     }
                 });
             }

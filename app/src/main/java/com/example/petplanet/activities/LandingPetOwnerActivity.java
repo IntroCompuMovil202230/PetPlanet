@@ -83,6 +83,7 @@ import org.json.JSONObject;
 
 import com.directions.route.RoutingListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -402,6 +403,51 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                     }
                 }
             };
+
+
+            binding.canelarpaseoBTN.setOnClickListener(view -> {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Deseas cancelar el paseo?")
+                        .setPositiveButton("Si, deseo cancelar el paseo", (dialogInterface, i) -> {
+                            myPaseos = database.getReference(Constants.PATH_PASEOS);
+                            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+                                task.getResult().getChildren().forEach(snapshot -> {
+                                    nPaseo = snapshot.getValue(Paseo.class);
+
+                                    if (nPaseo.getNombredelowner() != null) {
+                                        if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                                            nPaseo.setId(snapshot.getKey());
+                                            myPaseos = database.getReference(Constants.PATH_PASEOS + nPaseo.getId());
+                                            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + nPaseo.getId()).get().addOnCompleteListener(task1 -> {
+                                                if (task1.isSuccessful()) {
+                                                    nPaseo = task1.getResult().getValue(Paseo.class);
+                                                    if (nPaseo.isYatengoelperro()) {
+                                                        new MaterialAlertDialogBuilder(this)
+                                                                .setMessage("No puedes cancelar el paseo ya que el walker ya tiene el perro")
+                                                                .setPositiveButton("Ok", (dialogInterface1, i1) -> {
+                                                                    dialogInterface.dismiss();
+                                                                });
+                                                    }else{
+                                                        myPaseos.removeValue().getResult().equals(nPaseo.getId());
+                                                        binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                                                        binding.cardpaseo.setVisibility(View.GONE);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            });
+                            mMap.clear();
+                        })
+                        .setNegativeButton("No cancelar", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        })
+
+                        .show();
+            });
+
+
 
             binding.entregarperroBTN.setOnClickListener(v -> {
                 myPaseos = database.getReference(Constants.PATH_PASEOS);

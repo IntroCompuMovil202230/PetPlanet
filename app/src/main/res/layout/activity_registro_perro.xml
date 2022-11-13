@@ -207,7 +207,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/EsterilizadoCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -234,7 +234,7 @@
                 android:layout_weight="1" />
 
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/carnetVacunacionCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

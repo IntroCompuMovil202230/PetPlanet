@@ -80,7 +80,6 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                 } else {
                     binding.adTXT.setText("Ya tienes un paseo en curso");
                 }
-
             }
         });
     }
@@ -94,11 +93,23 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                     Log.d("Paseoxxx", paseox.getFecha());
 
                     if (paseox.getLocalidad().equals(walkerx.getLocalidad())) {
-                        if (paseox.getNombredelwalker().equals("pendiente") || paseox.getNombredelwalker() == null) {
-                            paseox.setId(paseo.getKey());
-                            paseos.add(paseox);
-                        }
+                        Long hora = Long.parseLong(paseox.getHora());
+                        if(hora < SystemClock.currentThreadTimeMillis()) {
 
+
+                            if (paseox.getNombredelwalker() != null) {
+                                if (paseox.getNombredelwalker().equals("pendiente")) {
+                                    paseox.setId(paseo.getKey());
+                                    paseos.add(paseox);
+                                }
+                            }
+                            if (paseox.getNombredelwalker() == null) {
+                                paseox.setId(paseo.getKey());
+                                paseos.add(paseox);
+                            }
+                        }else{
+                            binding.adTXT.setText("No hay paseos disponibles a esta hora");
+                        }
                     }
                     if (paseos.size() > 0) {
                         binding.grindDispo.setVisibility(View.VISIBLE);

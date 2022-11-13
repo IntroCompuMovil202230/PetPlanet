@@ -40,10 +40,12 @@ public class CardAdapterIniciarpaseo extends ArrayAdapter {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         v = inflater.inflate(R.layout.cardviewiniciarpaseo, null);
         TextView nombreperro = (TextView) v.findViewById(R.id.nombreperrotxt);
-        TextView nombredueno = (TextView) v.findViewById(R.id.duenoperrotxt);
+        TextView horadelpaseo = (TextView) v.findViewById(R.id.horadeinicio);
+        TextView horadelfin = (TextView) v.findViewById(R.id.horadetermino);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
         nombreperro.setText("Nombre del perro: " + perroslist.get(position).getNombredelperro());
-        nombredueno.setText("Nombre del dueño: " + perroslist.get(position).getDirecciondelowner());
+        horadelpaseo.setText("Hora del paseo: " + perroslist.get(position).getHora());
+        horadelfin.setText("Hora de termino: " + perroslist.get(position).getDuracion());
         byte[] decodedString = Base64.decode(perroslist.get(position).getFotodelperro(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);

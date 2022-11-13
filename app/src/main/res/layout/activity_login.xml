@@ -19,12 +19,13 @@
         android:layout_marginBottom="15dp"
         android:hint="@string/contrasena"
         android:textColorHint="@color/grey_200"
-        app:endIconMode="password_toggle"
+        android:visibility="gone"
 
+        app:endIconMode="password_toggle"
         app:endIconTint="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/olvidocontra"
-        app:layout_constraintEnd_toEndOf="parent"
 
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -40,6 +41,17 @@
             tools:ignore="TextContrastCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextLayoutCorreo"
@@ -59,7 +71,7 @@
         app:layout_constraintStart_toStartOf="parent"
 
 
-        >
+        tools:visibility="gone">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/loginCorreo"
@@ -88,11 +100,12 @@
         android:text="@string/iniciarsesion"
         android:textColor="#000000"
         app:cornerRadius="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/registrarselayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="TextContrastCheck" />
+        tools:ignore="TextContrastCheck"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/olvidocontra"
@@ -108,10 +121,11 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/loginBTN"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="TouchTargetSizeCheck" />
+        tools:ignore="TouchTargetSizeCheck"
+        tools:visibility="gone" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/bienvenidotxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -123,16 +137,18 @@
         android:textSize="27sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextLayoutCorreo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/registrarselayout"
         android:layout_width="420dp"
         android:layout_height="315dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone">
 
         <TextView
             android:id="@+id/textView3"

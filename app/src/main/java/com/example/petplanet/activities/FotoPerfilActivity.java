@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.petplanet.databinding.ActivityFotoPerfilBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -89,31 +90,31 @@ public class FotoPerfilActivity extends AppCompatActivity {
         }
         binding.fotodelusuarioBTN.setOnClickListener(v -> {
 
-            final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(FotoPerfilActivity.this);
-            builder.setTitle("Elige una opcion");
-            builder.setItems(options, (dialog, item) -> {
-                if (options[item].equals("Tomar foto")) {
-                    if (ContextCompat.checkSelfPermission(FotoPerfilActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(FotoPerfilActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                    } else {
-                        if(checkAndRequestPermissions()){
-                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_REQUEST);
-                            binding.fotodelusuarioBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Elige una opcion para subir tu foto")
+                    .setPositiveButton("Tomar foto", (dialogInterface, i) -> {
+                        if (ContextCompat.checkSelfPermission(FotoPerfilActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(FotoPerfilActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                        } else {
+                            if (checkAndRequestPermissions()) {
+                                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, CAMERA_REQUEST);
+                                binding.fotodelusuarioBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                            }
                         }
-                    }
-                } else if (options[item].equals("Elegir de galeria")) {
-                    if (checkAndRequestPermissionsStorage()) {
-                        imageChooser();
-                    } else {
-                        Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
-                    }
-                } else if (options[item].equals("Cancelar")) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
+                    })
+                    .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                    })
+                    .setNegativeButton("Elegir de galeria", (dialogInterface, i) -> {
+                        if (checkAndRequestPermissionsStorage()) {
+                            imageChooser();
+                        } else {
+                            Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+
+                    .show();
 
 
         });

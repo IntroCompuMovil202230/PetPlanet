@@ -17,10 +17,12 @@
 
         <!-- Media -->
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/fotoperrocard"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:scaleType="centerCrop" />
 
         <LinearLayout
@@ -40,11 +42,18 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/duenoperrotxt"
+                android:id="@+id/horadeinicio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
 
+                android:textColor="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:id="@+id/horadetermino"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:textColor="?android:attr/textColorSecondary" />
 
             <TextView
@@ -52,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
-                android:text="@string/enviarmens"
+                android:text="Mirar ruta hacia el perro"
                 android:textAlignment="center"
                 android:textColor="@color/purple_500"
                 android:textSize="15sp"

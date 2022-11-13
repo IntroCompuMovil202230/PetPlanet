@@ -39,6 +39,7 @@ public class RazasActivity extends AppCompatActivity {
     DatabaseReference myUserRef;
     public static final String PATH_USERS = "users/";
     public static final String PATH_PERROS = "/mascotas/";
+    boolean ischecked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,6 @@ public class RazasActivity extends AppCompatActivity {
         myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
         myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
-                Log.d("putoelquelolea", "onComplete: " + task1.getResult().getValue());
                 task1.getResult().getChildren().forEach(perro -> {
                     perrox = perro.getValue(Perro.class);
                     perros.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto(), perrox.getRedomendacionesespeciales(), perrox.getRecomendaciones()));
@@ -120,25 +120,20 @@ public class RazasActivity extends AppCompatActivity {
         binding.switchRecomendaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 binding.recomendacionesespecialestxt.setVisibility(View.VISIBLE);
+                ischecked = true;
             } else {
                 binding.recomendacionesespecialestxt.setVisibility(View.GONE);
+                ischecked = false;
             }
         });
 
         binding.registrarMascotaBT.setOnClickListener(view -> {
-            binding.switchRecomendaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    if (binding.recomendacionesespecialestxt.getText().toString().isEmpty()) {
-                        binding.recomendacionesespecialestxt.setError("Este campo es obligatorio");
-                    } else {
-                        registrarperro();
-                    }
-                } else {
-                    registrarperro();
-                }
-            });
-            if (binding.recomendacionesespecialestxt.getText().toString().isEmpty()) {
-                binding.recomendacionesespecialestxt.setError("Este campo es obligatorio");
+            Log.d("putoelquelolea", "onCreate: " + ischecked);
+            if (ischecked) {
+                binding.recomendacionesespecialestxt.setError("Ingrese las recomendaciones especiales");
+            }
+            if (razadelperro.isEmpty()) {
+                Toast.makeText(this, "Seleccione una raza", Toast.LENGTH_SHORT).show();
             } else {
                 registrarperro();
             }
@@ -156,7 +151,7 @@ public class RazasActivity extends AppCompatActivity {
         perro.setVacunado(vacunado);
         perro.setColor(colordelperro);
         perro.setFoto(fotoS);
-        perro.setRedomendacionesespeciales(binding.switchRecomendaciones.isChecked());
+        perro.setRedomendacionesespeciales(ischecked);
         perro.setRecomendaciones(binding.recomendacionesespecialestxt.getText().toString());
         return perro;
     }
@@ -171,6 +166,12 @@ public class RazasActivity extends AppCompatActivity {
     Usuario nUp = new Usuario();
 
     private void registrarperro() {
+        binding.chipGroup.setVisibility(View.GONE);
+        binding.switchRecomendaciones.setVisibility(View.GONE);
+        binding.recomendacionesespecialestxt.setVisibility(View.GONE);
+        binding.registrarMascotaBT.setVisibility(View.GONE);
+        binding.progressBarRazas.setVisibility(View.VISIBLE);
+        binding.registrandotxt.setVisibility(View.VISIBLE);
         perros.add(createPerroObject());
         Log.d("putoelquelolea", "registrarperro: " + perros.size());
         if (perros.size() == 0) {

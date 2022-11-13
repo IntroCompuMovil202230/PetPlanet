@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -99,7 +101,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         binding.grindPerrosdueno.setNumColumns(3);
         binding.grindPerrosdueno.setVerticalSpacing(30);
         binding.grindPerrosdueno.setHorizontalSpacing(30);
-
+        binding.grindPerrosdueno.setLongClickable(true);
 
         binding.toolbarPusuario.setTitle("");
         setSupportActionBar(binding.toolbarPusuario);
@@ -107,31 +109,32 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.profilePetUPicture.setOnClickListener(v -> {
-            final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(PerfilUsuarioActivity.this);
-            builder.setTitle("Elige una opcion");
-            builder.setItems(options, (dialog, item) -> {
-                if (options[item].equals("Tomar foto")) {
-                    if (ContextCompat.checkSelfPermission(PerfilUsuarioActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(PerfilUsuarioActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                    } else {
-                        if (checkAndRequestPermissions()) {
-                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_REQUEST);
-                            binding.profilePetUPicture.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+
+
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Elige una opcion para subir tu foto")
+                    .setPositiveButton("Tomar foto", (dialogInterface, i) -> {
+                        if (ContextCompat.checkSelfPermission(PerfilUsuarioActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(PerfilUsuarioActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                        } else {
+                            if (checkAndRequestPermissions()) {
+                                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, CAMERA_REQUEST);
+                                binding.profilePetUPicture.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                            }
                         }
-                    }
-                } else if (options[item].equals("Elegir de galeria")) {
-                    if (checkAndRequestPermissionsStorage()) {
-                        imageChooser();
-                    } else {
-                        Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
-                    }
-                } else if (options[item].equals("Cancelar")) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
+                    })
+                    .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                    })
+                    .setNegativeButton("Elegir de galeria", (dialogInterface, i) -> {
+                        if (checkAndRequestPermissionsStorage()) {
+                            imageChooser();
+                        } else {
+                            Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+
+                    .show();
         });
 
 
@@ -211,6 +214,21 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     });
+
+                    binding.grindPerrosdueno.setOnItemLongClickListener((parent, view, position, id) -> {
+                        new MaterialAlertDialogBuilder(this)
+                                .setTitle("Deseas eliminar este perro?")
+                                .setMessage("Si lo eliminas no podras recuperarlo")
+                                .setPositiveButton("Si eliminalo", (dialogInterface, i) -> {
+                                    Toast.makeText(this, "se elimino", Toast.LENGTH_SHORT).show();
+                                })
+                                .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+
+                                })
+                                .show();
+                        return true;
+                    });
+
                 });
             }
         });
@@ -311,7 +329,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                     binding.addpet.setVisibility(View.VISIBLE);
                 }
                 SystemClock.sleep(100);
-                binding.progressBarPerfilUsuario.setVisibility(View.INVISIBLE);
+                binding.progressBarPerfilUsuario.setVisibility(View.GONE);
                 binding.profilePetUPicture.setVisibility(View.VISIBLE);
                 binding.fullNamePet.setVisibility(View.VISIBLE);
                 binding.direccionUsuario.setVisibility(View.VISIBLE);
