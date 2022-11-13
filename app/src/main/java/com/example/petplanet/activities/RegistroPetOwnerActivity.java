@@ -57,14 +57,14 @@ public class RegistroPetOwnerActivity extends AppCompatActivity {
             String nombreS = binding.registroNombrePetOwner.getText().toString();
             String direccionS = binding.registrotDireccion.getText().toString();
             String passwordS = binding.registroPassword.getText().toString();
-            String localidadS = binding.spinnerLocalidad.getSelectedItem().toString();
+            String localidadS = binding.spinnerLocalidadxt.getText().toString();
             if (nombreS.isEmpty()) {
                 binding.registroNombrePetOwner.setError("Introduce un nombre");
                 binding.registroNombrePetOwner.requestFocus();
                 return;
             }
-            if (localidadS.equals("Selecciona una localidad")) {
-                ((TextView) binding.spinnerLocalidad.getSelectedView()).setError("Error message");
+            if (localidadS.isEmpty()) {
+                binding.spinnerLocalidad.setError("Selecciona una localidad");
             }
             if (direccionS.isEmpty()) {
                 binding.registrotDireccion.setError("Introduce una direccion");
@@ -96,7 +96,7 @@ public class RegistroPetOwnerActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), FotoPerfilActivity.class);
                     intent.putExtra("nombre", binding.registroNombrePetOwner.getText().toString());
                     intent.putExtra("direccion", binding.registrotDireccion.getText().toString());
-                    intent.putExtra("localidad", binding.spinnerLocalidad.getSelectedItem().toString());
+                    intent.putExtra("localidad", binding.spinnerLocalidadxt.getText().toString());
                     intent.putExtra("correo", binding.registroCorreo.getText().toString());
                     intent.putExtra("password", binding.registroPassword.getText().toString());
                     intent.putExtra("tipo", "petowner");

@@ -92,6 +92,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -335,51 +337,30 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                         nPaseo = snapshot.getValue(Paseo.class);
                         if (nPaseo.getNombredelowner() != null) {
                             if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
-                                if (!nPaseo.getNombredelwalker().equals("pendiente")) {
-                                    //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
-                                    binding.coordinatorLayout.setVisibility(View.GONE);
-                                    binding.cardpaseo.setVisibility(View.VISIBLE);
-                                    setIdpaseo(snapshot.getKey());
-                                    myRef = database.getReference(Constants.PATH_USERS);
-                                    myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            Walker = task1.getResult().getValue(Usuario.class);
-                                            binding.Nombrewalker.setText(Walker.getNombre());
-                                            byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
-                                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                                            binding.imagePerson.setImageBitmap(decodedByte);
-                                        }
-                                    });
+                                if (nPaseo.getNombredelwalker() != null) {
+                                    if (!nPaseo.getNombredelwalker().equals("pendiente")) {
+                                        //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
+                                        binding.coordinatorLayout.setVisibility(View.GONE);
+                                        binding.cardpaseo.setVisibility(View.VISIBLE);
+                                        setIdpaseo(snapshot.getKey());
+                                        myRef = database.getReference(Constants.PATH_USERS);
+                                        myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
+                                            if (task1.isSuccessful()) {
+                                                Walker = task1.getResult().getValue(Usuario.class);
+                                                binding.Nombrewalker.setText(Walker.getNombre());
+                                                byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
+                                                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                                binding.imagePerson.setImageBitmap(decodedByte);
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         }
                     }
                 }
             });
-
-
-            myPaseos = database.getReference(Constants.PATH_PASEOS + getIdpaseo());
-            myPaseos.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                        nPaseo = snapshot1.getValue(Paseo.class);
-                        if (nPaseo.getNombredelowner() != null) {
-                            if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
-                                if (nPaseo.isYallegoelpaseador()) {
-                                    Toast.makeText(LandingPetOwnerActivity.this, "Ya esta por llegar el paseador", Toast.LENGTH_SHORT).show();
-                                    binding.entregarperroBTN.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+            Log.d("asdasdasd", "Location update in the callback: " + getIdpaseo());
 
 
             mLocationCallback = new LocationCallback() {
@@ -408,7 +389,14 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                                 dis2.setLatitude(nPaseo.getLatitudwalker());  //latitud
                                 dis2.setLongitude(nPaseo.getLongitudwalker()); //longitud
                                 double distance = dis3.distanceTo(dis2);
-                                binding.distanciaTXT.setText(String.valueOf(distance) + " metros");
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                df.setRoundingMode(RoundingMode.FLOOR);
+
+                                binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
+
+                            }
+                            if (!nPaseo.isYarecibielperro()) {
+                                binding.entregarperroBTN.setVisibility(View.VISIBLE);
                             }
                         }
                     }

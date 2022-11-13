@@ -50,15 +50,15 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
             String nombreS = binding.registroNombreCompleto.getText().toString();
             String direccionS = binding.registrotDireccion.getText().toString();
             String passwordS = binding.registroPassword.getText().toString();
-            String localidadS = binding.registroLocalidad.getSelectedItem().toString();
+            String localidadS = binding.registroLocalidadtxt.getText().toString();
             String experienciaS = binding.registroExperiencia.getText().toString();
             if (nombreS.isEmpty()) {
                 binding.registroNombreCompleto.setError("Introduce un nombre");
                 binding.registroNombreCompleto.requestFocus();
                 return;
             }
-            if (localidadS.equals("Selecciona una localidad")) {
-                ((TextView) binding.registroLocalidad.getSelectedView()).setError("Error message");
+            if (localidadS.isEmpty()) {
+                binding.registroLocalidad.setError("Selecciona una localidad");
             }
             if (direccionS.isEmpty()) {
                 binding.registrotDireccion.setError("Introduce una direccion");
@@ -96,7 +96,7 @@ public class RegistroPetWalkerActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), FotoPerfilActivity.class);
                     intent.putExtra("nombre", binding.registroNombreCompleto.getText().toString());
                     intent.putExtra("direccion", binding.registrotDireccion.getText().toString());
-                    intent.putExtra("localidad", binding.registroLocalidad.getSelectedItem().toString());
+                    intent.putExtra("localidad", binding.registroLocalidadtxt.getText().toString());
                     intent.putExtra("correo", binding.registroCorreo.getText().toString());
                     intent.putExtra("password", binding.registroPassword.getText().toString());
                     intent.putExtra("experiencia", binding.registroExperiencia.getText().toString());

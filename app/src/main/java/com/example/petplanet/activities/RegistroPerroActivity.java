@@ -101,19 +101,19 @@ public class RegistroPerroActivity extends AppCompatActivity {
 
         binding.seguirconelregistroBTN.setOnClickListener(v -> {
             String nombrep = binding.registroNombrePet.getText().toString();
-            String colorS = binding.spinnercolor.getSelectedItem().toString();
-            String sexoS = binding.spinnersexo.getSelectedItem().toString();
+            String colorS = binding.spinnercolortxt.getText().toString();
+            String sexoS = binding.spinnersexotxt.getText().toString();
             String fechanacimientoS = binding.registrofechanacimientoperro.getText().toString();
             if (nombrep.isEmpty()) {
                 binding.registroNombrePet.setError("Ingrese el nombre de la mascota");
                 binding.registroNombrePet.requestFocus();
                 return;
             }
-            if (sexoS.equals("Seleccione el sexo")) {
-                ((TextView) binding.spinnersexo.getSelectedView()).setError("Error message");
+            if (sexoS.isEmpty()) {
+                binding.spinnersexo.setError("Seleccione el sexo de la mascota");
             }
-            if (colorS.equals("Selecciona un color")) {
-                ((TextView) binding.spinnercolor.getSelectedView()).setError("Error message");
+            if (colorS.isEmpty()) {
+                binding.spinnercolor.setError("Seleccione el color de la mascota");
             }
             if (fechanacimientoS.isEmpty()) {
                 binding.registrofechanacimientoperro.setError("Ingrese una fecha de nacimiento valida");

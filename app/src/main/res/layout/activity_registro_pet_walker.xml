@@ -37,23 +37,37 @@
             tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Spinner
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/registroLocalidad"
-        style="@style/Widget.AppCompat.Spinner.DropDown"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="20dp"
-        android:textColor="@color/grey_200"
-        android:background="@drawable/spinnertext"
-        android:entries="@array/localidades"
+        android:hint="Selecciona una localidad"
         android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNombre"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <AutoCompleteTextView
+            android:id="@+id/registroLocalidadtxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:inputType="none"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            app:simpleItems="@array/localidades" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextLayoutDireccion"
@@ -163,9 +177,9 @@
         android:layout_height="145dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
-        android:gravity="center|left"
         android:layout_marginEnd="20dp"
         android:background="@drawable/rounded_edittext"
+        android:gravity="center|left"
         android:hint="@string/experiencia"
         android:lines="8"
         android:textColor="@color/black"

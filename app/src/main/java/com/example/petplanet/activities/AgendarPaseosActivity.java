@@ -4,45 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-
-import android.widget.TextView;
 
 import com.example.petplanet.databinding.ActivityAgendarPaseosBinding;
 import com.example.petplanet.utilities.Constants;
 import com.google.android.material.datepicker.MaterialDatePicker;
 
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
-
-import com.example.petplanet.R;
-import com.example.petplanet.adapters.CardAdapterUserDog;
-import com.example.petplanet.adapters.CardAdapterUsuario;
-import com.example.petplanet.databinding.ActivityAgendarPaseosBinding;
-import com.example.petplanet.databinding.ActivityRazasBinding;
 import com.example.petplanet.models.Paseo;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -53,9 +31,6 @@ public class AgendarPaseosActivity extends AppCompatActivity {
     DatabaseReference myRef;
     DatabaseReference myUserRef;
     private FirebaseAuth mAuth;
-    public static final String PATH_USERS = "users/";
-    public static final String PATH_PERROS = "/mascotas/";
-    public static final String PATH_PASEOS = "paseos/";
 
     ArrayList<Perro> prueba = new ArrayList<>();
 
@@ -83,8 +58,8 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
         ArrayList<String> menuperros = new ArrayList<>();
         menuperros.add("Seleccione un perro");
-        myUserRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
-        myUserRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).child("perros").get().addOnCompleteListener(task1 -> {
+        myUserRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myUserRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).child("perros").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
 
                 Log.d("malditasea", "onComplete: " + task1.getResult().getValue());
@@ -95,10 +70,9 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
                         binding.progressBarAgendar.setVisibility(View.INVISIBLE);
                         binding.spinnerMascota.setVisibility(View.VISIBLE);
-
-
-                        binding.AgendarHora.setVisibility(View.VISIBLE);
-                        binding.AgendarFecha.setVisibility(View.VISIBLE);
+                        binding.agendarfechaview.setVisibility(View.VISIBLE);
+                        binding.agendarhoraview.setVisibility(View.VISIBLE);
+                        binding.duracionminimadelpaseoview.setVisibility(View.VISIBLE);
                         binding.buttonAgendar.setVisibility(View.VISIBLE);
                         Log.d("malditasea", "onComplete: " + perrox.getNombrecompleto());
                         prueba.add(new Perro(perrox.getNombrecompleto(), perrox.getRaza(), perrox.getSexo(), perrox.getColor(), perrox.getFechanacimiento(), perrox.getVacunado(), perrox.getEsterilizado(), perrox.getFoto(), perrox.getRedomendacionesespeciales(), perrox.getRecomendaciones()));
@@ -106,7 +80,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
                         Log.d("malditasea", "onComplete: " + prueba.size());
                         ArrayAdapter adapter = new ArrayAdapter(AgendarPaseosActivity.this, android.R.layout.simple_spinner_dropdown_item, menuperros);
-                        binding.spinnerMascota.setAdapter(adapter);
+                        binding.spinnerMascotatxt.setAdapter(adapter);
 
                     });
                 } else {
@@ -122,23 +96,25 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             finish();
         });
 
-        myRef = database.getReference(PATH_USERS + mAuth.getCurrentUser().getUid());
-        myRef.getDatabase().getReference(PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Client = task.getResult().getValue(Usuario.class);
             }
         });
 
 
-        binding.AgendarHora.setOnClickListener(v -> popTimePicker(v));
-
+        binding.AgendarHora.setOnClickListener(this::popTimePicker);
+        binding.duracionminimadelpaseo.setOnClickListener(this::popDiracionview);
 
         binding.buttonAgendar.setOnClickListener(v -> {
             String fecha = binding.AgendarFecha.getText().toString();
             String hora = binding.AgendarHora.getText().toString();
-            String mascota = binding.spinnerMascota.getSelectedItem().toString();
-            if (mascota.equals("Selecciona una mascota")) {
-                ((TextView) binding.spinnerMascota.getSelectedView()).setError("Error message");
+            String duracion = binding.duracionminimadelpaseo.getText().toString();
+            String mascota = binding.spinnerMascotatxt.getText().toString();
+            if (mascota.isEmpty()) {
+                binding.spinnerMascota.setError("Seleccione un perro");
+                binding.AgendarFecha.requestFocus();
             }
             if (fecha.isEmpty()) {
                 binding.AgendarFecha.setError("Selecciona una fecha valida");
@@ -148,8 +124,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                 binding.AgendarHora.setError("Selecciona una hora valida");
                 binding.AgendarHora.requestFocus();
             }
-            if (binding.duracionminimadelpaseo.getText().toString().isEmpty()) {
-
+            if (duracion.isEmpty()) {
                 binding.duracionminimadelpaseo.setError("Ingresa la duracion minima del paseo");
                 binding.duracionminimadelpaseo.requestFocus();
             } else {
@@ -158,7 +133,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
         });
 
         MaterialDatePicker.Builder<Long> materialDateBuilder = MaterialDatePicker.Builder.datePicker();
-        materialDateBuilder.setTitleText("Selecciona la fecha de nacimiento");
+        materialDateBuilder.setTitleText("Selecciona la fecha del paseo");
         final MaterialDatePicker materialDatePicker = materialDateBuilder.build();
         binding.AgendarFecha.setOnClickListener(v -> materialDatePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER"));
         materialDatePicker.addOnPositiveButtonClickListener(
@@ -207,9 +182,25 @@ public class AgendarPaseosActivity extends AppCompatActivity {
 
         // int style = AlertDialog.THEME_HOLO_DARK;
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, true);
-
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, false);
         timePickerDialog.setTitle("Selecciona la hora del paseo");
+
+        timePickerDialog.show();
+    }
+
+
+    public void popDiracionview(View view) {
+        TimePickerDialog.OnTimeSetListener onTimeSetListener = (timePicker, selectedHour, selectedMinute) -> {
+            hour = selectedHour;
+            minute = selectedMinute;
+            binding.duracionminimadelpaseo.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
+        };
+
+        // int style = AlertDialog.THEME_HOLO_DARK;
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, false);
+        timePickerDialog.setTitle("Selecciona la hora de finalizacion del paseo");
+
         timePickerDialog.show();
     }
 

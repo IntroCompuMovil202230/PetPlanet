@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".activities.LandingPetWalkerActivity">
 
-    <androidx.fragment.app.FragmentContainerView
+<androidx.fragment.app.FragmentContainerView
         android:id="@+id/mapwalker"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
         android:animateLayoutChanges="true"
         android:background="@drawable/background_content_top"
         android:backgroundTint="?attr/colorOnPrimary"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -63,7 +63,7 @@
             android:layout_marginTop="48dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/red_500"
+            android:backgroundTint="@color/biometric_error_color"
             android:text="Cancelar paseo"
             app:cornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
-            android:text="Distancia"
+            android:text="Distancia:"
             app:layout_constraintStart_toEndOf="@+id/imagePerson"
             app:layout_constraintTop_toBottomOf="@+id/Nombreperro" />
 
@@ -104,24 +104,40 @@
             android:id="@+id/distanciaTXT"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imagePerson"
-            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+            app:layout_constraintStart_toEndOf="@+id/textView17"
+            app:layout_constraintTop_toBottomOf="@+id/Nombreperro" />
+
+        <TextView
+            android:id="@+id/duracionTXT"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView17"
+            app:layout_constraintTop_toBottomOf="@+id/distanciaTXT" />
+
+
+
 
         <Button
             android:id="@+id/escriDuenoBTN"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="14dp"
             android:layout_marginEnd="20dp"
             android:text="Escribirle al dueño"
-            android:visibility="gone"
+            android:visibility="visible"
             app:cornerRadius="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imagePerson"
-            app:layout_constraintTop_toBottomOf="@+id/distanciaTXT"
+            app:layout_constraintTop_toBottomOf="@+id/duracionView"
             tools:ignore="TouchTargetSizeCheck" />
 
         <Button
@@ -137,6 +153,16 @@
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintStart_toStartOf="parent" />
 
+        <TextView
+            android:id="@+id/duracionView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:text="Duracion:"
+            app:layout_constraintStart_toEndOf="@+id/imagePerson"
+            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -144,7 +170,7 @@
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="92dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

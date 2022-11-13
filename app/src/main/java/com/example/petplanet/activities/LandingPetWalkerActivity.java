@@ -70,6 +70,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -450,7 +452,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             dis2.setLatitude(paseo.getLatitud());  //latitud
                             dis2.setLongitude(paseo.getLongitud()); //longitud
                             double distance = dis3.distanceTo(dis2);
-                            binding.distanciaTXT.setText(String.valueOf(distance) + " metros");
+                            DecimalFormat df = new DecimalFormat("#.##");
+                            df.setRoundingMode(RoundingMode.FLOOR);
+
+                            binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
                             if (distance < 100) {
                                 binding.escriDuenoBTN.setVisibility(View.VISIBLE);
                                 //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
@@ -469,7 +474,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
                                         Paseo paseo = task.getResult().getValue(Paseo.class);
-                                        if (paseo.isYarecibielperro()) {
+                                        if (!paseo.isYatengoelperro()) {
                                             binding.confirmarperroBTN.setVisibility(View.VISIBLE);
                                         }
                                     }
@@ -490,7 +495,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Paseo paseo = task.getResult().getValue(Paseo.class);
-                        paseo.setYarecibielperro(true);
+                        paseo.setYatengoelperro(true);
                         myPaseos.setValue(paseo);
                     }
                 });

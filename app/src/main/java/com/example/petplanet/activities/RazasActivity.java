@@ -126,6 +126,17 @@ public class RazasActivity extends AppCompatActivity {
         });
 
         binding.registrarMascotaBT.setOnClickListener(view -> {
+            binding.switchRecomendaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    if (binding.recomendacionesespecialestxt.getText().toString().isEmpty()) {
+                        binding.recomendacionesespecialestxt.setError("Este campo es obligatorio");
+                    } else {
+                        registrarperro();
+                    }
+                } else {
+                    registrarperro();
+                }
+            });
             if (binding.recomendacionesespecialestxt.getText().toString().isEmpty()) {
                 binding.recomendacionesespecialestxt.setError("Este campo es obligatorio");
             } else {
