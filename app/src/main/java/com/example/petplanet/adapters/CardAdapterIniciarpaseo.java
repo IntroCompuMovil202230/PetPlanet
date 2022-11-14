@@ -45,7 +45,7 @@ public class CardAdapterIniciarpaseo extends ArrayAdapter {
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
         nombreperro.setText("Nombre del perro: " + perroslist.get(position).getNombredelperro());
         horadelpaseo.setText("Hora del paseo: " + perroslist.get(position).getHora());
-        horadelfin.setText("Hora de termino: " + perroslist.get(position).getDuracion());
+        horadelfin.setText("Hora de regreso: " + perroslist.get(position).getHoraderegreso());
         byte[] decodedString = Base64.decode(perroslist.get(position).getFotodelperro(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);

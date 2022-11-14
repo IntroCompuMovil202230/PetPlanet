@@ -33,7 +33,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class IniciarPaseoActivity extends AppCompatActivity {
     private ActivityIniciarPaseoBinding binding;
@@ -85,30 +91,80 @@ public class IniciarPaseoActivity extends AppCompatActivity {
     }
 
     public void cargarPerros() {
+
         myRef = database.getReference(Constants.PATH_PASEOS);
+        myRef.getDatabase();
         myRef.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DataSnapshot paseo : task.getResult().getChildren()) {
                     paseox = paseo.getValue(Paseo.class);
-                    Log.d("Paseoxxx", paseox.getFecha());
-
+                    boolean iniciarpaseo = false;
                     if (paseox.getLocalidad().equals(walkerx.getLocalidad())) {
-                        Long hora = Long.parseLong(paseox.getHora());
-                        if(hora < SystemClock.currentThreadTimeMillis()) {
+                        binding.progressBarIniciar.setVisibility(View.GONE);
+                        Date fechafirebase = new Date();
+                        Date date2 = new Date();
 
+                        Date simplfirebase = new Date();
+                        Date simpl2 = new Date();
+                        DateFormat formatfecha = new SimpleDateFormat("dd MMMM yyyy");
+                        try {
+                            fechafirebase = formatfecha.parse(paseox.getFecha().toString());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        String fechaactual = formatfecha.format(date2);
+                        String fechafirebase2 = formatfecha.format(fechafirebase);
 
-                            if (paseox.getNombredelwalker() != null) {
-                                if (paseox.getNombredelwalker().equals("pendiente")) {
+                        Log.d("Paseoxxx", fechaactual.equals(fechafirebase2) + " " + formatfecha.format(date2) + " " + formatfecha.format(fechafirebase));
+                        if (fechaactual.equals(fechafirebase2)) {
+                            Log.d("Paseoxxx", paseox.getHora());
+                            DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+                            Date date = new Date();
+                            try {
+                                date = dateFormat.parse(paseox.getHora().toString());
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            int horaActual, minutosActual;
+                            horaActual = date2.getHours();
+                            minutosActual = date2.getMinutes();
+
+                            String horaActual2 = horaActual + ":" + minutosActual;
+                            Log.d("Paseoxxx", horaActual2);
+                            Date comparar1, comparar2, comparar3;
+                            int duracion = 0;
+// se comprueba la hora del paseo con la hora actual
+                            try {
+                                comparar1 = dateFormat.parse(paseox.getHora().toString()); //Esta es la hora que me viene de la BD
+                                comparar3 = dateFormat.parse(paseox.getHoraderegreso().toString()); //Esta es la hora actual
+                                comparar2 = dateFormat.parse(horaActual2);
+                                duracion = comparar1.getHours() - comparar3.getHours() + comparar1.getMinutes() - comparar3.getMinutes();
+
+                                Log.d("Paseoxxx", duracion + "");
+                                if (comparar1.compareTo(comparar2) < 0) {
+                                    iniciarpaseo = false;
+                                } else {
+                                    iniciarpaseo = true;
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            if (iniciarpaseo) {
+                                if (paseox.getNombredelwalker() != null) {
+                                    if (paseox.getNombredelwalker().equals("pendiente")) {
+                                        paseox.setId(paseo.getKey());
+                                        paseox.setDuracion(String.valueOf(duracion));
+                                        paseos.add(paseox);
+                                    }
+                                }
+                                if (paseox.getNombredelwalker() == null) {
                                     paseox.setId(paseo.getKey());
+                                    paseox.setDuracion(String.valueOf(duracion));
                                     paseos.add(paseox);
                                 }
                             }
-                            if (paseox.getNombredelwalker() == null) {
-                                paseox.setId(paseo.getKey());
-                                paseos.add(paseox);
-                            }
-                        }else{
-                            binding.adTXT.setText("No hay paseos disponibles a esta hora");
                         }
                     }
                     if (paseos.size() > 0) {
@@ -122,14 +178,22 @@ public class IniciarPaseoActivity extends AppCompatActivity {
                             Paseo items = paseos.get(position);
                             intent.putExtra("nombredelowner", items.getNombredelperro());
                             intent.putExtra("id", items.getId());
+                            intent.putExtra("duracion", items.getDuracion());
                             intent.putExtra("direccion", items.getDirecciondelowner());
                             startActivity(intent);
                             finish();
                         });
-                    } else {
+                    }
+                    if (iniciarpaseo && paseos.size() == 0) {
                         binding.adTXT.setText("No hay paseos disponibles en tu localidad");
                     }
+                    if (!iniciarpaseo || paseos.size() == 0) {
+                        binding.adTXT.setText("No hay paseos disponibles");
+                    }
                 }
+            }
+            if (!task.isSuccessful()) {
+                binding.adTXT.setText("No hay paseos disponibles");
             }
         });
     }

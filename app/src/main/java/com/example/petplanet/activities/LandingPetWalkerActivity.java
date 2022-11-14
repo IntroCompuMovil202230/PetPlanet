@@ -171,6 +171,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     RequestQueue request;
     boolean paseoencurso = false;
     Paseo paseo = new Paseo();
+    String duracion;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -220,11 +221,13 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 setDirecciondelOwner(extras.getString("direccion"));
                 setNombredelowner(extras.getString("nombredelowner"));
                 setId(extras.getString("id"));
+                duracion = extras.getString("duracion");
             }
         } else {
             setDirecciondelOwner((String) savedInstanceState.getSerializable("direccion"));
             setNombredelowner((String) savedInstanceState.getSerializable("nombredelowner"));
             setId((String) savedInstanceState.getSerializable("id"));
+            duracion = (String) savedInstanceState.getSerializable("duracion");
         }
         mLocationRequest = createLocationRequest();
 
@@ -375,6 +378,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             binding.confirmarpaseoBTN.setVisibility(View.GONE);
                             mMap.clear();
                             setDirecciondelOwner(null);
+                            mMap.clear();
                         })
 
                         .show();
@@ -398,6 +402,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                                     binding.imagePerson.setImageBitmap(decodedByte);
                                     binding.Nombreperro.setText(paseo.getNombredelperro());
+                                    binding.duracionTXT.setText(paseo.getDuracion() + " min");
                                     pintarrutahaciaelowner(paseo.getDirecciondelowner());
                                     paseoencurso = true;
                                 }
@@ -453,7 +458,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             DecimalFormat df = new DecimalFormat("#.##");
                             df.setRoundingMode(RoundingMode.FLOOR);
 
-                            binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
+                            binding.distanciaTXT.setText(df.format(distance) + " metros");
                             if (distance < 100) {
                                 binding.escriDuenoBTN.setVisibility(View.VISIBLE);
                                 //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
@@ -482,7 +487,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                         if (getDirecciondelOwner() != null) {
                             start = new LatLng(currentLat, currentLong);
                             pintarrutahaciaelowner(getDirecciondelOwner());
-                            Log.d("paseoasd", "sacarpaseo: " + getId());
                             binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
                         }
                     }
@@ -507,6 +511,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 binding.paseoencursoBTN.setVisibility(View.VISIBLE);
                 binding.coordinatorLayout.setVisibility(View.VISIBLE);
                 binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                stopLocationUpdates();
                 mMap.clear();
             });
 
@@ -597,9 +602,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 dis2.setLatitude(address.getLatitude());  //latitud
                 dis2.setLongitude(address.getLongitude()); //longitud
                 double distance = dis3.distanceTo(dis2);
-                double distanceKm = 0;
-                distanceKm = distance / 1000;
-                binding.distanciaTXT.setText(String.valueOf(distanceKm));
+                DecimalFormat df = new DecimalFormat("#.##");
+                df.setRoundingMode(RoundingMode.FLOOR);
+
+                binding.distanciaTXT.setText(df.format(distance) + " metros");
                 LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
                 end = destination;
                 paseo.setLatitud(end.latitude);
@@ -624,12 +630,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelowner());
                 nPaseo.setNombredelwalker(Client.getNombre());
                 nPaseo.setUidWalker(Client.getId());
+                nPaseo.setDuracion(duracion);
                 Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelwalker());
                 myPaseos.setValue(nPaseo);
                 byte[] decodedString = Base64.decode(nPaseo.getFotodelperro(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 binding.imagePerson.setImageBitmap(decodedByte);
                 binding.Nombreperro.setText(nPaseo.getNombredelperro());
+                binding.duracionTXT.setText(nPaseo.getDuracion() + " min");
                 binding.confirmarpaseoBTN.setVisibility(View.GONE);
 
             }

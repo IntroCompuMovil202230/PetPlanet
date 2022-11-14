@@ -22,8 +22,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class AgendarPaseosActivity extends AppCompatActivity {
     private ActivityAgendarPaseosBinding binding;
@@ -114,7 +117,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
             String mascota = binding.spinnerMascotatxt.getText().toString();
             if (mascota.isEmpty()) {
                 binding.spinnerMascota.setError("Seleccione un perro");
-                binding.AgendarFecha.requestFocus();
+                binding.spinnerMascota.requestFocus();
             }
             if (fecha.isEmpty()) {
                 binding.AgendarFecha.setError("Selecciona una fecha valida");
@@ -142,7 +145,14 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                     // if the user clicks on the positive
                     // button that is ok button update the
                     // selected date
-                    binding.AgendarFecha.setText(materialDatePicker.getHeaderText());
+                    TimeZone timeZoneUTC = TimeZone.getDefault();
+                    // It will be negative, so that's the -1
+                    int offsetFromUTC = timeZoneUTC.getOffset(new Date().getTime()) * -1;
+                    // Create a date format, then a date object with our offset
+                    SimpleDateFormat simpleFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.US);
+                    Date date = new Date(materialDatePicker.getHeaderText());
+
+                    binding.AgendarFecha.setText(simpleFormat.format(date));
                     // in the above statement, getHeaderText
                     // will return selected date preview from the
                     // dialog

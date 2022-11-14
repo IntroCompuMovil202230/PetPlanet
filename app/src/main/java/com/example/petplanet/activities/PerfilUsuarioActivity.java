@@ -78,21 +78,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
 
-
-        binding.guardatBTN.setVisibility(View.INVISIBLE);
-        binding.profilePetUPicture.setVisibility(View.INVISIBLE);
-        binding.fullNamePet.setVisibility(View.INVISIBLE);
-        binding.direccionUsuario.setVisibility(View.INVISIBLE);
-        binding.localidadPetOwner.setVisibility(View.INVISIBLE);
-        binding.emailtxt.setVisibility(View.INVISIBLE);
         binding.progressBarPerfilUsuario.setVisibility(View.VISIBLE);
-        binding.textViewcorreo.setVisibility(View.INVISIBLE);
-        binding.textViewdireccion.setVisibility(View.INVISIBLE);
-        binding.textViewLocalidad.setVisibility(View.INVISIBLE);
-        binding.textViewnombre.setVisibility(View.INVISIBLE);
-        binding.fingerBTN.setVisibility(View.INVISIBLE);
-        binding.changepasswordBTN.setVisibility(View.INVISIBLE);
-        binding.addpet.setVisibility(View.INVISIBLE);
 
         cargardatos();
         cargandodatosperros();
@@ -324,9 +310,13 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 binding.localidadPetOwner.setText(Client.getLocalidad());
                 binding.emailtxt.setText(Client.getCorreo());
                 if (Client.getWalker()) {
-                    binding.addpet.setVisibility(View.INVISIBLE);
+                    binding.addpet.setVisibility(View.GONE);
+                    binding.tusmascotastxt.setVisibility(View.GONE);
+                    binding.grindPerrosdueno.setVisibility(View.GONE);
                 } else {
+                    binding.tusmascotastxt.setVisibility(View.VISIBLE);
                     binding.addpet.setVisibility(View.VISIBLE);
+                    binding.grindPerrosdueno.setVisibility(View.VISIBLE);
                 }
                 SystemClock.sleep(100);
                 binding.progressBarPerfilUsuario.setVisibility(View.GONE);

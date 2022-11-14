@@ -31,7 +31,7 @@ public class Paseo {
 
 
 
-    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner,String duracion) {
+    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner,String horaderegreso) {
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
@@ -39,7 +39,7 @@ public class Paseo {
         this.fecha = fecha;
         this.hora = hora;
         this.direcciondelowner = direcciondelowner;
-        this.duracion = duracion;
+        this.horaderegreso = horaderegreso;
     }
 
     public Paseo() {
