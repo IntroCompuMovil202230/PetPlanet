@@ -193,7 +193,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
         mAuth = FirebaseAuth.getInstance();
-        String serverKey ="AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER";
+        String serverKey = String.valueOf(R.string.secretkey);
         FCMSend.SetServerKey(serverKey);
 
         cargardatos();
