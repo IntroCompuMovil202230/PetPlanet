@@ -81,11 +81,16 @@ public class IniciarPaseoActivity extends AppCompatActivity {
         myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 walkerx = task.getResult().getValue(Usuario.class);
-                if (!walkerx.getPaseoencurso()) {
+                if(walkerx.getPaseoencurso()!= null){
+                    if (!walkerx.getPaseoencurso()) {
+                        cargarPerros();
+                    }else {
+                        binding.adTXT.setText("Ya tienes un paseo en curso");
+                    }
+                }else{
                     cargarPerros();
-                } else {
-                    binding.adTXT.setText("Ya tienes un paseo en curso");
                 }
+
             }
         });
     }
@@ -93,7 +98,6 @@ public class IniciarPaseoActivity extends AppCompatActivity {
     public void cargarPerros() {
 
         myRef = database.getReference(Constants.PATH_PASEOS);
-        myRef.getDatabase();
         myRef.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DataSnapshot paseo : task.getResult().getChildren()) {

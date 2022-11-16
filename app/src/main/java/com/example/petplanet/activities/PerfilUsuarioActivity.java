@@ -37,10 +37,15 @@ import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,6 +84,11 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         binding.progressBarPerfilUsuario.setVisibility(View.VISIBLE);
+
+
+
+
+
 
         cargardatos();
         cargandodatosperros();
@@ -277,6 +287,8 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             binding.guardatBTN.setVisibility(View.VISIBLE);
             binding.profilePetUPicture.setImageBitmap(image);
         }
+
+
         binding.guardatBTN.setOnClickListener(view -> {
             cargardatos();
             myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
@@ -437,4 +449,87 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             finish();
         }
     }
+
+
+
+    private void handleNotificationData() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            if (bundle.containsKey("data1")) {
+                Log.d("asdasdasd", "Data1 : " + bundle.getString("data1"));
+            }
+            if (bundle.containsKey("data2")) {
+                Log.d("asdasdasd", "Data2 : " + bundle.getString("data2"));
+            }
+
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("asdasdasd", "On New Intent called");
+    }
+
+    public void subsSports(View view) {
+        subscribeToTopic("sports");
+    }
+
+    public void unsubsSports(View view) {
+        unsubscribeToTopic("sports");
+    }
+
+    public void subsEnt(View view) {
+        subscribeToTopic("entertainment");
+    }
+
+    public void unsubsEnt(View view) {
+        unsubscribeToTopic("entertainment");
+    }
+
+    /**
+     * method to subscribe to topic
+     *
+     * @param topic to which subscribe
+     */
+    private void subscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Subscribed to " + topic, Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to subscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * method to unsubscribe to topic
+     *
+     * @param topic to which unsubscribe
+     */
+    private void unsubscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "UnSubscribed to " + topic, Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to unsubscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
+
+
 }

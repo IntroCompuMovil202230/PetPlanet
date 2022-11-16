@@ -17,6 +17,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
@@ -28,6 +29,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +50,7 @@ import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityLandingPetOwnerBinding;
 import com.example.petplanet.models.Paseo;
+import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
@@ -74,7 +78,9 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
@@ -91,6 +97,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 import java.math.RoundingMode;
@@ -100,7 +107,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-
+@SuppressLint("MissingPermission")
 public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RoutingListener {
     private ActivityLandingPetOwnerBinding binding;
     public final static double RADIUS_OF_EARTH_KM = 6371;
@@ -176,6 +183,44 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         setContentView(binding.getRoot());
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAuth = FirebaseAuth.getInstance();
+
+        ArrayList<Perro> prueba = new ArrayList<>();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+
+                if (!task.isSuccessful()) {
+                    Log.e("asdasdasdasd", "Failed to get the token.");
+                    return;
+                }
+
+                //get the token from task
+                String token = task.getResult();
+                Log.d("asdasdasdasd", "Token2 : " + Client.getFcmToken());
+                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        Client = task2.getResult().getValue(Usuario.class);
+                        Client.setFcmToken(token);
+                        if (Client.getPerros() != null) {
+                            if (Client.getPerros().size() > 0) {
+                                prueba.addAll(Client.getPerros());
+                                Client.setPerros(prueba);
+                            }
+                        }
+                        myRef.setValue(Client);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("asdasdasdasd", "Failed to get the token : " + e.getLocalizedMessage());
+            }
+        });
+
 
         humActual = 0;
         binding.bottomNavigation.setBackground(null);
@@ -427,7 +472,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                                                                 .setPositiveButton("Ok", (dialogInterface1, i1) -> {
                                                                     dialogInterface.dismiss();
                                                                 });
-                                                    }else{
+                                                    } else {
                                                         myPaseos.removeValue().getResult().equals(nPaseo.getId());
                                                         binding.coordinatorLayout.setVisibility(View.VISIBLE);
                                                         binding.cardpaseo.setVisibility(View.GONE);
@@ -446,7 +491,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
                         .show();
             });
-
 
 
             binding.entregarperroBTN.setOnClickListener(v -> {
@@ -707,6 +751,88 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Findroutes(start, end);
 
+    }
+
+    private void handleNotificationData() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            if (bundle.containsKey("data1")) {
+                Log.d("asdasdasd", "Data1 : " + bundle.getString("data1"));
+            }
+            if (bundle.containsKey("data2")) {
+                Log.d("asdasdasd", "Data2 : " + bundle.getString("data2"));
+            }
+
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("asdasdasd", "On New Intent called");
+    }
+
+    public void subsSports(View view) {
+        subscribeToTopic("sports");
+    }
+
+    public void unsubsSports(View view) {
+        unsubscribeToTopic("sports");
+    }
+
+    public void subsEnt(View view) {
+        subscribeToTopic("entertainment");
+    }
+
+    public void unsubsEnt(View view) {
+        unsubscribeToTopic("entertainment");
+    }
+
+    /**
+     * method to subscribe to topic
+     *
+     * @param topic to which subscribe
+     */
+    private void subscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Subscribed to " + topic, Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to subscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * method to unsubscribe to topic
+     *
+     * @param topic to which unsubscribe
+     */
+    private void unsubscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "UnSubscribed to " + topic, Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to unsubscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void runtimeEnableAutoInit() {
+        // [START fcm_runtime_enable_auto_init]
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        // [END fcm_runtime_enable_auto_init]
     }
 
 

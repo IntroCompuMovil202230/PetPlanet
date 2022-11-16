@@ -170,8 +170,7 @@ public class AgendarPaseosActivity extends AppCompatActivity {
                 fotodelperro = perro.getFoto();
             }
         });
-
-        Paseo paseo = new Paseo(fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion(), binding.duracionminimadelpaseo.getText().toString());
+        Paseo paseo = new Paseo(mAuth.getCurrentUser().getUid(),Client.getFcmToken(),fotodelperro, Client.getNombre(), mascota, Client.getLocalidad(), fecha, hora, Client.getDireccion(), binding.duracionminimadelpaseo.getText().toString());
         myRef = database.getReference(Constants.PATH_PASEOS);
         myRef.getDatabase().getReference().child(Constants.PATH_PASEOS).child(myRef.getDatabase().getReference().push().getKey()).setValue(paseo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

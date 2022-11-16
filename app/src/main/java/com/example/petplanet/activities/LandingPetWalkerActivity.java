@@ -34,12 +34,14 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.widget.Toast;
 
+import com.deeplabstudio.fcmsend.FCMSend;
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
+import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.models.Paseo;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
@@ -67,14 +69,18 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import com.android.volley.RequestQueue;
@@ -86,6 +92,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 public class LandingPetWalkerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RoutingListener {
     private ActivityLandingPetWalkerBinding binding;
@@ -173,6 +181,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     Paseo paseo = new Paseo();
     String duracion;
 
+    Usuario owner = new Usuario();
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,6 +193,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
         mAuth = FirebaseAuth.getInstance();
+        String serverKey ="AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER";
+        FCMSend.SetServerKey(serverKey);
+
         cargardatos();
         binding.coordinatorLayout.setVisibility(View.VISIBLE);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
@@ -356,10 +369,13 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Client = task.getResult().getValue(Usuario.class);
-                    if (Client.getPaseoencurso()) {
-                        binding.paseoencursoBTN.setVisibility(View.VISIBLE);
-                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                    if (Client.getPaseoencurso() != null) {
+                        if (Client.getPaseoencurso()) {
+                            binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                        }
                     }
+
                 }
             });
 
@@ -461,6 +477,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             binding.distanciaTXT.setText(df.format(distance) + " metros");
                             if (distance < 100) {
                                 binding.escriDuenoBTN.setVisibility(View.VISIBLE);
+
                                 //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
                             }
                             if (distance < 5) {
@@ -468,6 +485,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
                                         Paseo paseo = task.getResult().getValue(Paseo.class);
+                                        FCMSend.Builder build = new FCMSend.Builder(paseo.getFcmtokenowner())
+                                                .setTitle("Tu paseador esta cerca")
+                                                .setBody("Tu paseador esta a " + df.format(distance) + " metros de ti, puedes hablar con el");
+                                        String result = build.send().Result();
                                         paseo.setYallegoelpaseador(true);
                                         myPaseos.setValue(paseo);
                                     }
@@ -544,6 +565,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Paseo paseo = task.getResult().getValue(Paseo.class);
+                                    FCMSend.Builder build = new FCMSend.Builder(paseo.getFcmtokenowner())
+                                            .setTitle("Cancelaron tu paseo")
+                                            .setBody("Lo sentimos, tu paseador ha cancelado el paseo");
+                                    String result = build.send().Result();
                                     paseo.setNombredelwalker("pendiente");
                                     paseo.setUidWalker("0");
                                     paseo.setLatitudwalker(0);
@@ -622,6 +647,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
 
     public void sacarpaseo() {
+        final String SENDER_ID;
         Log.d("paseoasd", "sacarpaseo: " + getId());
         myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
         myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
@@ -632,13 +658,27 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 nPaseo.setUidWalker(Client.getId());
                 nPaseo.setDuracion(duracion);
                 Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelwalker());
+
+                Log.d("paseoasd", "sacarpaseo: " + nPaseo.getFcmtokenowner());
+// See documentation on defining a message payload.
+                FCMSend.Builder build = new FCMSend.Builder(nPaseo.getFcmtokenowner())
+                        .setTitle(nPaseo.getNombredelwalker() + " ha aceptado tu paseo")
+                        .setBody("El walker ya va para tu ubicacion preparate");
+                String result = build.send().Result();
+
+                // [START fcm_send_upstream]
+
                 myPaseos.setValue(nPaseo);
+
+                // [END fcm_send_upstream]
                 byte[] decodedString = Base64.decode(nPaseo.getFotodelperro(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 binding.imagePerson.setImageBitmap(decodedByte);
                 binding.Nombreperro.setText(nPaseo.getNombredelperro());
                 binding.duracionTXT.setText(nPaseo.getDuracion() + " min");
                 binding.confirmarpaseoBTN.setVisibility(View.GONE);
+
+
 
             }
         });
@@ -783,6 +823,38 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
 
     public void cargardatos() {
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+
+                if (!task.isSuccessful()) {
+                    Log.e("asdasdasdasd", "Failed to get the token.");
+                    return;
+                }
+
+                //get the token from task
+                String token = task.getResult();
+                Log.d("asdasdasdasd", "Token2 : " + Client.getFcmToken());
+                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        Client = task2.getResult().getValue(Usuario.class);
+                        Client.setFcmToken(token);
+                        myRef.setValue(Client);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("asdasdasdasd", "Failed to get the token : " + e.getLocalizedMessage());
+            }
+        });
+
+
         myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -898,5 +970,66 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         Findroutes(start, end);
     }
 
+    private void handleNotificationData() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            if (bundle.containsKey("data1")) {
+                Log.d("asdasdasd", "Data1 : " + bundle.getString("data1"));
+            }
+            if (bundle.containsKey("data2")) {
+                Log.d("asdasdasd", "Data2 : " + bundle.getString("data2"));
+            }
+
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("asdasdasd", "On New Intent called");
+    }
+
+
+    /**
+     * method to subscribe to topic
+     *
+     * @param topic to which subscribe
+     */
+    private void subscribeToTopic(String topic) {
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Subscribed to " + topic, Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to subscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * method to unsubscribe to topic
+     *
+     * @param topic to which unsubscribe
+     */
+    private void unsubscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "UnSubscribed to " + topic, Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to unsubscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }

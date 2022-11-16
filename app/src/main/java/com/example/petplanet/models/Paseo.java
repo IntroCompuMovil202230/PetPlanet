@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Paseo {
     private String id;
+    private String uidOwner;
+    private String fcmtokenowner;
     private String fotodelperro;
     private String nombredelowner;
     private String nombredelperro;
@@ -30,8 +32,10 @@ public class Paseo {
     private double longitudwalker;
 
 
+    public Paseo(String uidOwner, String fcmtokenowner, String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner, String horaderegreso) {
 
-    public Paseo(String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner,String horaderegreso) {
+        this.uidOwner = uidOwner;
+        this.fcmtokenowner = fcmtokenowner;
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
@@ -46,6 +50,22 @@ public class Paseo {
 
     }
 
+
+    public String getFcmtokenowner() {
+        return fcmtokenowner;
+    }
+
+    public void setFcmtokenowner(String fcmtokenowner) {
+        this.fcmtokenowner = fcmtokenowner;
+    }
+
+    public String getUidOwner() {
+        return uidOwner;
+    }
+
+    public void setUidOwner(String uidOwner) {
+        this.uidOwner = uidOwner;
+    }
 
     public boolean isYarecibielperro() {
         return yarecibielperro;

@@ -1,5 +1,6 @@
 package com.example.petplanet.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,6 +23,10 @@ import android.widget.Toast;
 import com.example.petplanet.databinding.ActivityFotoPerfilBinding;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -204,7 +210,6 @@ public class FotoPerfilActivity extends AppCompatActivity {
             }
         });
     }
-
     private Usuario createUserObject() {
         if (tipoS.equals("petowner")) {
             return new Usuario(mAuth.getCurrentUser().getUid(), nombreS, binding.editTextPhone.getText().toString(), localidadS, emailS, direccionS, fotoS, false, "");
@@ -266,5 +271,6 @@ public class FotoPerfilActivity extends AppCompatActivity {
         }
         return true;
     }
+
 
 }
