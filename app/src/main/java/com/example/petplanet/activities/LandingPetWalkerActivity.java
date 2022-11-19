@@ -193,7 +193,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
         mAuth = FirebaseAuth.getInstance();
-        String serverKey = String.valueOf(R.string.secretkey);
+        String serverKey = String.valueOf(R.string.secret_key);
         FCMSend.SetServerKey(serverKey);
 
         cargardatos();
@@ -436,6 +436,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                     aux = location;
 
                     if (location != null) {
+                        mMap.clear();
                         mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
                         // Enable touch gestures
 
@@ -473,6 +474,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             double distance = dis3.distanceTo(dis2);
                             DecimalFormat df = new DecimalFormat("#.##");
                             df.setRoundingMode(RoundingMode.FLOOR);
+                            pintarrutahaciaelowner(paseo.getDirecciondelowner());
+
 
                             binding.distanciaTXT.setText(df.format(distance) + " metros");
                             if (distance < 100) {
@@ -970,18 +973,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         Findroutes(start, end);
     }
 
-    private void handleNotificationData() {
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if (bundle.containsKey("data1")) {
-                Log.d("asdasdasd", "Data1 : " + bundle.getString("data1"));
-            }
-            if (bundle.containsKey("data2")) {
-                Log.d("asdasdasd", "Data2 : " + bundle.getString("data2"));
-            }
 
-        }
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -990,46 +982,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
 
-    /**
-     * method to subscribe to topic
-     *
-     * @param topic to which subscribe
-     */
-    private void subscribeToTopic(String topic) {
 
 
-        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getApplicationContext(), "Subscribed to " + topic, Toast.LENGTH_SHORT).show();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to subscribe", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    /**
-     * method to unsubscribe to topic
-     *
-     * @param topic to which unsubscribe
-     */
-    private void unsubscribeToTopic(String topic) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getApplicationContext(), "UnSubscribed to " + topic, Toast.LENGTH_SHORT).show();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to unsubscribe", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
 }

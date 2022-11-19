@@ -24,7 +24,7 @@
     <string name="petwalker">PetWalker</string>
     <string name="registropet">Registrar Mascota</string>
 
-
+    <string name="secret_key">AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER</string>
     // Perfiles
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>

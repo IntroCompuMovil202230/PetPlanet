@@ -75,6 +75,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -175,6 +176,8 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         this.idpaseo = idpaseo;
     }
 
+    Marker petwalker;
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,41 +188,44 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         mAuth = FirebaseAuth.getInstance();
 
         ArrayList<Perro> prueba = new ArrayList<>();
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
 
-                if (!task.isSuccessful()) {
-                    Log.e("asdasdasdasd", "Failed to get the token.");
-                    return;
-                }
-
-                //get the token from task
-                String token = task.getResult();
-                Log.d("asdasdasdasd", "Token2 : " + Client.getFcmToken());
-                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
-                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
-                    if (task2.isSuccessful()) {
-                        Client = task2.getResult().getValue(Usuario.class);
-                        Client.setFcmToken(token);
-                        if (Client.getPerros() != null) {
-                            if (Client.getPerros().size() > 0) {
-                                prueba.addAll(Client.getPerros());
-                                Client.setPerros(prueba);
-                            }
-                        }
-                        myRef.setValue(Client);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("asdasdasdasd", "Failed to get the token : " + e.getLocalizedMessage());
+        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
+            if (task2.isSuccessful()) {
+                Client = task2.getResult().getValue(Usuario.class);
+            } else {
+                Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+
+            if (!task.isSuccessful()) {
+                Log.e("asdasdasdasd", "Failed to get the token.");
+                return;
+            }
+
+            //get the token from task
+            String token = task.getResult();
+            Log.d("asdasdasdasd", "Token2 : " + Client.getFcmToken());
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
+                if (task2.isSuccessful()) {
+                    Client = task2.getResult().getValue(Usuario.class);
+                    Client.setFcmToken(token);
+                    if (Client.getPerros() != null) {
+                        if (Client.getPerros().size() > 0) {
+                            prueba.addAll(Client.getPerros());
+                            Client.setPerros(prueba);
+                        }
+                    }
+                    myRef.setValue(Client);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }).addOnFailureListener(e -> Log.e("asdasdasdasd", "Failed to get the token : " + e.getLocalizedMessage()));
 
 
         humActual = 0;
@@ -382,23 +388,25 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                     for (DataSnapshot snapshot : task.getResult().getChildren()) {
                         nPaseo = snapshot.getValue(Paseo.class);
                         if (nPaseo.getNombredelowner() != null) {
-                            if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
-                                if (nPaseo.getNombredelwalker() != null) {
-                                    if (!nPaseo.getNombredelwalker().equals("pendiente")) {
-                                        //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
-                                        binding.coordinatorLayout.setVisibility(View.GONE);
-                                        binding.cardpaseo.setVisibility(View.VISIBLE);
-                                        setIdpaseo(snapshot.getKey());
-                                        myRef = database.getReference(Constants.PATH_USERS);
-                                        myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
-                                            if (task1.isSuccessful()) {
-                                                Walker = task1.getResult().getValue(Usuario.class);
-                                                binding.Nombrewalker.setText(Walker.getNombre());
-                                                byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
-                                                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                                                binding.imagePerson.setImageBitmap(decodedByte);
-                                            }
-                                        });
+                            if (Client.getNombre() != null) {
+                                if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                                    if (nPaseo.getNombredelwalker() != null) {
+                                        if (!nPaseo.getNombredelwalker().equals("pendiente")) {
+                                            //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
+                                            binding.coordinatorLayout.setVisibility(View.GONE);
+                                            binding.cardpaseo.setVisibility(View.VISIBLE);
+                                            setIdpaseo(snapshot.getKey());
+                                            myRef = database.getReference(Constants.PATH_USERS);
+                                            myRef.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task1 -> {
+                                                if (task1.isSuccessful()) {
+                                                    Walker = task1.getResult().getValue(Usuario.class);
+                                                    binding.Nombrewalker.setText(Walker.getNombre());
+                                                    byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
+                                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                                    binding.imagePerson.setImageBitmap(decodedByte);
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -428,22 +436,57 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                         currentLong = location.getLongitude();
                         if (nPaseo.getNombredelwalker() != null) {
                             if (!nPaseo.getNombredelwalker().equals("pendiente")) {
-                                Location dis3 = new Location("localizacion 1");
-                                dis3.setLatitude(currentLat);  //latitud
-                                dis3.setLongitude(currentLong); //longitud
-                                Location dis2 = new Location("localizacion 2");
-                                dis2.setLatitude(nPaseo.getLatitudwalker());  //latitud
-                                dis2.setLongitude(nPaseo.getLongitudwalker()); //longitud
-                                double distance = dis3.distanceTo(dis2);
-                                DecimalFormat df = new DecimalFormat("#.##");
-                                df.setRoundingMode(RoundingMode.FLOOR);
 
-                                binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
+                                myPaseos = database.getReference(Constants.PATH_PASEOS);
+                                myPaseos.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                            Paseo paseo = dataSnapshot.getValue(Paseo.class);
+
+                                            if (paseo.getUidOwner().equals(mAuth.getCurrentUser().getUid())) {
+                                                if (paseo.getUidWalker().equals(nPaseo.getUidWalker())) {
+                                                    Location dis3 = new Location("localizacion 1");
+                                                    dis3.setLatitude(currentLat);  //latitud
+                                                    dis3.setLongitude(currentLong); //longitud
+                                                    Location dis2 = new Location("localizacion 2");
+                                                    dis2.setLatitude(paseo.getLatitudwalker());  //latitud
+                                                    dis2.setLongitude(paseo.getLongitudwalker()); //longitud
+                                                    double distance = dis3.distanceTo(dis2);
+                                                    DecimalFormat df = new DecimalFormat("#.##");
+                                                    df.setRoundingMode(RoundingMode.FLOOR);
+                                                    if (petwalker != null) {
+                                                        petwalker.remove();
+                                                    }
+                                                    petwalker = mMap.addMarker(new MarkerOptions()
+                                                            .position(new LatLng(paseo.getLatitudwalker(), paseo.getLongitudwalker()))
+                                                            .title("Walker")
+                                                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.petmap_foreground)));
+                                                    petwalker.showInfoWindow();
+                                                    binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
+                                                    if (nPaseo.isYarecibielperro()) {
+                                                        binding.entregarperroBTN.setVisibility(View.VISIBLE);
+                                                    }
+                                                }if(paseo.getUidWalker().equals("pendiente")){
+                                                    if (petwalker != null) {
+                                                        petwalker.remove();
+                                                    }
+                                                    binding.cardpaseo.setVisibility(View.GONE);
+                                                    binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
 
                             }
-                            if (!nPaseo.isYarecibielperro()) {
-                                binding.entregarperroBTN.setVisibility(View.VISIBLE);
-                            }
+
                         }
                     }
                 }
