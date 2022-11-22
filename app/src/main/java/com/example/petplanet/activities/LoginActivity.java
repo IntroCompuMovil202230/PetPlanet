@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.registrarselayout.setVisibility(View.VISIBLE);
         binding.olvidocontra.setVisibility(View.VISIBLE);
         binding.loginBTN.setVisibility(View.VISIBLE);
-
+        binding.progressLogin.setVisibility(View.GONE);
 
         binding.nuevousuario.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);

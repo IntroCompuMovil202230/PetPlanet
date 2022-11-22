@@ -1,7 +1,7 @@
 package com.example.petplanet.utilities;
 
 public class Constants {
-    public static final String KER_FCM_TOKEN = "fcmtoken";
+    public static final String KER_FCM_TOKEN = "fcmtokenreciber";
     public static final String KEY_USER = "user";
     public static final String PATH_CHATS = "chats/";
     public static final String PATH_USERS = "users/";

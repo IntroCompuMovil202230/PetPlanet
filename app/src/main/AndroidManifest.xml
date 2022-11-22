@@ -28,7 +28,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/applogo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PetPlanet">
+        android:theme="@style/Theme.PetPlanet"
+        tools:targetApi="s">
 
         <!-- declare firebase messaging service -->
         <service

@@ -1,8 +1,10 @@
 {
   "project_info": {
     "project_number": "353400476399",
+    "firebase_url": "https://petplanet-15354-default-rtdb.firebaseio.com",
     "project_id": "petplanet-15354",
-    "storage_bucket": "petplanet-15354.appspot.com"
+    "storage_bucket": "petplanet-15354.appspot.com",
+    "serverfcm":"AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER"
   },
   "client": [
     {

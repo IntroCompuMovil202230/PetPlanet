@@ -383,10 +383,11 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                 }
             });
             myPaseos = database.getReference(Constants.PATH_PASEOS);
-            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (DataSnapshot snapshot : task.getResult().getChildren()) {
-                        nPaseo = snapshot.getValue(Paseo.class);
+            myPaseos.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        nPaseo = dataSnapshot.getValue(Paseo.class);
                         if (nPaseo.getNombredelowner() != null) {
                             if (Client.getNombre() != null) {
                                 if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
@@ -406,12 +407,20 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                                                     binding.imagePerson.setImageBitmap(decodedByte);
                                                 }
                                             });
+                                        }if(nPaseo.getNombredelwalker().equals("pendiente")){
+                                            binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                                            binding.cardpaseo.setVisibility(View.GONE);
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
             });
             Log.d("asdasdasd", "Location update in the callback: " + getIdpaseo());

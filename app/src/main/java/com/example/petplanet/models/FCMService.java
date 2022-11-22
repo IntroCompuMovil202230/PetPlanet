@@ -14,7 +14,12 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.example.petplanet.R;
+import com.example.petplanet.activities.ChatActivity;
+import com.example.petplanet.activities.LandingPetOwnerActivity;
+import com.example.petplanet.activities.LoginActivity;
 import com.example.petplanet.activities.MainActivity;
+import com.example.petplanet.utilities.Constants;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -22,6 +27,7 @@ import java.util.Map;
 
 public class FCMService extends FirebaseMessagingService {
     private static final String TAG = FCMService.class.getSimpleName();
+    private FirebaseAuth mAuth;
 
     /**
      * * There are two scenarios when onNewToken is called:
@@ -68,11 +74,12 @@ public class FCMService extends FirebaseMessagingService {
             //get the title and body
             String title = remoteMessage.getNotification().getTitle();
             String body = remoteMessage.getNotification().getBody();
+            String id = remoteMessage.getData().get(Constants.KEY_SENDER_ID);
 
-            Log.d(TAG, "Notification Title: " + title + " - Body: " + body);
+            Log.d(TAG, "Notification Title: " + title + " - Body: " + body + " - ID: " + id);
 
             //show notification
-            showNotification(title, body);
+            showNotification(title, body,id);
         }
 
         //check if push notification has data payload or not
@@ -109,19 +116,52 @@ public class FCMService extends FirebaseMessagingService {
      * @param title of the notification
      * @param body  of the notification
      */
-    private void showNotification(String title, String body) {
+    private void showNotification(String title, String body, String chatId) {
+        mAuth = FirebaseAuth.getInstance();
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (mAuth.getCurrentUser() != null) {
+            if (title.equals("Alguien te ha enviado un mensaje")) {
+                Intent intent = new Intent(this, ChatActivity.class);
 
-        Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra(Constants.KEY_USER_ID, chatId);
 
-        //pass the same channel_id which we created in previous method
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                .setContentTitle(title)
-                .setContentText(body)
-                .setSmallIcon(R.mipmap.applogo)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.applogo))
-                .setAutoCancel(true)
-                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE));
-        notificationManager.notify(1, builder.build());
+                //pass the same channel_id which we created in previous method
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setSmallIcon(R.mipmap.applogo)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.applogo))
+                        .setAutoCancel(true)
+                        .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
+                notificationManager.notify(1, builder.build());
+            }
+            if (title.equals("Cancelaron tu paseo")) {
+                Intent intent = new Intent(this, LandingPetOwnerActivity.class);
+                //pass the same channel_id which we created in previous method
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setSmallIcon(R.mipmap.applogo)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.applogo))
+                        .setAutoCancel(true)
+                        .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
+                notificationManager.notify(1, builder.build());
+            }
+
+
+        } else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            //pass the same channel_id which we created in previous method
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setSmallIcon(R.mipmap.applogo)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.applogo))
+                    .setAutoCancel(true)
+                    .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
+            notificationManager.notify(1, builder.build());
+        }
+
+
     }
 }

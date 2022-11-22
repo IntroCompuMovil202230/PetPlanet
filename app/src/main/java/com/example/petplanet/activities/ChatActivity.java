@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.deeplabstudio.fcmsend.FCMSend;
 import com.example.petplanet.R;
 import com.example.petplanet.adapters.ChatAdapter;
 import com.example.petplanet.databinding.ActivityCambiarPasswordBinding;
@@ -108,6 +109,12 @@ public class ChatActivity extends AppCompatActivity {
             correo = (String) savedInstanceState.getSerializable(Constants.KEY_USER);
             setUid2((String) savedInstanceState.getSerializable(Constants.KEY_USER_ID));
         }
+
+
+        String serverKey = R.string.serverfcm + "";
+        Log.d("aasdasdhhhhasd", "onCreate: " + serverKey);
+        FCMSend.SetServerKey("AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER");
+
         llenarUsuariochat();
         llenarWalkerx();
         setListeners();
@@ -214,7 +221,19 @@ public class ChatActivity extends AppCompatActivity {
             myRef = database.getReference(Constants.PATH_CHATS);
             myRef.push().setValue(message);
             Log.d("CrHATerrrr", "onCreatetttt: " + conversionId);
+
+
             if (conversionId != null) {
+                Log.d("CrHATerrrr", "onCreatetttt: " + walkerx.getFcmToken());
+                HashMap<String, String> message2 = new HashMap<>();
+                message2.put(Constants.KEY_SENDER_ID, mAuth.getCurrentUser().getUid());
+                FCMSend.Builder build = new FCMSend.Builder(walkerx.getFcmToken())
+                        .setTitle("Alguien te ha enviado un mensaje")
+                        .setData(message2)
+                        .setBody("Tienes un nuevo mensaje de " + usuariochat.getNombre());
+
+                String result = build.send().Result();
+                Log.d("CrHATerrrr", "onCreatetttt: " + result);
                 updateConversion(binding.inputmessage.getText().toString());
             } else {
                 HashMap<String, Object> conversion = new HashMap<>();
@@ -222,6 +241,12 @@ public class ChatActivity extends AppCompatActivity {
                 conversion.put(Constants.KEY_SENDER_NAME, usuariochat.getNombre());
                 conversion.put(Constants.KEY_SENDER_IMAGE, usuariochat.getFoto());
                 conversion.put(Constants.KEY_RECEIVER_ID, getUid2());
+                Log.d("CrHATerrrr", "onCreatetttt: " + walkerx.getFcmToken());
+                FCMSend.Builder build = new FCMSend.Builder(walkerx.getFcmToken())
+                        .setTitle("Alguien te ha enviado un mensaje")
+                        .setBody("Tienes un nuevo mensaje de " + usuariochat.getNombre());
+                String result = build.send().Result();
+                Log.d("CrHATerrrr", "onCreatetttt: " + result);
                 conversion.put(Constants.KEY_RECEIVER_NAME, walkerx.getNombre());
                 conversion.put(Constants.KEY_RECEIVER_IMAGE, walkerx.getFoto());
                 conversion.put(Constants.KEY_LAST_MESSAGE, binding.inputmessage.getText().toString());
@@ -268,6 +293,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void updateConversion(String message) {
+
         myRef = database.getReference(Constants.KEY_COLLECTION_CONVERSATIONS);
         myRef.child(conversionId).child(Constants.KEY_LAST_MESSAGE).setValue(message);
         myRef.child(conversionId).child(Constants.KEY_TIMESTAMP).setValue(java.text.DateFormat.getDateTimeInstance().format(new Date()));

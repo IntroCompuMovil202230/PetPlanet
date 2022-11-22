@@ -64,8 +64,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -123,7 +125,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     private Paseo nPaseo = new Paseo();
     DatabaseReference myPaseos;
 
-
+    Marker petOwnerMarker;
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
     public static final int REQUEST_CHECK_SETTINGS = 201;
@@ -194,7 +196,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         binding.bottomNavigationWalker.setBackground(null);
         mAuth = FirebaseAuth.getInstance();
         String serverKey = String.valueOf(R.string.secret_key);
-        FCMSend.SetServerKey(serverKey);
+        FCMSend.SetServerKey("AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER");
 
         cargardatos();
         binding.coordinatorLayout.setVisibility(View.VISIBLE);
@@ -563,6 +565,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                         .setMessage("Si cancelas el paseo, el dueño del perro no podra ver tu ubicacion")
                         .setPositiveButton("Si, deseo cancelar el paseo", (dialogInterface, i) -> {
                             setDirecciondelOwner(null);
+                            mMap.clear();
                             Log.d("asdasdasd33", "Loc: " + getId());
                             myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
                             myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
@@ -578,7 +581,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                     paseo.setLongitudwalker(0);
                                     paseo.setYallegoelpaseador(false);
                                     myPaseos.setValue(paseo);
-
                                 }
                             });
                             myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
@@ -622,7 +624,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             if (!addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 LatLng latLng2 = new LatLng(address.getLatitude(), address.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(latLng2).title("Direccion del Owner"));
+                if (petOwnerMarker != null) {
+                    petOwnerMarker.remove();
+                }
+                petOwnerMarker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(address.getLatitude(), address.getLongitude()))
+                        .title("direccion del owner")
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ownermap_foreground)));
+                petOwnerMarker.showInfoWindow();
                 Location dis3 = new Location("localizacion 1");
                 dis3.setLatitude(currentLat);  //latitud
                 dis3.setLongitude(currentLong); //longitud

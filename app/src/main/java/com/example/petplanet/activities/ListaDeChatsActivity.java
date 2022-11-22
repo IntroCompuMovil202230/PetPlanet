@@ -81,7 +81,8 @@ public class ListaDeChatsActivity extends AppCompatActivity implements Conversat
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 conversations.clear();
                 for (DataSnapshot conversation : snapshot.getChildren()) {
-                    if (conversation.child(Constants.KEY_SENDER_ID).getValue().equals(mAuth.getCurrentUser().getUid())) {
+                    if (conversation.child(Constants.KEY_SENDER_ID).getValue().equals(mAuth.getCurrentUser().getUid()) ||
+                            conversation.child(Constants.KEY_RECEIVER_ID).getValue().equals(mAuth.getCurrentUser().getUid())) {
                         ChatMessage chatMessage = new ChatMessage();
                         chatMessage.setSenderid(conversation.child(Constants.KEY_SENDER_ID).getValue().toString());
                         chatMessage.setReceiverid(conversation.child(Constants.KEY_RECEIVER_ID).getValue().toString());
