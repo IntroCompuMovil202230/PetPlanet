@@ -102,6 +102,11 @@ public class FotoPerfilActivity extends AppCompatActivity {
                     .setPositiveButton("Tomar foto", (dialogInterface, i) -> {
                         if (ContextCompat.checkSelfPermission(FotoPerfilActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                             ActivityCompat.requestPermissions(FotoPerfilActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                            if (ContextCompat.checkSelfPermission(FotoPerfilActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, CAMERA_REQUEST);
+                                binding.fotodelusuarioBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                            }
                         } else {
                             if (checkAndRequestPermissions()) {
                                 Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -210,6 +215,7 @@ public class FotoPerfilActivity extends AppCompatActivity {
             }
         });
     }
+
     private Usuario createUserObject() {
         if (tipoS.equals("petowner")) {
             return new Usuario(mAuth.getCurrentUser().getUid(), nombreS, binding.editTextPhone.getText().toString(), localidadS, emailS, direccionS, fotoS, false, "");

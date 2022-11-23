@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.petplanet.R;
+import com.example.petplanet.models.Paseo;
 import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 public class CardAdapterUsuario extends ArrayAdapter {
 
 
-    private ArrayList<Usuario> usuariolist = new ArrayList<>();
+    private ArrayList<Paseo> usuariolist = new ArrayList<>();
 
     public CardAdapterUsuario(Context context, int textViewResourceId, ArrayList objects) {
         super(context, textViewResourceId, objects);
@@ -38,11 +39,13 @@ public class CardAdapterUsuario extends ArrayAdapter {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         v = inflater.inflate(R.layout.cardview, null);
         TextView nombre = (TextView) v.findViewById(R.id.nombreperrotx);
+        TextView descripcion = (TextView) v.findViewById(R.id.horariotxt);
         TextView conoce = (TextView) v.findViewById(R.id.conoceperrotxt);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
-        nombre.setText(usuariolist.get(position).getNombre());
-        conoce.setText("Conoce mas de: " + usuariolist.get(position).getNombre());
-        byte[] decodedString = Base64.decode(usuariolist.get(position).getFoto(), Base64.DEFAULT);
+        nombre.setText("Nombde del perro: "+usuariolist.get(position).getNombredelperro());
+        descripcion.setText("Nombde del Dueño: "+usuariolist.get(position).getNombredelowner());
+        conoce.setText("Dia del paseo: " + usuariolist.get(position).getFecha());
+        byte[] decodedString = Base64.decode(usuariolist.get(position).getFotodelperro(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);
         return v;

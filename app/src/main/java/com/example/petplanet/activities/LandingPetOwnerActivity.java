@@ -8,39 +8,27 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
@@ -79,17 +67,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.directions.route.RoutingListener;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -100,11 +81,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -143,12 +122,22 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     private LocationCallback mLocationCallback;
     Location mCurrentLocation;
     Location aux;
-
+    DatabaseReference myUserRef;
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
     protected LatLng start = null;
     protected LatLng end = null;
 
+
+    private String idpa;
+
+    public String getIdpa() {
+        return idpa;
+    }
+
+    public void setIdpa(String idpa) {
+        this.idpa = idpa;
+    }
 
     private float humActual;
     private SensorEventListener humSensorListener;
@@ -165,18 +154,24 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
     private Paseo nPaseo = new Paseo();
     DatabaseReference myPaseos;
     DatabaseReference myRef;
-
+    DatabaseReference myOwner;
+    DatabaseReference mywalker;
     public String idpaseo;
 
     public String getIdpaseo() {
-        return idpaseo;
+        return idpa;
     }
 
     public void setIdpaseo(String idpaseo) {
-        this.idpaseo = idpaseo;
+        this.idpa = idpaseo;
     }
 
     Marker petwalker;
+
+
+    Paseo paseoxx = new Paseo();
+    ArrayList<Paseo> paseoxd = new ArrayList<>();
+    ArrayList<Perro> prueba = new ArrayList<>();
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -187,7 +182,6 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAuth = FirebaseAuth.getInstance();
 
-        ArrayList<Perro> prueba = new ArrayList<>();
 
         myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
         myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
@@ -195,6 +189,26 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                 Client = task2.getResult().getValue(Usuario.class);
             } else {
                 Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        myOwner = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myOwner.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
+            if (task2.isSuccessful()) {
+                Client = task2.getResult().getValue(Usuario.class);
+            } else {
+                Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        myUserRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myUserRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).child("paseosterminados").get().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                task1.getResult().getChildren().forEach(paseo -> {
+                    paseoxx = paseo.getValue(Paseo.class);
+                    paseoxd.add(paseoxx);
+                });
             }
         });
 
@@ -234,7 +248,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
             int id = item.getItemId();
             switch (id) {
                 case R.id.cuidadores:
-                    Intent intent = new Intent(getApplicationContext(), ListarCuidadoresActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ListaPaseosActivity.class);
                     startActivity(intent);
                     finish();
                     break;
@@ -280,9 +294,15 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                     humActual = sensorEvent.values[0];
                     Log.d("Humedad", "Humedad: " + humActual);
                     if (humActual > 65) {
-                        Toast.makeText(LandingPetOwnerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(LandingPetOwnerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+                        new MaterialAlertDialogBuilder(LandingPetOwnerActivity.this)
+                                .setTitle("posiblemente va a llover")
+                                .setMessage("Si vas a salir lleva un paraguas")
+                                .setPositiveButton("ok", (dialogInterface, i) -> {
+                                })
+                                .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                                })
+                                .show();
+
                     }
                 }
             }
@@ -382,17 +402,38 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                     Client = task.getResult().getValue(Usuario.class);
                 }
             });
+
+
+            SystemClock.sleep(100);
+            myPaseos = database.getReference(Constants.PATH_PASEOS);
+            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+                task.getResult().getChildren().forEach(snapshot -> {
+                    nPaseo = snapshot.getValue(Paseo.class);
+                    if (nPaseo.getUidOwner() != null) {
+                        if (nPaseo.getUidOwner().equals(mAuth.getCurrentUser().getUid()) && nPaseo.getUidWalker() != null) {
+                            binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                            setIdpa(snapshot.getKey());
+                        }
+                    }
+                });
+            });
+
+
             myPaseos = database.getReference(Constants.PATH_PASEOS);
             myPaseos.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         nPaseo = dataSnapshot.getValue(Paseo.class);
+
                         if (nPaseo.getNombredelowner() != null) {
                             if (Client.getNombre() != null) {
                                 if (Client.getNombre().equals(nPaseo.getNombredelowner())) {
+                                    binding.paseoencursoBTN.setVisibility(View.GONE);
                                     if (nPaseo.getNombredelwalker() != null) {
-                                        if (!nPaseo.getNombredelwalker().equals("pendiente")) {
+                                        if (!nPaseo.getNombredelwalker().equals("pendiente") && nPaseo.getUidWalker() != null) {
+                                            binding.paseoencursoBTN.setVisibility(View.GONE);
+                                            // setIdpa(snapshot.getKey());
                                             //mostrar imagen del walker y el nombre del walker y la distancia en la que esta y ademas se muestra la localizacion en tiempo real
                                             binding.coordinatorLayout.setVisibility(View.GONE);
                                             binding.cardpaseo.setVisibility(View.VISIBLE);
@@ -405,9 +446,21 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                                                     byte[] decodedString = Base64.decode(Walker.getFoto(), Base64.DEFAULT);
                                                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                                                     binding.imagePerson.setImageBitmap(decodedByte);
+
                                                 }
                                             });
-                                        }if(nPaseo.getNombredelwalker().equals("pendiente")){
+
+                                            if (!nPaseo.isYarecibielperro()) {
+                                                binding.entregarperroBTN.setVisibility(View.VISIBLE);
+                                                binding.canelarpaseoBTN.setVisibility(View.GONE);
+                                            } else {
+                                                binding.entregarperroBTN.setVisibility(View.GONE);
+                                            }
+                                            if (nPaseo.isEntregadelperro()) {
+                                                binding.recibirperroBTN.setVisibility(View.VISIBLE);
+                                            }
+                                        }
+                                        if (nPaseo.getNombredelwalker().equals("pendiente")) {
                                             binding.coordinatorLayout.setVisibility(View.VISIBLE);
                                             binding.cardpaseo.setVisibility(View.GONE);
                                         }
@@ -445,7 +498,7 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                         currentLong = location.getLongitude();
                         if (nPaseo.getNombredelwalker() != null) {
                             if (!nPaseo.getNombredelwalker().equals("pendiente")) {
-
+                                binding.paseoencursoBTN.setVisibility(View.GONE);
                                 myPaseos = database.getReference(Constants.PATH_PASEOS);
                                 myPaseos.addValueEventListener(new ValueEventListener() {
                                     @Override
@@ -454,35 +507,38 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                                             Paseo paseo = dataSnapshot.getValue(Paseo.class);
 
                                             if (paseo.getUidOwner().equals(mAuth.getCurrentUser().getUid())) {
-                                                if (paseo.getUidWalker().equals(nPaseo.getUidWalker())) {
-                                                    Location dis3 = new Location("localizacion 1");
-                                                    dis3.setLatitude(currentLat);  //latitud
-                                                    dis3.setLongitude(currentLong); //longitud
-                                                    Location dis2 = new Location("localizacion 2");
-                                                    dis2.setLatitude(paseo.getLatitudwalker());  //latitud
-                                                    dis2.setLongitude(paseo.getLongitudwalker()); //longitud
-                                                    double distance = dis3.distanceTo(dis2);
-                                                    DecimalFormat df = new DecimalFormat("#.##");
-                                                    df.setRoundingMode(RoundingMode.FLOOR);
-                                                    if (petwalker != null) {
-                                                        petwalker.remove();
+                                                if (paseo.getUidWalker() != null) {
+                                                    if (paseo.getUidWalker().equals(nPaseo.getUidWalker())) {
+                                                        Location dis3 = new Location("localizacion 1");
+                                                        dis3.setLatitude(currentLat);  //latitud
+                                                        dis3.setLongitude(currentLong); //longitud
+                                                        Location dis2 = new Location("localizacion 2");
+                                                        dis2.setLatitude(paseo.getLatitudwalker());  //latitud
+                                                        dis2.setLongitude(paseo.getLongitudwalker()); //longitud
+                                                        double distance = dis3.distanceTo(dis2);
+                                                        DecimalFormat df = new DecimalFormat("#.##");
+                                                        df.setRoundingMode(RoundingMode.FLOOR);
+                                                        if (petwalker != null) {
+                                                            petwalker.remove();
+                                                        }
+                                                        Log.d("asdasdasd", "Location update in the callback: " + nPaseo.getId());
+                                                        petwalker = mMap.addMarker(new MarkerOptions()
+                                                                .position(new LatLng(paseo.getLatitudwalker(), paseo.getLongitudwalker()))
+                                                                .title("Walker")
+                                                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.petmap_foreground)));
+                                                        petwalker.showInfoWindow();
+                                                        binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
+
                                                     }
-                                                    petwalker = mMap.addMarker(new MarkerOptions()
-                                                            .position(new LatLng(paseo.getLatitudwalker(), paseo.getLongitudwalker()))
-                                                            .title("Walker")
-                                                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.petmap_foreground)));
-                                                    petwalker.showInfoWindow();
-                                                    binding.distanciaTXT.setText(String.valueOf(df.format(distance)) + " metros");
-                                                    if (nPaseo.isYarecibielperro()) {
-                                                        binding.entregarperroBTN.setVisibility(View.VISIBLE);
+                                                    if (paseo.getUidWalker().equals("pendiente")) {
+                                                        if (petwalker != null) {
+                                                            petwalker.remove();
+                                                        }
+                                                        binding.cardpaseo.setVisibility(View.GONE);
+                                                        binding.coordinatorLayout.setVisibility(View.VISIBLE);
                                                     }
-                                                }if(paseo.getUidWalker().equals("pendiente")){
-                                                    if (petwalker != null) {
-                                                        petwalker.remove();
-                                                    }
-                                                    binding.cardpaseo.setVisibility(View.GONE);
-                                                    binding.coordinatorLayout.setVisibility(View.VISIBLE);
                                                 }
+
                                             }
                                         }
                                     }
@@ -500,6 +556,42 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
                     }
                 }
             };
+
+
+            binding.recibirperroBTN.setOnClickListener(view -> {
+
+                Log.d("asdasdasd", "Location update in the callback: " + getIdpa());
+
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getIdpa());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getIdpa()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        if (paseo.getNombredelowner() != null) {
+                            if (Client.getNombre().equals(paseo.getNombredelowner())) {
+                                paseo.setSeacaboelpaseo(true);
+                                paseoxd.add(paseo);
+                                myPaseos.setValue(paseo);
+                            }
+                        }
+                        binding.recibirperroBTN.setVisibility(View.GONE);
+                        binding.entregarperroBTN.setVisibility(View.GONE);
+                    }
+                });
+
+                crearpaseoterminado();
+
+
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getIdpa());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getIdpa()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        myPaseos.removeValue();
+                        startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
+                        finish();
+                    }
+                });
+
+            });
 
 
             binding.canelarpaseoBTN.setOnClickListener(view -> {
@@ -543,7 +635,29 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
                         .show();
             });
+            binding.paseoencursoBTN.setOnClickListener(view -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getIdpa());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getIdpa()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                            nPaseo = snapshot.getValue(Paseo.class);
+                            Log.d("Paseo", "cargarpaseo: " + nPaseo.getDirecciondelowner());
 
+                            if (nPaseo.getNombredelwalker() != null) {
+                                if (nPaseo.getUidOwner().equals(mAuth.getCurrentUser().getUid()) && nPaseo.getUidWalker() != null) {
+                                    binding.cardpaseo.setVisibility(View.VISIBLE);
+                                    binding.paseoencursoBTN.setVisibility(View.GONE);
+                                    binding.coordinatorLayout.setVisibility(View.GONE);
+                                    byte[] decodedString = Base64.decode(nPaseo.getFotodelperro(), Base64.DEFAULT);
+                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                    binding.imagePerson.setImageBitmap(decodedByte);
+                                    binding.Nombrewalker.setText(nPaseo.getNombredelwalker());
+                                }
+                            }
+                        }
+                    }
+                });
+            });
 
             binding.entregarperroBTN.setOnClickListener(v -> {
                 myPaseos = database.getReference(Constants.PATH_PASEOS);
@@ -571,7 +685,9 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
 
             binding.volveralmenuBTN.setOnClickListener(view -> {
                 binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                binding.paseoencursoBTN.setVisibility(View.VISIBLE);
                 binding.cardpaseo.setVisibility(View.GONE);
+                binding.entregarperroBTN.setVisibility(View.GONE);
             });
             startLocationUpdates();
         }
@@ -591,6 +707,70 @@ public class LandingPetOwnerActivity extends AppCompatActivity implements OnMapR
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
+
+
+    Usuario nUp = new Usuario();
+    Usuario wal = new Usuario();
+
+    private void crearpaseoterminado() {
+
+        Log.d("putoelquelolea", "registrarperro: " + paseoxd.size());
+        if (paseoxd.size() == 0) {
+
+            myOwner = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myOwner.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    nUp = task.getResult().getValue(Usuario.class);
+                    prueba.addAll(nUp.getPerros());
+                    nUp.setPerros(prueba);
+                    nUp.setPaseosterminados(paseoxd);
+                    myOwner.setValue(nUp);
+                } else {
+                    Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mywalker = database.getReference(Constants.PATH_USERS + nPaseo.getUidWalker());
+            mywalker.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    wal = task.getResult().getValue(Usuario.class);
+                    wal.setPaseosterminados(paseoxd);
+                    wal.setPaseoencurso(false);
+                    mywalker.setValue(wal);
+                } else {
+                    Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            myOwner = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myOwner.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    nUp = task.getResult().getValue(Usuario.class);
+                    prueba.addAll(nUp.getPerros());
+                    nUp.setPerros(prueba);
+
+                    nUp.setPaseosterminados(paseoxd);
+                    myOwner.setValue(nUp);
+                } else {
+                    Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mywalker = database.getReference(Constants.PATH_USERS + nPaseo.getUidWalker());
+            mywalker.getDatabase().getReference(Constants.PATH_USERS + nPaseo.getUidWalker()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    wal = task.getResult().getValue(Usuario.class);
+                    wal.setPaseoencurso(false);
+                    wal.setPaseosterminados(paseoxd);
+                    mywalker.setValue(wal);
+                } else {
+                    Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+        binding.recibirperroBTN.setVisibility(View.GONE);
+
+    }
+
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {

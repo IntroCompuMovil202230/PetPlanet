@@ -43,6 +43,7 @@ import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.models.Paseo;
+import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
@@ -177,6 +178,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         this.nombredelowner = nombredelowner;
     }
 
+
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
     boolean paseoencurso = false;
@@ -190,7 +192,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
-
         setContentView(binding.getRoot());
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
@@ -258,30 +259,34 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, "El permiso es necesario para acceder a la localizacion", LOCATION_PERMISSION_ID);
 
 
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
-            humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-            humSensorListener = new SensorEventListener() {
-                @Override
-                public void onSensorChanged(SensorEvent sensorEvent) {
+        humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        humSensorListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
 
-                    if (Math.abs(humActual - sensorEvent.values[0]) > 1) {
-                        humActual = sensorEvent.values[0];
-                        Log.d("Humedad", "Humedad: " + humActual);
-                        if (humActual > 65) {
-                            Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
-                        }
+                if (Math.abs(humActual - sensorEvent.values[0]) > 1) {
+                    humActual = sensorEvent.values[0];
+                    Log.d("Humedad", "Humedad: " + humActual);
+                    if (humActual > 65) {
+                        new MaterialAlertDialogBuilder(LandingPetWalkerActivity.this)
+                                .setTitle("posiblemente va a llover")
+                                .setMessage("Si vas a salir lleva un paraguas")
+                                .setPositiveButton("ok", (dialogInterface, i) -> {
+                                })
+                                .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                                })
+                                .show();
+
                     }
                 }
+            }
 
-                @Override
-                public void onAccuracyChanged(Sensor sensor, int i) {
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
 
-                }
-            };
-        }
-        sensorManager.registerListener(humSensorListener, humSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            }
+        };
+
 
 
         // Initialize the sensors
@@ -409,20 +414,22 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             paseo = snapshot.getValue(Paseo.class);
                             Log.d("Paseo", "cargarpaseo: " + paseo.getDirecciondelowner());
                             if (Client.getPaseoencurso()) {
-                                if (paseo.getNombredelwalker().equals(Client.getNombre())) {
-                                    binding.cardpaseo.setVisibility(View.VISIBLE);
-                                    binding.paseoencursoBTN.setVisibility(View.GONE);
-                                    binding.coordinatorLayout.setVisibility(View.GONE);
-                                    binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                                if (paseo.getNombredelwalker() != null) {
+                                    if (paseo.getNombredelwalker().equals(Client.getNombre())) {
+                                        binding.cardpaseo.setVisibility(View.VISIBLE);
+                                        binding.paseoencursoBTN.setVisibility(View.GONE);
+                                        binding.coordinatorLayout.setVisibility(View.GONE);
+                                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
 
-                                    setId(snapshot.getKey());
-                                    byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
-                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                                    binding.imagePerson.setImageBitmap(decodedByte);
-                                    binding.Nombreperro.setText(paseo.getNombredelperro());
-                                    binding.duracionTXT.setText(paseo.getDuracion() + " min");
-                                    pintarrutahaciaelowner(paseo.getDirecciondelowner());
-                                    paseoencurso = true;
+                                        setId(snapshot.getKey());
+                                        byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
+                                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                        binding.imagePerson.setImageBitmap(decodedByte);
+                                        binding.Nombreperro.setText(paseo.getNombredelperro());
+                                        binding.duracionTXT.setText(paseo.getDuracion() + " min");
+                                        pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                                        paseoencurso = true;
+                                    }
                                 }
                             }
 
@@ -476,35 +483,42 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                             double distance = dis3.distanceTo(dis2);
                             DecimalFormat df = new DecimalFormat("#.##");
                             df.setRoundingMode(RoundingMode.FLOOR);
-                            pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                            if (!paseo.isYallegoelpaseador()) {
+                                pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                            }
+                            if (paseo.isPaseoprontoaaacabar()) {
+                                binding.entregarperrooBTN.setVisibility(View.VISIBLE);
+                                pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                            }
 
 
                             binding.distanciaTXT.setText(df.format(distance) + " metros");
-                            if (distance < 100) {
-                                binding.escriDuenoBTN.setVisibility(View.VISIBLE);
-
-                                //Toast.makeText(LandingPetWalkerActivity.this, "Estas a " + distance + " metros de la ubicacion del paseo", Toast.LENGTH_SHORT).show();
-                            }
-                            if (distance < 5) {
+                            if (distance < 20.0) {
                                 myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
                                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
-                                        Paseo paseo = task.getResult().getValue(Paseo.class);
-                                        FCMSend.Builder build = new FCMSend.Builder(paseo.getFcmtokenowner())
-                                                .setTitle("Tu paseador esta cerca")
-                                                .setBody("Tu paseador esta a " + df.format(distance) + " metros de ti, puedes hablar con el");
-                                        String result = build.send().Result();
-                                        paseo.setYallegoelpaseador(true);
-                                        myPaseos.setValue(paseo);
+                                        Paseo paseox = task.getResult().getValue(Paseo.class);
+                                        if (!paseox.isYallegoelpaseador()) {
+                                            FCMSend.Builder build = new FCMSend.Builder(paseo.getFcmtokenowner())
+                                                    .setTitle("Tu paseador esta cerca")
+                                                    .setBody("Tu paseador esta a " + df.format(distance) + " metros de ti, puedes hablar con el");
+                                            String result = build.send().Result();
+                                            paseox.setYallegoelpaseador(true);
+                                            myPaseos.setValue(paseox);
+                                        }
                                     }
                                 });
-
                                 myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
                                 myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
                                         Paseo paseo = task.getResult().getValue(Paseo.class);
                                         if (!paseo.isYatengoelperro()) {
                                             binding.confirmarperroBTN.setVisibility(View.VISIBLE);
+                                        }
+                                        if (paseo.isYatengoelperro() && !paseo.isPaseoprontoaaacabar()) {
+                                            binding.confirmarperroBTN.setVisibility(View.GONE);
+                                            binding.acabarpaseoBTN.setVisibility(View.VISIBLE);
+                                            setDirecciondelOwner(null);
                                         }
                                     }
                                 });
@@ -518,6 +532,44 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                     }
                 }
             };
+            binding.acabarpaseoBTN.setOnClickListener(view -> {
+
+
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseost = task.getResult().getValue(Paseo.class);
+                        FCMSend.Builder build = new FCMSend.Builder(paseost.getFcmtokenowner())
+                                .setTitle("Tu paseador ya va de regreso")
+                                .setBody("Ten preparado el pago que le vas a dar a tu paseador");
+                        String result = build.send().Result();
+                        paseost.setPaseoprontoaaacabar(true);
+                        myPaseos.setValue(paseost);
+                    }
+                });
+
+                pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                binding.entregarperrooBTN.setVisibility(View.VISIBLE);
+                binding.acabarpaseoBTN.setVisibility(View.GONE);
+            });
+
+
+            binding.entregarperrooBTN.setOnClickListener(v -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        paseo.setEntregadelperro(true);
+                        myPaseos.setValue(paseo);
+                    }
+                });
+                binding.confirmarperroBTN.setVisibility(View.GONE);
+                binding.entregarperrooBTN.setVisibility(View.GONE);
+                binding.cardpaseo.setVisibility(View.GONE);
+                binding.escriDuenoBTN.setVisibility(View.GONE);
+                binding.coordinatorLayout.setVisibility(View.VISIBLE);
+            });
+
 
             binding.confirmarperroBTN.setOnClickListener(view -> {
                 myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
@@ -580,6 +632,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                                     paseo.setLatitudwalker(0);
                                     paseo.setLongitudwalker(0);
                                     paseo.setYallegoelpaseador(false);
+                                    paseo.setYatengoelperro(false);
+                                    paseo.setEntregadelperro(false);
+
                                     myPaseos.setValue(paseo);
                                 }
                             });
@@ -641,7 +696,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 double distance = dis3.distanceTo(dis2);
                 DecimalFormat df = new DecimalFormat("#.##");
                 df.setRoundingMode(RoundingMode.FLOOR);
-
+                binding.textView17.setText("Distancia:");
                 binding.distanciaTXT.setText(df.format(distance) + " metros");
                 LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
                 end = destination;
@@ -689,7 +744,6 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 binding.Nombreperro.setText(nPaseo.getNombredelperro());
                 binding.duracionTXT.setText(nPaseo.getDuracion() + " min");
                 binding.confirmarpaseoBTN.setVisibility(View.GONE);
-
 
 
             }
@@ -983,15 +1037,11 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
 
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d("asdasdasd", "On New Intent called");
     }
-
-
-
 
 
 }

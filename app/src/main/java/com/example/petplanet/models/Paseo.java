@@ -24,6 +24,8 @@ public class Paseo {
     private boolean yallegoelpaseador;
     private boolean yatengoelperro;
     private boolean yarecibielperro;
+    private boolean entregadelperro;
+    private boolean paseoprontoaaacabar;
 
 
     private double Latitud;
@@ -35,7 +37,6 @@ public class Paseo {
     public Paseo(String uidOwner, String fcmtokenowner, String fotodelperro, String nombredelowner, String nombredelperro, String localidad, String fecha, String hora, String direcciondelowner, String horaderegreso) {
 
         this.uidOwner = uidOwner;
-        this.fcmtokenowner = fcmtokenowner;
         this.fotodelperro = fotodelperro;
         this.nombredelowner = nombredelowner;
         this.nombredelperro = nombredelperro;
@@ -50,6 +51,21 @@ public class Paseo {
 
     }
 
+    public boolean isPaseoprontoaaacabar() {
+        return paseoprontoaaacabar;
+    }
+
+    public void setPaseoprontoaaacabar(boolean paseoprontoaaacabar) {
+        this.paseoprontoaaacabar = paseoprontoaaacabar;
+    }
+
+    public boolean isEntregadelperro() {
+        return entregadelperro;
+    }
+
+    public void setEntregadelperro(boolean entregadelperro) {
+        this.entregadelperro = entregadelperro;
+    }
 
     public String getFcmtokenowner() {
         return fcmtokenowner;

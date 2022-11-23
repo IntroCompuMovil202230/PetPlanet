@@ -77,6 +77,9 @@ public class RegistroPerroActivity extends AppCompatActivity {
                     .setPositiveButton("Tomar foto", (dialogInterface, i) -> {
                         if (ContextCompat.checkSelfPermission(RegistroPerroActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                             ActivityCompat.requestPermissions(RegistroPerroActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, CAMERA_REQUEST);
+                            binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
                         } else {
                             if (checkAndRequestPermissions()) {
                                 Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);

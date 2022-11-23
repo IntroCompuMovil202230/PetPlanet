@@ -17,7 +17,7 @@ public class Usuario {
     private Boolean paseoencurso;
 
     private ArrayList<Perro> perros;    //Array de perros
-
+    private ArrayList<Paseo> paseosterminados;    //Array de perros
 
     Boolean isWalker;
     String experiencia;
@@ -53,6 +53,15 @@ public class Usuario {
         this.experiencia = experiencia;
         this.linkhojadevida = linkhojadevida;
         this.linkdocumentoid = linkdocumentoid;
+    }
+
+
+    public ArrayList<Paseo> getPaseosterminados() {
+        return paseosterminados;
+    }
+
+    public void setPaseosterminados(ArrayList<Paseo> paseosterminados) {
+        this.paseosterminados = paseosterminados;
     }
 
     public Boolean getPaseoencurso() {

@@ -34,9 +34,13 @@ import android.widget.Toast;
 import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterUserDog;
 import com.example.petplanet.databinding.ActivityPerfilUsuarioBinding;
+import com.example.petplanet.models.Paseo;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 import com.example.petplanet.utilities.Constants;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,10 +70,13 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     DatabaseReference myUserRef;
+    DatabaseReference mydogdel;
     public static final String PATH_USERS = "users/";
     public static final String PATH_PERROS = "/mascotas/";
     String fotoS;
     int SELECT_PICTURE = 200;
+    private LocationCallback mLocationCallback;
+    private FusedLocationProviderClient fusedLocationClient;
     int CAMERA_REQUEST = 100;
     ArrayList<Perro> perroslist = new ArrayList<>();
     Boolean iswalker;
@@ -86,8 +93,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         binding.progressBarPerfilUsuario.setVisibility(View.VISIBLE);
 
 
-
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
         cargardatos();
@@ -216,6 +222,28 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                                 .setTitle("Deseas eliminar este perro?")
                                 .setMessage("Si lo eliminas no podras recuperarlo")
                                 .setPositiveButton("Si eliminalo", (dialogInterface, i) -> {
+                                    Perro items = prueba.get(position);
+
+
+                                    for (int j = 0; j < prueba.size(); j++) {
+                                        if (prueba.get(j).getNombrecompleto().equals(items.getNombrecompleto())) {
+                                            prueba.remove(j);
+                                        }
+                                    }
+                                    myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                                    myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            Client = task.getResult().getValue(Usuario.class);
+                                            Client.setPerros(prueba);
+                                            myRef.setValue(Client);
+                                            startActivity(new Intent(getApplicationContext(), PerfilUsuarioActivity.class));
+                                            finish();
+                                        } else {
+                                            Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+
                                     Toast.makeText(this, "se elimino", Toast.LENGTH_SHORT).show();
                                 })
                                 .setNeutralButton("Cancelar", (dialogInterface, i) -> {
@@ -398,14 +426,20 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 //noinspection SimplifiableIfStatement
 // Display menu item's title by using a Toast.
         if (id == R.id.logoutBtn) {
-
+            stopLocationUpdates();
             mAuth.signOut();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
             startActivity(intent);
             finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     @Override
@@ -451,85 +485,11 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     }
 
 
-
-    private void handleNotificationData() {
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if (bundle.containsKey("data1")) {
-                Log.d("asdasdasd", "Data1 : " + bundle.getString("data1"));
-            }
-            if (bundle.containsKey("data2")) {
-                Log.d("asdasdasd", "Data2 : " + bundle.getString("data2"));
-            }
-
-        }
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d("asdasdasd", "On New Intent called");
     }
-
-    public void subsSports(View view) {
-        subscribeToTopic("sports");
-    }
-
-    public void unsubsSports(View view) {
-        unsubscribeToTopic("sports");
-    }
-
-    public void subsEnt(View view) {
-        subscribeToTopic("entertainment");
-    }
-
-    public void unsubsEnt(View view) {
-        unsubscribeToTopic("entertainment");
-    }
-
-    /**
-     * method to subscribe to topic
-     *
-     * @param topic to which subscribe
-     */
-    private void subscribeToTopic(String topic) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getApplicationContext(), "Subscribed to " + topic, Toast.LENGTH_SHORT).show();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to subscribe", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    /**
-     * method to unsubscribe to topic
-     *
-     * @param topic to which unsubscribe
-     */
-    private void unsubscribeToTopic(String topic) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getApplicationContext(), "UnSubscribed to " + topic, Toast.LENGTH_SHORT).show();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to unsubscribe", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
-
-
 
 
 }

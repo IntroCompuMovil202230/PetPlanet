@@ -19,7 +19,7 @@
         android:layout_marginBottom="15dp"
         android:hint="@string/contrasena"
         android:textColorHint="@color/grey_200"
-        android:visibility="gone"
+        android:visibility="visible"
 
         app:endIconMode="password_toggle"
         app:endIconTint="@color/black"
@@ -46,12 +46,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextLayoutCorreo"
@@ -66,12 +66,12 @@
         android:inputType="textEmailAddress"
         android:maxLength="255"
         android:textColorHint="@color/grey_200"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/editTextLayoutPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
 
 
-        tools:visibility="gone">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/loginCorreo"
@@ -99,13 +99,13 @@
         android:padding="10dp"
         android:text="@string/iniciarsesion"
         android:textColor="#000000"
+        android:visibility="visible"
         app:cornerRadius="15dp"
         app:layout_constraintBottom_toTopOf="@+id/registrarselayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="TextContrastCheck"
-        tools:visibility="gone" />
+        tools:ignore="TextContrastCheck" />
 
     <TextView
         android:id="@+id/olvidocontra"
@@ -121,8 +121,7 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/loginBTN"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="TouchTargetSizeCheck"
-        tools:visibility="gone" />
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/bienvenidotxt"
@@ -135,20 +134,31 @@
         android:text="@string/loginwelcome"
         android:textColor="@color/purple_500"
         android:textSize="27sp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/editTextLayoutCorreo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/huella"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBTN"
+        app:srcCompat="@drawable/ic_fingerprint" />
 
     <LinearLayout
         android:id="@+id/registrarselayout"
         android:layout_width="420dp"
         android:layout_height="315dp"
         android:orientation="horizontal"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="gone">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/textView3"

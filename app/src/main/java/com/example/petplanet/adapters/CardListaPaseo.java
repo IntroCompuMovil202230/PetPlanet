@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class CardListaPaseo extends ArrayAdapter {
 
-    private ArrayList<Paseo> paseolist;
+    private ArrayList<Paseo> paseolist = new ArrayList<>();
 
 
     public CardListaPaseo(Context context, int textViewResourceId, ArrayList objects) {
@@ -37,15 +37,13 @@ public class CardListaPaseo extends ArrayAdapter {
 
         View v = convertView;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        v = inflater.inflate(R.layout.cardview, null);
+        v = inflater.inflate(R.layout.listapaseocard, null);
         TextView nombredelperro = (TextView) v.findViewById(R.id.nombredelperrorecorrido);
         TextView diadelpaseo = (TextView) v.findViewById(R.id.diadelpaseo);
-        TextView recordido = (TextView) v.findViewById(R.id.distanciarecorrida);
         TextView durecion = (TextView) v.findViewById(R.id.tiemporecorrido);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
-        nombredelperro.setText("Nombre dle perro: " + paseolist.get(position).getNombredelperro());
+        nombredelperro.setText("Nombre del perro: " + paseolist.get(position).getNombredelperro());
         diadelpaseo.setText("El dia del paseo fue: " + paseolist.get(position).getFecha());
-        recordido.setText("La distancia recorrida fue: " + paseolist.get(position).getDistanciarecorrida());
         durecion.setText("La duracion del paseo fue: " + paseolist.get(position).getDuracion());
         byte[] decodedString = Base64.decode(paseolist.get(position).getFotodelperro(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
