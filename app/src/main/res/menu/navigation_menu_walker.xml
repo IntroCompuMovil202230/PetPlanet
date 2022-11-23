@@ -4,7 +4,7 @@
     <item
         android:id="@+id/mascotas"
         android:icon="@drawable/ic_pets"
-        android:title="@string/mascotas"
+        android:title="@string/mis_paseos"
         />
     <item
         android:id="@+id/IniciarPaseoBTN"

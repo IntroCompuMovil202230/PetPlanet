@@ -10,17 +10,17 @@
         android:id="@+id/iniciarsesionBTN"
         android:layout_width="match_parent"
         android:layout_height="57dp"
+        android:layout_below="@+id/creacruentaBTN"
         android:layout_marginStart="36dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="149dp"
         android:backgroundTint="@color/grey_100"
-        app:cornerRadius="15dp"
-        android:layout_below="@+id/creacruentaBTN"
         android:text="@string/iniciarsesion"
         android:textAllCaps="false"
         android:textColor="@color/black"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        app:cornerRadius="15dp" />
 
     <Button
         android:id="@+id/creacruentaBTN"
@@ -42,7 +42,7 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="395dp"
-        app:srcCompat="@mipmap/logoconletras_foreground"
-        android:contentDescription="TODO" />
+        android:contentDescription="TODO"
+        app:srcCompat="@mipmap/logoconletras_foreground" />
 
 </RelativeLayout>

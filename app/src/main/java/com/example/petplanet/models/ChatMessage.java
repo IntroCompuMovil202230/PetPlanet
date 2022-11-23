@@ -5,10 +5,12 @@ import java.util.Date;
 public class ChatMessage {
     private String senderid;
     private String receiverid;
+    private String receiverFCMToken;
     private String message;
     private String datetime;
     public Date dateObject;
-    public String conversionId,conversionName,conversionImage;
+    public String conversionId, conversionName, conversionImage;
+
     public ChatMessage() {
     }
 
@@ -19,8 +21,13 @@ public class ChatMessage {
         this.datetime = datetime;
     }
 
+    public String getReceiverFCMToken() {
+        return receiverFCMToken;
+    }
 
-
+    public void setReceiverFCMToken(String receiverFCMToken) {
+        this.receiverFCMToken = receiverFCMToken;
+    }
 
     public void setSenderid(String senderid) {
         this.senderid = senderid;

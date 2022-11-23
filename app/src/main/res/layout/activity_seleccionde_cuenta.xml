@@ -6,81 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activities.SelecciondeCuentaActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/petowner_cardview"
-        android:layout_width="154dp"
-        android:layout_height="213dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="20dp"
-
-        android:layout_marginTop="114dp"
-        android:layout_marginEnd="23dp"
-        android:backgroundTint="@color/petwalker_background"
-        android:clickable="true"
-        app:cardCornerRadius="15dp"
-        app:layout_constraintEnd_toStartOf="@+id/petwalker_cardview"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarSele">
-
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="206dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/app_name"
-            app:srcCompat="@mipmap/petowner_foreground" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/rounded_buttonselection"
-            android:text="@string/petowner"
-            android:textAlignment="center"
-            android:textColor="@color/purple_500"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/petwalker_cardview"
-        android:layout_width="154dp"
-        android:layout_height="213dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="114dp"
-        android:layout_marginEnd="20dp"
-        android:backgroundTint="@color/petwalker_background"
-        android:clickable="true"
-        app:cardCornerRadius="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarSele">
-
-        <ImageView
-
-            android:layout_width="200dp"
-            android:layout_height="206dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/app_name"
-            app:srcCompat="@mipmap/petwalker_foreground" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="0dp"
-
-            android:background="@drawable/rounded_buttonselection"
-            android:text="@string/petwalker"
-            android:textAlignment="center"
-            android:textColor="@color/purple_500"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </androidx.cardview.widget.CardView>
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarSele"
         android:layout_width="match_parent"
@@ -92,6 +17,115 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/seleccion_de_cuenta"
-        app:titleTextColor="@color/purple_500" />
+         />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="20dp"
+        android:text="Selecciona el tipo de cuenta que deseas crear"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarSele" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/petowner_cardview"
+        android:layout_width="154dp"
+        android:layout_height="213dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+
+        android:layout_marginTop="40dp"
+        android:backgroundTint="@color/petwalker_background"
+        android:clickable="true"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="185dp"
+                android:layout_gravity="center"
+                app:srcCompat="@mipmap/petowner_foreground" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_buttonselection"
+
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/petowner"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="@color/purple_500"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/petwalker_cardview"
+        android:layout_width="154dp"
+        android:layout_height="213dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="15dp"
+        android:backgroundTint="@color/petwalker_background"
+        android:clickable="true"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+
+                android:layout_width="150dp"
+                android:layout_height="185dp"
+                android:layout_gravity="center"
+                app:srcCompat="@mipmap/petwalker_foreground" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_buttonselection"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/petwalker"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="@color/purple_500"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

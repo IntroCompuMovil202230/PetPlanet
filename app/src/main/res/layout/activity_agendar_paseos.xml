@@ -14,31 +14,46 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginTop="0dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:title="@string/agendarpaseos"
         app:titleTextColor="@color/purple_500" />
 
-    <Spinner
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/spinnerMascota"
-        style="@style/Widget.AppCompat.Spinner.DropDown"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-
         android:layout_below="@id/toolbarAgendar"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="30dp"
+        android:hint="Selecciona una mascota"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
 
-        android:background="@drawable/spinnertext"
-        android:minHeight="48dp"
-        tools:ignore="SpeakableTextPresentCheck" />
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/spinnerMascotatxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:textColor="?attr/colorOnSecondary"
+            android:textColorHint="#757575"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-    <EditText
-        android:id="@+id/AgendarFecha"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/agendarfechaview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerMascota"
@@ -47,63 +62,151 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/rounded_edittext"
-        android:focusable="false"
-        android:cursorVisible="false"
-        android:importantForAutofill="no"
-        android:clickable="false"
-        android:focusableInTouchMode="false"
-        android:gravity="center"
-        android:hint="@string/Ingresefecha"
-        android:minHeight="48dp"
-        android:textAlignment="center"
-        android:textColorHint="#757575" />
+        android:textColor="?attr/colorOnSecondary"
+        android:textColorHint="#757575"
+        android:visibility="gone">
 
-    <EditText
-        android:id="@+id/AgendarHora"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/AgendarFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:hint="@string/Ingresefecha"
+            android:importantForAutofill="no"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSecondary"
+            android:textColorHint="#757575"
+            android:visibility="visible" />
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/agendarhoraview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/AgendarFecha"
+        android:layout_below="@id/agendarfechaview"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/rounded_edittext"
-        android:focusable="false"
-        android:cursorVisible="false"
-        android:importantForAutofill="no"
-        android:clickable="false"
-        android:focusableInTouchMode="false"
-        android:gravity="center"
-        android:hint="@string/Ingresehora"
-        android:minHeight="48dp"
-        android:textAlignment="center"
-        android:textColorHint="#757575" />
+        android:textColor="?attr/colorOnSecondary"
+        android:textColorHint="#757575"
+        android:visibility="gone">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/AgendarHora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+
+            android:background="@drawable/rounded_edittext"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:hint="@string/Ingresehora"
+            android:importantForAutofill="no"
+            android:inputType="datetime"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSecondary"
+            android:textColorHint="#757575"
+            android:visibility="visible" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 
     <Button
         android:id="@+id/buttonAgendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/AgendarHora"
+        android:layout_below="@id/duracionminimadelpaseoview"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_edittext"
-        android:text="Agendar!" />
+        android:text="Agendar!"
+        android:visibility="gone" />
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBarAgendar"
-        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:indeterminate="true"
         android:layout_marginTop="381dp" />
 
+    <TextView
+        android:id="@+id/nohayperrostxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="344dp"
+        android:text="Uppsss no tienes perros"
+        android:textColor="@color/purple_500"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/moverregistrarperroBTN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nohayperrostxt"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/registra_a_tu_perro"
+        android:visibility="gone"
+        app:cornerRadius="15dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/duracionminimadelpaseoview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/agendarhoraview"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:textColor="?attr/colorOnSecondary"
+        android:textColorHint="#757575"
+        android:visibility="gone">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/duracionminimadelpaseo"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:hint="Ingrese la duracion minima del paseo"
+            android:importantForAutofill="no"
+            android:inputType="datetime"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSecondary"
+            android:textColorHint="#757575"
+            android:visibility="visible" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </RelativeLayout>

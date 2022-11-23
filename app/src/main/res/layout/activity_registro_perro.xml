@@ -48,9 +48,9 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:background="@drawable/circleimage"
+        android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:clickable="true"
         app:layout_constraintTop_toBottomOf="@+id/toolbarRegPetW"
         tools:ignore="SpeakableTextPresentCheck"
         tools:srcCompat="@tools:sample/avatars" />
@@ -83,44 +83,70 @@
             android:maxLength="20"
             android:textColor="@color/black"
             android:textColorHint="#616161"
-            tools:ignore="TextContrastCheck"
-            />
+            tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Spinner
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/spinnersexo"
-        style="@style/Widget.AppCompat.Spinner.DropDown"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/spinnertext"
-        android:entries="@array/sexo"
+        android:layout_marginEnd="20dp"
+        android:hint="Seleccione el sexo de su mascota"
         android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNombre"
-        tools:ignore="SpeakableTextPresentCheck"
-        />
+        tools:ignore="SpeakableTextPresentCheck">
 
-    <Spinner
+        <AutoCompleteTextView
+            android:id="@+id/spinnersexotxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:inputType="none"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            app:simpleItems="@array/sexo" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/spinnercolor"
-        style="@style/Widget.AppCompat.Spinner.DropDown"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/spinnertext"
-        android:entries="@array/colores"
+        android:hint="Seleccione el sexo de su mascota"
         android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnersexo"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <AutoCompleteTextView
+            android:id="@+id/spinnercolortxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:inputType="none"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            app:simpleItems="@array/colores" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 
     <EditText
@@ -141,6 +167,7 @@
         android:importantForAutofill="no"
         android:textAlignment="center"
         android:textColorHint="#757575"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnercolor" />
@@ -180,7 +207,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/EsterilizadoCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -207,7 +234,7 @@
                 android:layout_weight="1" />
 
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/carnetVacunacionCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

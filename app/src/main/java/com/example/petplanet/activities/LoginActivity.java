@@ -3,17 +3,25 @@ package com.example.petplanet.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
+
 import com.example.petplanet.databinding.ActivityLoginBinding;
 import com.example.petplanet.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.Executor;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,16 +32,27 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
-
-
-
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
         mAuth = FirebaseAuth.getInstance();
+
+
+        binding.editTextLayoutCorreo.setVisibility(View.VISIBLE);
+        binding.editTextLayoutPassword.setVisibility(View.VISIBLE);
+        binding.bienvenidotxt.setVisibility(View.VISIBLE);
+        binding.registrarselayout.setVisibility(View.VISIBLE);
+        binding.olvidocontra.setVisibility(View.VISIBLE);
+        binding.loginBTN.setVisibility(View.VISIBLE);
+        binding.progressLogin.setVisibility(View.GONE);
 
         binding.nuevousuario.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SelecciondeCuentaActivity.class);
@@ -53,29 +72,67 @@ public class LoginActivity extends AppCompatActivity {
             String pass = binding.loginPassword.getText().toString();
 
 
-            if(!isEmail(binding.loginCorreo)){
+            if (!isEmail(binding.loginCorreo)) {
                 binding.loginCorreo.setError("Introduce un correo electonico valido");
                 binding.loginCorreo.requestFocus();
                 return;
-            }if(pass.isEmpty()){
+            }
+            if (pass.isEmpty()) {
                 binding.loginPassword.setError("Introduce una contraseña");
                 binding.loginPassword.requestFocus();
                 return;
-            }else{
+            } else {
 
                 login(String.valueOf(binding.loginCorreo.getText()), String.valueOf(binding.loginPassword.getText()));
             }
         });
 
+        executor = ContextCompat.getMainExecutor(this);
+        biometricPrompt = new BiometricPrompt(LoginActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+            }
 
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+            }
+        });
+
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Autenticación Biometrica")
+                .setSubtitle("Inicia Sesión con tu huella")
+                .setNegativeButtonText("Use Password")
+                .build();
+
+        binding.huella.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                biometricPrompt.authenticate(promptInfo);
+                onStart();
+            }
+        });
     }
 
+
     private void login(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                binding.editTextLayoutCorreo.setVisibility(View.GONE);
+                binding.editTextLayoutPassword.setVisibility(View.GONE);
+                binding.bienvenidotxt.setVisibility(View.GONE);
+                binding.registrarselayout.setVisibility(View.GONE);
+                binding.olvidocontra.setVisibility(View.GONE);
+                binding.loginBTN.setVisibility(View.GONE);
+                binding.progressLogin.setVisibility(View.VISIBLE);
                 updateUI(mAuth.getCurrentUser());
-            }
-            else {
+            } else {
                 showMessage(task.getException().getMessage());
             }
         });
@@ -83,23 +140,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showMessage(String text) {
-        Toast.makeText(getApplicationContext(),text, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
     }
+
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             myRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
             myRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
 
-                    if(task.getResult().exists()){
+                    if (task.getResult().exists()) {
                         Usuario usuario = task.getResult().getValue(Usuario.class);
 
                         assert usuario != null;
-                        if(usuario.getWalker())
-                            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
+                        if (usuario.getWalker())
+                            startActivity(new Intent(getApplicationContext(), LandingPetWalkerActivity.class));
                         else
-                            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
+                            startActivity(new Intent(getApplicationContext(), LandingPetOwnerActivity.class));
                     }
                 }
             });
@@ -112,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
         CharSequence email = text.getText().toString();
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -131,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
+        if (currentUser != null) {
             updateUI(currentUser);
         }
     }

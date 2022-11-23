@@ -1,18 +1,20 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.example.petplanet.databinding.ActivitySelecciondeCuentaBinding;
 
 public class SelecciondeCuentaActivity extends AppCompatActivity {
     private ActivitySelecciondeCuentaBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySelecciondeCuentaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
 
         setSupportActionBar(binding.toolbarSele);
@@ -37,7 +39,6 @@ public class SelecciondeCuentaActivity extends AppCompatActivity {
             finish();
         });
     }
-
 
 
     @Override

@@ -12,15 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.petplanet.R;
+import com.example.petplanet.models.Paseo;
 import com.example.petplanet.models.Perro;
 import com.example.petplanet.models.Usuario;
 
 import java.util.ArrayList;
 
-public class CardAdapterIniciarpaseo  extends ArrayAdapter {
+public class CardAdapterIniciarpaseo extends ArrayAdapter {
 
 
-    private ArrayList<Perro> perroslist = new ArrayList<>();
+    private ArrayList<Paseo> perroslist = new ArrayList<>();
 
     public CardAdapterIniciarpaseo(Context context, int textViewResourceId, ArrayList objects) {
         super(context, textViewResourceId, objects);
@@ -39,11 +40,13 @@ public class CardAdapterIniciarpaseo  extends ArrayAdapter {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         v = inflater.inflate(R.layout.cardviewiniciarpaseo, null);
         TextView nombreperro = (TextView) v.findViewById(R.id.nombreperrotxt);
-        TextView nombredueno = (TextView) v.findViewById(R.id.duenoperrotxt);
+        TextView horadelpaseo = (TextView) v.findViewById(R.id.horadeinicio);
+        TextView horadelfin = (TextView) v.findViewById(R.id.horadetermino);
         ImageView imageView = (ImageView) v.findViewById(R.id.fotoperrocard);
-        nombreperro.setText("Nombre del perro: "+perroslist.get(position).getNombrecompleto());
-        //nombredueno.setText("Nombre del dueño: "+perroslist.get(position).getNombredueno());
-        byte[] decodedString = Base64.decode(perroslist.get(position).getFoto(), Base64.DEFAULT);
+        nombreperro.setText("Nombre del perro: " + perroslist.get(position).getNombredelperro());
+        horadelpaseo.setText("Hora del paseo: " + perroslist.get(position).getHora());
+        horadelfin.setText("Hora de regreso: " + perroslist.get(position).getHoraderegreso());
+        byte[] decodedString = Base64.decode(perroslist.get(position).getFotodelperro(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);
         return v;

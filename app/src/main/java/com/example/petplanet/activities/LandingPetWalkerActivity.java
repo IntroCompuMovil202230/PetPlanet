@@ -5,20 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -27,16 +31,21 @@ import androidx.core.content.ContextCompat;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.widget.Toast;
 
+import com.deeplabstudio.fcmsend.FCMSend;
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.petplanet.R;
+import com.example.petplanet.adapters.CardAdapterUsuario;
+import com.example.petplanet.models.Paseo;
+import com.example.petplanet.models.Perro;
+import com.example.petplanet.models.Usuario;
+import com.example.petplanet.utilities.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -59,69 +68,124 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
-
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-import com.android.volley.Request;
+
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.petplanet.databinding.ActivityLandingPetWalkerBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 public class LandingPetWalkerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RoutingListener {
     private ActivityLandingPetWalkerBinding binding;
     // Setup del logger para esta clase
     private static final String TAG = LandingPetWalkerActivity.class.getName();
     private Logger logger = Logger.getLogger(TAG);
-    private List<Polyline> polylines=null;
-    protected LatLng start=null;
-    protected LatLng end=null;
+    private List<Polyline> polylines = null;
+    protected LatLng start = null;
+    protected LatLng end = null;
     private GoogleMap mMap;
     private final static int INITIAL_ZOOM_LEVEL = 15;
 
     private Geocoder mGeocoder;
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
     SensorManager sensorManager;
     Sensor lightSensor;
     SensorEventListener lightSensorListener;
-
+    private FirebaseAuth mAuth;
+    Usuario Client = new Usuario();
+    private LocationCallback mLocationCallback;
     private float humActual;
     private SensorEventListener humSensorListener;
     private Sensor humSensor;
 
-    public static final double lowerLeftLatitude = 4.4542324059959295;
-    public static final double lowerLeftLongitude= -74.31798356566968;
-    public static final double upperRightLatitude= 4.978316663093684;
-    public static final double upperRightLongitude= -73.89683495545846;
 
+    private Paseo nPaseo = new Paseo();
+    DatabaseReference myPaseos;
+
+    Marker petOwnerMarker;
     //Variables de permisos
     private final int LOCATION_PERMISSION_ID = 103;
     public static final int REQUEST_CHECK_SETTINGS = 201;
     String locationPerm = Manifest.permission.ACCESS_FINE_LOCATION;
 
     //Variables de localizacion
-    private FusedLocationProviderClient mFusedLocationClient;
+    private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest mLocationRequest;
-    private LocationCallback mLocationCallback;
-    Location mCurrentLocation;
+    public Location mCurrentLocation;
+
+    public Location getmCurrentLocation() {
+        return mCurrentLocation;
+    }
+
+    public void setmCurrentLocation(Location mCurrentLocation) {
+        this.mCurrentLocation = mCurrentLocation;
+    }
+
     Location aux;
+
+    public String direcciondelOwner;
+
+    public String getDirecciondelOwner() {
+        return direcciondelOwner;
+    }
+
+    public void setDirecciondelOwner(String direcciondelOwner) {
+        this.direcciondelOwner = direcciondelOwner;
+    }
+
+
+    public String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String nombredelowner;
+
+    public String getNombredelowner() {
+        return nombredelowner;
+    }
+
+    public void setNombredelowner(String nombredelowner) {
+        this.nombredelowner = nombredelowner;
+    }
+
 
     JsonObjectRequest jsonObjectRequest;
     RequestQueue request;
+    boolean paseoencurso = false;
+    Paseo paseo = new Paseo();
+    String duracion;
+
+    Usuario owner = new Usuario();
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -129,8 +193,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         super.onCreate(savedInstanceState);
         binding = ActivityLandingPetWalkerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         binding.bottomNavigationWalker.setBackground(null);
+        mAuth = FirebaseAuth.getInstance();
+        String serverKey = String.valueOf(R.string.secret_key);
+        FCMSend.SetServerKey("AAAAUkhPUu8:APA91bGn-4C8RrBoJrOTxLIT4_cTFks6WLsNI_Pn3t843hvD73n93uTq2yAH89uOJBORNobXoWVHR2JArZWrzfU0xzNOy83lFzM66LEcL8qkPAgEB685xxnOdoGG-RIizrlLQsMKxEER");
+
+        cargardatos();
+        binding.coordinatorLayout.setVisibility(View.VISIBLE);
         binding.bottomNavigationWalker.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             switch (id) {
@@ -157,45 +227,60 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
             }
             return true;
         });
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                direcciondelOwner = null;
+
+            } else {
+                setDirecciondelOwner(extras.getString("direccion"));
+                setNombredelowner(extras.getString("nombredelowner"));
+                setId(extras.getString("id"));
+                duracion = extras.getString("duracion");
+            }
+        } else {
+            setDirecciondelOwner((String) savedInstanceState.getSerializable("direccion"));
+            setNombredelowner((String) savedInstanceState.getSerializable("nombredelowner"));
+            setId((String) savedInstanceState.getSerializable("id"));
+            duracion = (String) savedInstanceState.getSerializable("duracion");
+        }
+        mLocationRequest = createLocationRequest();
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.mapwalker);
         mapFragment.getMapAsync(this);
 
-        mLocationRequest = createLocationRequest();
+
         //Location
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, "El permiso es necesario para acceder a la localizacion", LOCATION_PERMISSION_ID);
 
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                aux=location;
-                Log.i(TAG, "Location update in the callback: " + location);
-                if (location != null) {
-                    mCurrentLocation = location;
-                }
-            }
-        };
 
         humSensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         humSensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
 
-                if(Math.abs(humActual-sensorEvent.values[0])>1){
+                if (Math.abs(humActual - sensorEvent.values[0]) > 1) {
                     humActual = sensorEvent.values[0];
-                    Log.d("Humedad", "Humedad: "+humActual);
-                    if(humActual >  65)
-                    {
-                        Toast.makeText(LandingPetWalkerActivity.this, "Cuidado puede llover, busca un paraguas!", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(LandingPetWalkerActivity.this, "Hace fresco, Relajao!!!", Toast.LENGTH_SHORT).show();
+                    Log.d("Humedad", "Humedad: " + humActual);
+                    if (humActual > 65) {
+                        new MaterialAlertDialogBuilder(LandingPetWalkerActivity.this)
+                                .setTitle("posiblemente va a llover")
+                                .setMessage("Si vas a salir lleva un paraguas")
+                                .setPositiveButton("ok", (dialogInterface, i) -> {
+                                })
+                                .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                                })
+                                .show();
+
                     }
                 }
             }
+
             @Override
             public void onAccuracyChanged(Sensor sensor, int i) {
 
@@ -204,9 +289,8 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
 
 
-
         // Initialize the sensors
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // Initialize the listener
@@ -225,8 +309,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                     }
                 }
             }
+
             @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
         };
 
         // Initialize geocoder
@@ -234,130 +320,488 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     }
 
+    private double currentLat = 0;
+    private double currentLong = 0;
+
+    public void currentlocation() {
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                aux = location;
+
+                if (location != null) {
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                    // Enable touch gestures
+
+                    LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
+
+                    mCurrentLocation = location;
+
+                    currentLat = location.getLatitude();
+                    currentLong = location.getLongitude();
+                    start = new LatLng(currentLat, currentLong);
+                }
+            }
+        };
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setBuildingsEnabled(true);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        // UI controls
 
-        LatLng center = null;
-        ArrayList<LatLng> points = null;
-        PolylineOptions lineOptions = null;
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        if (checkPermissions()) {
+            mMap.setMyLocationEnabled(true);
+            mMap.isMyLocationEnabled();
+            currentlocation();
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(@NonNull LatLng latLng) {mMap.clear();
+            // Set  zoom level
 
-                // Animating to the touched position
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.setMyLocationEnabled(true);
 
-                try {
-                    List<Address> direcciones =mGeocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
-                    if(!direcciones.isEmpty()){
-                        for(Address dir: direcciones){
-                            mMap.addMarker( new MarkerOptions()
-                                    .position(latLng)
-                                    .title(dir.getFeatureName())
-                                    .snippet(dir.getAddressLine(0))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                            Location locationA = new Location("point A");
-                            locationA.setLatitude(mCurrentLocation.getLatitude());
-                            locationA.setLongitude(mCurrentLocation.getLongitude());
-                            start = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
-                            Location locationB = new Location("point B");
-                            locationB.setLatitude(latLng.latitude);
-                            locationB.setLongitude(latLng.longitude);
-                            float distance = locationA.distanceTo(locationB);
-                            float distanceKm = distance / 1000;
-                            end = new LatLng(latLng.latitude,latLng.longitude);
-                            Toast.makeText(getApplicationContext(),
-                                    "Distancia : "+distanceKm+" km", Toast.LENGTH_SHORT).show();
-                            Findroutes(start,end);
+            LatLng center = null;
+            ArrayList<LatLng> points = null;
+            PolylineOptions lineOptions = null;
+
+            SystemClock.sleep(200);
+            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Client = task.getResult().getValue(Usuario.class);
+                    if (Client.getPaseoencurso() != null) {
+                        if (Client.getPaseoencurso()) {
+                            binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
                         }
-                    } else {
-                        Toast.makeText(LandingPetWalkerActivity.this,
-                                "Dirección no encontrada", Toast.LENGTH_SHORT).show();}
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    }
+
                 }
+            });
+
+
+            binding.confirmarpaseoBTN.setOnClickListener(view -> {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Elige una opcion para subir tu foto")
+                        .setPositiveButton("Si, iniciar paseo ya mismo", (dialogInterface, i) -> {
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                            binding.cardpaseo.setVisibility(View.VISIBLE);
+                            binding.coordinatorLayout.setVisibility(View.GONE);
+                            sacarpaseo();
+                            setDirecciondelOwner(null);
+                        })
+                        .setNegativeButton("No, prefiero buscar otro", (dialogInterface, i) -> {
+                            binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                            mMap.clear();
+                            setDirecciondelOwner(null);
+                            mMap.clear();
+                        })
+
+                        .show();
+            });
+            binding.paseoencursoBTN.setOnClickListener(view -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS);
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                            paseo = snapshot.getValue(Paseo.class);
+                            Log.d("Paseo", "cargarpaseo: " + paseo.getDirecciondelowner());
+                            if (Client.getPaseoencurso()) {
+                                if (paseo.getNombredelwalker() != null) {
+                                    if (paseo.getNombredelwalker().equals(Client.getNombre())) {
+                                        binding.cardpaseo.setVisibility(View.VISIBLE);
+                                        binding.paseoencursoBTN.setVisibility(View.GONE);
+                                        binding.coordinatorLayout.setVisibility(View.GONE);
+                                        binding.confirmarpaseoBTN.setVisibility(View.GONE);
+
+                                        setId(snapshot.getKey());
+                                        byte[] decodedString = Base64.decode(paseo.getFotodelperro(), Base64.DEFAULT);
+                                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                        binding.imagePerson.setImageBitmap(decodedByte);
+                                        binding.Nombreperro.setText(paseo.getNombredelperro());
+                                        binding.duracionTXT.setText(paseo.getDuracion() + " min");
+                                        pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                                        paseoencurso = true;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                });
+            });
+
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
+                    aux = location;
+
+                    if (location != null) {
+                        mMap.clear();
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
+                        // Enable touch gestures
+
+                        LatLng clatlng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(clatlng));
+
+                        mCurrentLocation = location;
+
+                        currentLat = location.getLatitude();
+                        currentLong = location.getLongitude();
+
+                        if (getId() != null) {
+                            myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Paseo paseo = task.getResult().getValue(Paseo.class);
+                                    if (paseo.getUidWalker() != null) {
+                                        if (paseo.getUidWalker().equals(mAuth.getCurrentUser().getUid())) {
+                                            paseo.setLatitudwalker(currentLat);
+                                            paseo.setLongitudwalker(currentLong);
+                                            myPaseos.setValue(paseo);
+                                        }
+                                    }
+
+                                }
+                            });
+
+                            start = new LatLng(currentLat, currentLong);
+                            Location dis3 = new Location("localizacion 1");
+                            dis3.setLatitude(currentLat);  //latitud
+                            dis3.setLongitude(currentLong); //longitud
+                            Location dis2 = new Location("localizacion 2");
+                            dis2.setLatitude(paseo.getLatitud());  //latitud
+                            dis2.setLongitude(paseo.getLongitud()); //longitud
+                            double distance = dis3.distanceTo(dis2);
+                            DecimalFormat df = new DecimalFormat("#.##");
+                            df.setRoundingMode(RoundingMode.FLOOR);
+                            if (!paseo.isYallegoelpaseador()) {
+                                pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                            }
+                            if (paseo.isPaseoprontoaaacabar()) {
+                                binding.entregarperrooBTN.setVisibility(View.VISIBLE);
+                                pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                            }
+
+
+                            binding.distanciaTXT.setText(df.format(distance) + " metros");
+                            if (distance < 20.0) {
+                                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Paseo paseox = task.getResult().getValue(Paseo.class);
+                                        if (!paseox.isYallegoelpaseador()) {
+                                            FCMSend.Builder build = new FCMSend.Builder(paseo.getFcmtokenowner())
+                                                    .setTitle("Tu paseador esta cerca")
+                                                    .setBody("Tu paseador esta a " + df.format(distance) + " metros de ti, puedes hablar con el");
+                                            String result = build.send().Result();
+                                            paseox.setYallegoelpaseador(true);
+                                            myPaseos.setValue(paseox);
+                                        }
+                                    }
+                                });
+                                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                                        if (!paseo.isYatengoelperro()) {
+                                            binding.confirmarperroBTN.setVisibility(View.VISIBLE);
+                                        }
+                                        if (paseo.isYatengoelperro() && !paseo.isPaseoprontoaaacabar()) {
+                                            binding.confirmarperroBTN.setVisibility(View.GONE);
+                                            binding.acabarpaseoBTN.setVisibility(View.VISIBLE);
+                                            setDirecciondelOwner(null);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        if (getDirecciondelOwner() != null) {
+                            start = new LatLng(currentLat, currentLong);
+                            pintarrutahaciaelowner(getDirecciondelOwner());
+                            binding.confirmarpaseoBTN.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            };
+            binding.acabarpaseoBTN.setOnClickListener(view -> {
+
+
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseost = task.getResult().getValue(Paseo.class);
+                        FCMSend.Builder build = new FCMSend.Builder(paseost.getFcmtokenowner())
+                                .setTitle("Tu paseador ya va de regreso")
+                                .setBody("Ten preparado el pago que le vas a dar a tu paseador");
+                        String result = build.send().Result();
+                        paseost.setPaseoprontoaaacabar(true);
+                        myPaseos.setValue(paseost);
+                    }
+                });
+
+                pintarrutahaciaelowner(paseo.getDirecciondelowner());
+                binding.entregarperrooBTN.setVisibility(View.VISIBLE);
+                binding.acabarpaseoBTN.setVisibility(View.GONE);
+            });
+
+
+            binding.entregarperrooBTN.setOnClickListener(v -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        paseo.setEntregadelperro(true);
+                        myPaseos.setValue(paseo);
+                    }
+                });
+                binding.confirmarperroBTN.setVisibility(View.GONE);
+                binding.entregarperrooBTN.setVisibility(View.GONE);
+                binding.cardpaseo.setVisibility(View.GONE);
+                binding.escriDuenoBTN.setVisibility(View.GONE);
+                binding.coordinatorLayout.setVisibility(View.VISIBLE);
+            });
+
+
+            binding.confirmarperroBTN.setOnClickListener(view -> {
+                myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Paseo paseo = task.getResult().getValue(Paseo.class);
+                        paseo.setYatengoelperro(true);
+                        myPaseos.setValue(paseo);
+                    }
+                });
+                binding.confirmarperroBTN.setVisibility(View.GONE);
+            });
+
+
+            binding.volveralmenuBTN.setOnClickListener(view -> {
+                binding.cardpaseo.setVisibility(View.GONE);
+                binding.paseoencursoBTN.setVisibility(View.VISIBLE);
+                binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                stopLocationUpdates();
+                mMap.clear();
+            });
+
+
+            binding.escriDuenoBTN.setOnClickListener(view -> {
+                myRef = database.getReference(Constants.PATH_USERS);
+                myRef.getDatabase().getReference(Constants.PATH_USERS).get().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        task1.getResult().getChildren().forEach(snapshot -> {
+                            Usuario user = snapshot.getValue(Usuario.class);
+                            if (user.getNombre().equals(paseo.getNombredelowner())) {
+                                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                                intent.putExtra(Constants.KEY_USER_ID, snapshot.getKey());
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                });
+            });
+
+
+            binding.canelarpaseoBTN.setOnClickListener(view -> {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Deseas cancelar el paseo?")
+                        .setMessage("Si cancelas el paseo, el dueño del perro no podra ver tu ubicacion")
+                        .setPositiveButton("Si, deseo cancelar el paseo", (dialogInterface, i) -> {
+                            setDirecciondelOwner(null);
+                            mMap.clear();
+                            Log.d("asdasdasd33", "Loc: " + getId());
+                            myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+                            myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Paseo paseo = task.getResult().getValue(Paseo.class);
+                                    FCMSend.Builder build = new FCMSend.Builder(paseo.getFcmtokenowner())
+                                            .setTitle("Cancelaron tu paseo")
+                                            .setBody("Lo sentimos, tu paseador ha cancelado el paseo");
+                                    String result = build.send().Result();
+                                    paseo.setNombredelwalker("pendiente");
+                                    paseo.setUidWalker("0");
+                                    paseo.setLatitudwalker(0);
+                                    paseo.setLongitudwalker(0);
+                                    paseo.setYallegoelpaseador(false);
+                                    paseo.setYatengoelperro(false);
+                                    paseo.setEntregadelperro(false);
+
+                                    myPaseos.setValue(paseo);
+                                }
+                            });
+                            myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                            myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Client = task1.getResult().getValue(Usuario.class);
+                                    Client.setPaseoencurso(false);
+                                    myRef.setValue(Client);
+                                    binding.cardpaseo.setVisibility(View.GONE);
+                                    binding.paseoencursoBTN.setVisibility(View.GONE);
+                                    binding.coordinatorLayout.setVisibility(View.VISIBLE);
+                                    binding.confirmarpaseoBTN.setVisibility(View.GONE);
+                                }
+                            });
+                            mMap.clear();
+                        })
+                        .setNegativeButton("No cancelar", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        })
+
+                        .show();
+            });
+
+
+            // localizacion del walker
+
+
+            startLocationUpdates();
+        }
+
+    }
+
+    public void pintarrutahaciaelowner(String direcciondelOwner) {
+        Log.d("Paseoasd", "cargarpaseo0: " + currentLat);
+        Geocoder coder = new Geocoder(getApplicationContext());
+        List<Address> addresses;
+        String strAddress = direcciondelOwner;
+        try {
+            addresses = coder.getFromLocationName(strAddress + "Bogotá", 5);
+            Log.d("Pasesso", "Location update in the callback: " + currentLat);
+            if (!addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                LatLng latLng2 = new LatLng(address.getLatitude(), address.getLongitude());
+                if (petOwnerMarker != null) {
+                    petOwnerMarker.remove();
+                }
+                petOwnerMarker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(address.getLatitude(), address.getLongitude()))
+                        .title("direccion del owner")
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ownermap_foreground)));
+                petOwnerMarker.showInfoWindow();
+                Location dis3 = new Location("localizacion 1");
+                dis3.setLatitude(currentLat);  //latitud
+                dis3.setLongitude(currentLong); //longitud
+                Location dis2 = new Location("localizacion 2");
+                dis2.setLatitude(address.getLatitude());  //latitud
+                dis2.setLongitude(address.getLongitude()); //longitud
+                double distance = dis3.distanceTo(dis2);
+                DecimalFormat df = new DecimalFormat("#.##");
+                df.setRoundingMode(RoundingMode.FLOOR);
+                binding.textView17.setText("Distancia:");
+                binding.distanciaTXT.setText(df.format(distance) + " metros");
+                LatLng destination = new LatLng(dis2.getLatitude(), dis2.getLongitude());
+                end = destination;
+                paseo.setLatitud(end.latitude);
+                paseo.setLongitud(end.longitude);
+                if (start == null) {
+                    start = new LatLng(dis3.getLatitude(), dis3.getLongitude());
+                }
+                Findroutes(start, end);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void sacarpaseo() {
+        final String SENDER_ID;
+        Log.d("paseoasd", "sacarpaseo: " + getId());
+        myPaseos = database.getReference(Constants.PATH_PASEOS + getId());
+        myPaseos.getDatabase().getReference(Constants.PATH_PASEOS + getId()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                nPaseo = task.getResult().getValue(Paseo.class);
+                Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelowner());
+                nPaseo.setNombredelwalker(Client.getNombre());
+                nPaseo.setUidWalker(Client.getId());
+                nPaseo.setDuracion(duracion);
+                Log.d("paseoasd", "sacarpaseo: " + nPaseo.getNombredelwalker());
+
+                Log.d("paseoasd", "sacarpaseo: " + nPaseo.getFcmtokenowner());
+// See documentation on defining a message payload.
+                FCMSend.Builder build = new FCMSend.Builder(nPaseo.getFcmtokenowner())
+                        .setTitle(nPaseo.getNombredelwalker() + " ha aceptado tu paseo")
+                        .setBody("El walker ya va para tu ubicacion preparate");
+                String result = build.send().Result();
+
+                // [START fcm_send_upstream]
+
+                myPaseos.setValue(nPaseo);
+
+                // [END fcm_send_upstream]
+                byte[] decodedString = Base64.decode(nPaseo.getFotodelperro(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                binding.imagePerson.setImageBitmap(decodedByte);
+                binding.Nombreperro.setText(nPaseo.getNombredelperro());
+                binding.duracionTXT.setText(nPaseo.getDuracion() + " min");
+                binding.confirmarpaseoBTN.setVisibility(View.GONE);
+
+
+            }
+        });
+        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Client = task.getResult().getValue(Usuario.class);
+                Client.setPaseoencurso(true);
+                myRef.setValue(Client);
             }
         });
 
-        for(int i=0;i<Utilitys.routes.size();i++){
-            points = new ArrayList<LatLng>();
-            lineOptions = new PolylineOptions();
-
-            // Obteniendo el detalle de la ruta
-            List<HashMap<String, String>> path = Utilitys.routes.get(i);
-
-            // Obteniendo todos los puntos y/o coordenadas de la ruta
-            for(int j=0;j<path.size();j++){
-                HashMap<String,String> point = path.get(j);
-
-                double lat = Double.parseDouble(point.get("lat"));
-                double lng = Double.parseDouble(point.get("lng"));
-                LatLng position = new LatLng(lat, lng);
-
-                if (center == null) {
-                    //Obtengo la 1ra coordenada para centrar el mapa en la misma.
-                    center = new LatLng(lat, lng);
-                }
-                points.add(position);
-            }
-
-            // Agregamos todos los puntos en la ruta al objeto LineOptions
-            lineOptions.addAll(points);
-            //Definimos el grosor de las Polilíneas
-            lineOptions.width(2);
-            //Definimos el color de la Polilíneas
-            lineOptions.color(Color.BLUE);
-        }
-
-        LatLng location = new LatLng(4.62867, -74.06461);
-
-        //int auxiliar = (int) Math.round(mCurrentLocation.getLatitude());
-        //LatLng location = new LatLng(auxiliar,-74.06461);
-        mMap.addMarker(new MarkerOptions().position(location));
-
-        // Set  zoom level
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(INITIAL_ZOOM_LEVEL));
-        // Enable touch gestures
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        // UI controls
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(location));
 
     }
 
-    private void startLocationUpdates(){
-        if(ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED){
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, null);
+
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
         }
     }
 
-    private void stopLocationUpdates(){
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+
+    private boolean checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
     }
 
-    private LocationRequest createLocationRequest(){
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
 
-    private void requestPermission(Activity context, String permiso, String justificacion, int idCode){
-        if(ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)){
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    private LocationRequest createLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setInterval(3000)
+                .setFastestInterval(500)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
+    }
+
+    private void requestPermission(Activity context, String permiso, String justificacion,
+                                   int idCode) {
+        if (ContextCompat.checkSelfPermission(context, permiso) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permiso)) {
                 Toast.makeText(context, justificacion, Toast.LENGTH_SHORT).show();
             }
             ActivityCompat.requestPermissions(context, new String[]{permiso}, idCode);
@@ -365,11 +809,12 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
+        switch (requestCode) {
             case LOCATION_PERMISSION_ID: {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Ya hay permiso para acceder a la localizacion", Toast.LENGTH_LONG).show();
                     turnOnLocationAndStartUpdates();
                 } else {
@@ -380,7 +825,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
         }
     }
 
-    private void turnOnLocationAndStartUpdates(){
+    private void turnOnLocationAndStartUpdates() {
         LocationSettingsRequest.Builder builder =
                 new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
         SettingsClient client = LocationServices.getSettingsClient(this);
@@ -399,7 +844,7 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                         try {
                             // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
                             ResolvableApiException resolvable = (ResolvableApiException) e;
-                            resolvable.startResolutionForResult(LandingPetWalkerActivity.this,REQUEST_CHECK_SETTINGS);
+                            resolvable.startResolutionForResult(LandingPetWalkerActivity.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException sendEx) {
                             // Ignore the error.
                         }
@@ -415,11 +860,11 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CHECK_SETTINGS: {
-                if (resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     startLocationUpdates();
-                }else {
+                } else {
                     Toast.makeText(this, "Sin acceso a localizacion", Toast.LENGTH_LONG).show();
                 }
             }
@@ -430,8 +875,9 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     @Override
     protected void onResume() {
         super.onResume();
-        turnOnLocationAndStartUpdates();
-        startLocationUpdates();
+        if (checkPermissions()) {
+            turnOnLocationAndStartUpdates();
+        }
         sensorManager.registerListener(lightSensorListener,
                 lightSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
@@ -440,6 +886,49 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
                 humSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
+
+
+    public void cargardatos() {
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+
+                if (!task.isSuccessful()) {
+                    Log.e("asdasdasdasd", "Failed to get the token.");
+                    return;
+                }
+
+                //get the token from task
+                String token = task.getResult();
+                Log.d("asdasdasdasd", "Token2 : " + Client.getFcmToken());
+                myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+                myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        Client = task2.getResult().getValue(Usuario.class);
+                        Client.setFcmToken(token);
+                        myRef.setValue(Client);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error al actualizar el token de perfil", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("asdasdasdasd", "Failed to get the token : " + e.getLocalizedMessage());
+            }
+        });
+
+
+        myRef = database.getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid());
+        myRef.getDatabase().getReference(Constants.PATH_USERS + mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Client = task.getResult().getValue(Usuario.class);
+            }
+        });
+    }
+
 
     @Override
     protected void onPause() {
@@ -469,13 +958,10 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     }
 
 
-    public void Findroutes(LatLng Start, LatLng End)
-    {
-        if(Start==null || End==null) {
-            Toast.makeText(getApplicationContext(),"Unable to get location", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
+    public void Findroutes(LatLng Start, LatLng End) {
+        if (Start == null || End == null) {
+            Toast.makeText(getApplicationContext(), "Unable to get location", Toast.LENGTH_LONG).show();
+        } else {
 
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.DRIVING)
@@ -493,14 +979,14 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
     @Override
     public void onRoutingFailure(RouteException e) {
         View parentLayout = findViewById(android.R.id.content);
-        Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
         snackbar.show();
 //        Findroutes(start,end);
     }
 
     @Override
     public void onRoutingStart() {
-        Toast.makeText(getApplicationContext(),"Finding Route...",Toast.LENGTH_LONG).show();
+
     }
 
     //If Route finding success..
@@ -509,31 +995,29 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-        if(polylines!=null) {
+        if (polylines != null) {
             polylines.clear();
         }
         PolylineOptions polyOptions = new PolylineOptions();
-        LatLng polylineStartLatLng=null;
-        LatLng polylineEndLatLng=null;
+        LatLng polylineStartLatLng = null;
+        LatLng polylineEndLatLng = null;
 
 
         polylines = new ArrayList<>();
         //add route(s) to the map using polyline
-        for (int i = 0; i <route.size(); i++) {
+        for (int i = 0; i < route.size(); i++) {
 
-            if(i==shortestRouteIndex)
-            {
+            if (i == shortestRouteIndex) {
                 polyOptions.color(getResources().getColor(R.color.purple_500));
                 polyOptions.width(7);
                 polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
                 Polyline polyline = mMap.addPolyline(polyOptions);
-                polylineStartLatLng=polyline.getPoints().get(0);
-                int k=polyline.getPoints().size();
-                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylineStartLatLng = polyline.getPoints().get(0);
+                int k = polyline.getPoints().size();
+                polylineEndLatLng = polyline.getPoints().get(k - 1);
                 polylines.add(polyline);
 
-            }
-            else {
+            } else {
 
             }
 
@@ -544,13 +1028,19 @@ public class LandingPetWalkerActivity extends AppCompatActivity implements OnMap
 
     @Override
     public void onRoutingCancelled() {
-        Findroutes(start,end);
+        Findroutes(start, end);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Findroutes(start,end);
+        Findroutes(start, end);
+    }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("asdasdasd", "On New Intent called");
     }
 
 

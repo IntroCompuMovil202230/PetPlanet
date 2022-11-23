@@ -29,13 +29,13 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        checkAndRequestPermissions();
         mAuth = FirebaseAuth.getInstance();
 
         binding.creacruentaBTN.setOnClickListener(view -> {
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -68,57 +69,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
-            updateUI(currentUser);
-        }
     }
 
-
-    private  boolean checkAndRequestPermissions() {
-        int permissionWritestorage = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int permissionCamera = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA);
-        int locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        List<String> listPermissionsNeeded = new ArrayList<>();
-        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if (permissionWritestorage != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.CAMERA);
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
-    }
-
-    private void updateUI(FirebaseUser user) {
-        if (user != null) {
-            myRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-
-            myRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()){
-
-                    if(task.getResult().exists()){
-                        Usuario usuario = task.getResult().getValue(Usuario.class);
-
-                        assert usuario != null;
-                        if(usuario.getWalker())
-                            startActivity(new Intent(getApplicationContext(),LandingPetWalkerActivity.class));
-                        else
-                            startActivity(new Intent(getApplicationContext(),LandingPetOwnerActivity.class));
-                    }
-                }
-            });
-
-        }
-    }
 
     @Override
     public void onStop() {

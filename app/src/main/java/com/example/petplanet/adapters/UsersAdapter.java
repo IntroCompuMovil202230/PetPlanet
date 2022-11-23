@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder>  {
+public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
 
     private List<Usuario> usuarioList;
 
@@ -36,7 +36,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     private Context context;
     private View.OnClickListener listener;
 
-    public UsersAdapter(List<Usuario> usuarioList,UserListener userListener) {
+    public UsersAdapter(List<Usuario> usuarioList, UserListener userListener) {
         this.usuarioList = usuarioList;
         this.userListener = userListener;
     }
@@ -44,7 +44,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemContainerUserBinding itemContainerUserBinding = ItemContainerUserBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+        ItemContainerUserBinding itemContainerUserBinding = ItemContainerUserBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new UserViewHolder(itemContainerUserBinding);
     }
 
@@ -60,11 +60,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     class UserViewHolder extends RecyclerView.ViewHolder {
         ItemContainerUserBinding binding;
+
         UserViewHolder(ItemContainerUserBinding itemContainerUserBinding) {
             super(itemContainerUserBinding.getRoot());
             binding = itemContainerUserBinding;
         }
-        void setUserData(Usuario user){
+
+        void setUserData(Usuario user) {
             binding.TextName.setText(user.getNombre());
             binding.TextPhone.setText(user.getTelefono());
             binding.imageprofile.setImageBitmap(getUserImage(user.getFoto()));
@@ -72,7 +74,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         }
     }
 
-    private Bitmap getUserImage(String image){
+    private Bitmap getUserImage(String image) {
         byte[] decodedString = android.util.Base64.decode(image, android.util.Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
     }

@@ -1,11 +1,15 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,13 +18,17 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.petplanet.R;
 import com.example.petplanet.databinding.ActivityRegistroPerroBinding;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RegistroPerroActivity extends AppCompatActivity {
@@ -28,6 +36,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
     String encoded;
     int SELECT_PICTURE = 200;
     int CAMERA_REQUEST = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,51 +72,65 @@ public class RegistroPerroActivity extends AppCompatActivity {
                 });
 
         binding.fotodelperroBTN.setOnClickListener(v -> {
-                    final CharSequence[] options = {"Tomar foto", "Elegir de galeria", "Cancelar"};
-                    AlertDialog.Builder builder = new AlertDialog.Builder(RegistroPerroActivity.this);
-                    builder.setTitle("Elige una opcion");
-                    builder.setItems(options, (dialog, item) -> {
-                        if (options[item].equals("Tomar foto")) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Elige una opcion para subir tu foto")
+                    .setPositiveButton("Tomar foto", (dialogInterface, i) -> {
+                        if (ContextCompat.checkSelfPermission(RegistroPerroActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(RegistroPerroActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
                             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                             startActivityForResult(intent, CAMERA_REQUEST);
                             binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
-
-                        } else if (options[item].equals("Elegir de galeria")) {
-                            imageChooser();
-                        } else if (options[item].equals("Cancelar")) {
-                            dialog.dismiss();
+                        } else {
+                            if (checkAndRequestPermissions()) {
+                                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent, CAMERA_REQUEST);
+                                binding.fotodelperroBTN.setImageURI(Uri.parse(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
+                            }
                         }
-                    });
-                    builder.show();
-                });
+                    })
+                    .setNeutralButton("Cancelar", (dialogInterface, i) -> {
+                    })
+                    .setNegativeButton("Elegir de galeria", (dialogInterface, i) -> {
+                        if (checkAndRequestPermissionsStorage()) {
+                            imageChooser();
+                        } else {
+                            Toast.makeText(this, "No se puede acceder a la galeria", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+
+                    .show();
+        });
 
 
         binding.seguirconelregistroBTN.setOnClickListener(v -> {
-            String nombrep =binding.registroNombrePet.getText().toString();
-            String colorS = binding.spinnercolor.getSelectedItem().toString();
-            String sexoS = binding.spinnersexo.getSelectedItem().toString();
+            String nombrep = binding.registroNombrePet.getText().toString();
+            String colorS = binding.spinnercolortxt.getText().toString();
+            String sexoS = binding.spinnersexotxt.getText().toString();
             String fechanacimientoS = binding.registrofechanacimientoperro.getText().toString();
-            if(nombrep.isEmpty()){
+            if (nombrep.isEmpty()) {
                 binding.registroNombrePet.setError("Ingrese el nombre de la mascota");
                 binding.registroNombrePet.requestFocus();
                 return;
-            }if(sexoS.equals("Seleccione el sexo")){
-                ((TextView)binding.spinnersexo.getSelectedView()).setError("Error message");
-            }if(colorS.equals("Selecciona un color")){
-                ((TextView)binding.spinnercolor.getSelectedView()).setError("Error message");
-            }if(fechanacimientoS.isEmpty()){
+            }
+            if (sexoS.isEmpty()) {
+                binding.spinnersexo.setError("Seleccione el sexo de la mascota");
+            }
+            if (colorS.isEmpty()) {
+                binding.spinnercolor.setError("Seleccione el color de la mascota");
+            }
+            if (fechanacimientoS.isEmpty()) {
                 binding.registrofechanacimientoperro.setError("Ingrese una fecha de nacimiento valida");
                 binding.registrofechanacimientoperro.requestFocus();
                 return;
-            }else{
+            } else {
                 Intent intent = new Intent(getApplicationContext(), RazasActivity.class);
-                intent.putExtra("nombredelamascota",nombrep);
-                intent.putExtra("colordelperro",colorS);
-                intent.putExtra("sexoselamascota",sexoS);
-                intent.putExtra("foto",encoded);
-                intent.putExtra("esterilizado",binding.EsterilizadoCheck.isChecked());
-                intent.putExtra("vacunado",binding.carnetVacunacionCheck.isChecked());
-                intent.putExtra("fechadenacimiento",fechanacimientoS);
+                intent.putExtra("nombredelamascota", nombrep);
+                intent.putExtra("colordelperro", colorS);
+                intent.putExtra("sexoselamascota", sexoS);
+                intent.putExtra("foto", encoded);
+                intent.putExtra("esterilizado", binding.EsterilizadoCheck.isChecked());
+                intent.putExtra("vacunado", binding.carnetVacunacionCheck.isChecked());
+                intent.putExtra("fechadenacimiento", fechanacimientoS);
                 startActivity(intent);
                 finish();
             }
@@ -129,6 +152,37 @@ public class RegistroPerroActivity extends AppCompatActivity {
     }
 
 
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    private boolean checkAndRequestPermissions() {
+        int permissionCamera = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkAndRequestPermissionsStorage() {
+        int permissionWritestorage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionWritestorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -148,7 +202,7 @@ public class RegistroPerroActivity extends AppCompatActivity {
                         Bitmap img = (Bitmap) MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         img.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                        byte[] byteArray = byteArrayOutputStream .toByteArray();
+                        byte[] byteArray = byteArrayOutputStream.toByteArray();
                         encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         Log.d("imagen", "onActivityResult: " + encoded);
                     } catch (IOException e) {
@@ -165,14 +219,13 @@ public class RegistroPerroActivity extends AppCompatActivity {
             Bitmap image = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
             encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
             Log.d("imagen", "onActivityResult: " + encoded);
 
             binding.fotodelperroBTN.setImageBitmap(image);
         }
     }
-
 
 
     @Override

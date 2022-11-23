@@ -1,6 +1,7 @@
 package com.example.petplanet.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import com.example.petplanet.R;
 import com.example.petplanet.adapters.CardAdapterUsuario;
 import com.example.petplanet.databinding.ActivityPerfilUsuarioWalkerBinding;
 import com.example.petplanet.models.Usuario;
+import com.example.petplanet.utilities.Constants;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,12 +27,21 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
     String nombre;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
-    public static final String PATH_USERS="users/";
+    public static final String PATH_USERS = "users/";
 
     byte[] decodedString;
     Bitmap decodedByte;
+    boolean chat = false;
     Usuario walkerx = new Usuario();
+    public String uid2;
 
+    public String getUid2() {
+        return uid2;
+    }
+
+    public void setUid2(String uid2) {
+        this.uid2 = uid2;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +62,16 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                nombre= null;
+            if (extras == null) {
+                nombre = null;
 
             } else {
-                nombre= extras.getString("nombre");
-
+                nombre = extras.getString("nombre");
+                chat = extras.getBoolean("vengodeunchat");
             }
         } else {
-            nombre= (String) savedInstanceState.getSerializable("nombre");
-
+            nombre = (String) savedInstanceState.getSerializable("nombre");
+            chat = (boolean) savedInstanceState.getSerializable("vengodeunchat");
         }
         myRef = database.getReference(PATH_USERS);
         myRef.getDatabase().getReference(PATH_USERS).get().addOnCompleteListener(task -> {
@@ -77,7 +88,8 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
                 for (DataSnapshot walker : task.getResult().getChildren()) {
                     walkerx = walker.getValue(Usuario.class);
                     if (walkerx.getWalker()) {
-                        if(walkerx.getNombre().equals(nombre)){
+                        if (walkerx.getNombre().equals(nombre)) {
+                            setUid2(walker.getKey());
                             binding.nombrePetWalker.setText(walkerx.getNombre());
                             binding.TelefonoPetwalker.setText(walkerx.getTelefono());
                             binding.experienciaPetwalker.setText(walkerx.getExperiencia());
@@ -94,8 +106,16 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         binding.tollbarPwalker.setNavigationOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(),ListarCuidadoresActivity.class));// esto cambia si el usuario es dueño o walker
-            finish();
+            if (chat) {
+                Intent intent = new Intent(PerfilUsuarioWalkerActivity.this, ChatActivity.class);
+                intent.putExtra(Constants.KEY_USER_ID, getUid2());
+                startActivity(intent);
+                finish();
+            } else {
+                startActivity(new Intent(getApplicationContext(), ListarCuidadoresActivity.class));// esto cambia si el usuario es dueño o walker
+                finish();
+            }
+
         });
 
         binding.agregarFaboritos.setOnClickListener(v -> {
@@ -106,6 +126,7 @@ public class PerfilUsuarioWalkerActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
